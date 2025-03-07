@@ -16,6 +16,51 @@ const translations = {
             timeline: "Historical Evolution",
             about: "About AeroDataBank"
         },
+        table: {
+            headers: {
+                aircraft: "Aircraft",
+                manufacturer: "Manufacturer",
+                model: "Model",
+                year: "Year",
+                type: "Type",
+                era: "Era",
+                mtow: "MTOW (kg)"
+            },
+            no_data: "No data available.",
+            no_name: "No name",
+            error_rendering: "Error rendering table",
+            no_results: "No aircraft found with the selected filters."
+        },
+        charts: {
+            scatter: {
+                x_param: "X Parameter",
+                y_param: "Y Parameter",
+                scale: "Chart Scale",
+                log_scale_x: "Log Scale X",
+                log_scale_y: "Log Scale Y",
+                selected_aircraft: "Selected Aircraft",
+                click_point: "Click on a point in the chart to see aircraft details."
+            },
+            flight: {
+                select_diagram: "Select Diagram",
+                wing_loading_mtow: "Wing Loading vs MTOW",
+                speed_mtow: "True Airspeed (TAS) vs MTOW",
+                speed_mtow_ve: "Equivalent Speed (VE) vs MTOW",
+                wing_loading_speed: "Wing Loading vs True Airspeed (TAS)",
+                wing_loading_speed_ve: "Wing Loading vs Equivalent Speed (VE)",
+                chart_options: "Chart Options",
+                log_scale_x: "Log Scale X",
+                log_scale_y: "Log Scale Y",
+                show_trendlines: "Show Trendlines",
+                comparative_diagram: "Comparative Diagram",
+                description: "This diagram allows comparing different aircraft and birds based on their aerodynamic characteristics. The chart uses logarithmic scale to allow visualization of aircraft of very different sizes."
+            },
+            timeline: {
+                parameter: "Parameter",
+                chart_scale: "Chart Scale",
+                log_scale: "Logarithmic Scale (Y axis)"
+            }
+        },
         filters: {
             title: "Filter by Category",
             type: {
@@ -59,6 +104,92 @@ const translations = {
                 very_large: "Very Large (above 300,000 kg)"
             },
             clear: "Clear Filters"
+        },
+        aircraft: {
+            edit: {
+                title: "Add/Edit Aircraft",
+                image_url: "Image URL",
+                cancel: "Cancel",
+                save: "Save",
+                select: "Select..."
+            },
+            details: {
+                title: "Aircraft Details",
+                close: "Close",
+                not_found: "Aircraft not found.",
+                general: {
+                    title: "General Information",
+                    name: "Name",
+                    manufacturer: "Manufacturer",
+                    model: "Model",
+                    first_flight_year: "First Flight Year",
+                    engine_type: "Engine Type",
+                    engine_count: "Number of Engines"
+                },
+                categories: {
+                    title: "Categories",
+                    type: "Type/Function",
+                    era: "Era/Generation",
+                    engine: "Engine Type",
+                    size: "Size"
+                },
+                physical: {
+                    title: "Physical Characteristics",
+                    mtow: "Maximum Takeoff Weight",
+                    wing_area: "Wing Area",
+                    wingspan: "Wingspan",
+                    wing_loading: "Wing Loading",
+                    aspect_ratio: "Aspect Ratio"
+                },
+                speeds: {
+                    title: "Speeds",
+                    cruise: "Cruise Speed",
+                    takeoff: "Takeoff Speed",
+                    landing: "Landing Speed"
+                },
+                performance: {
+                    title: "Other Characteristics",
+                    service_ceiling: "Service Ceiling",
+                    cruise_altitude: "Cruise Altitude",
+                    max_thrust: "Maximum Thrust",
+                    range: "Range"
+                }
+            },
+            categories: {
+                type: {
+                    comercial: "Commercial Aviation",
+                    executiva: "Business Aircraft",
+                    carga: "Cargo Aviation",
+                    militar: "Military Aviation",
+                    geral: "General Aviation",
+                    historica: "Historical Aircraft",
+                    experimental: "Experimental Aircraft",
+                    ave: "Bird"
+                },
+                era: {
+                    pioneiros: "Pioneers (until 1930)",
+                    classica: "Classic Era (1930-1950)",
+                    jato_inicial: "Early Jet Era (1950-1970)",
+                    moderna: "Modern Era (1970-2000)",
+                    contemporanea: "Contemporary Era (2000+)",
+                    biologica: "Biological"
+                },
+                engine: {
+                    pistao: "Piston Engine",
+                    turboelice: "Turboprop",
+                    turbojato: "Turbojet",
+                    turbofan: "Turbofan",
+                    especial: "Special Propulsion",
+                    muscular: "Muscular (Biological)"
+                },
+                size: {
+                    muito_leve: "Very Light (up to 5,700 kg)",
+                    regional: "Regional (5,700-50,000 kg)",
+                    medio: "Medium Size (50,000-150,000 kg)",
+                    grande: "Large Size (150,000-300,000 kg)",
+                    muito_grande: "Very Large (above 300,000 kg)"
+                }
+            }
         },
         about: {
             intro: "This database was developed to support aircraft performance courses, enabling visualization and analysis of technical characteristics of various aircraft.",
@@ -111,6 +242,51 @@ const translations = {
             timeline: "Evolução Histórica",
             about: "Sobre o AeroDataBank"
         },
+        table: {
+            headers: {
+                aircraft: "Aeronave",
+                manufacturer: "Fabricante",
+                model: "Modelo",
+                year: "Ano",
+                type: "Tipo",
+                era: "Era",
+                mtow: "MTOW (kg)"
+            },
+            no_data: "Nenhum dado disponível.",
+            no_name: "Sem nome",
+            error_rendering: "Erro ao renderizar tabela",
+            no_results: "Nenhuma aeronave encontrada com os filtros selecionados."
+        },
+        charts: {
+            scatter: {
+                x_param: "Parâmetro X",
+                y_param: "Parâmetro Y",
+                scale: "Escala do Gráfico",
+                log_scale_x: "Escala Log X",
+                log_scale_y: "Escala Log Y",
+                selected_aircraft: "Aeronave Selecionada",
+                click_point: "Clique em um ponto no gráfico para ver os detalhes da aeronave."
+            },
+            flight: {
+                select_diagram: "Selecionar Diagrama",
+                wing_loading_mtow: "Carga Alar vs MTOW",
+                speed_mtow: "Velocidade Real (TAS) vs MTOW",
+                speed_mtow_ve: "Velocidade Equivalente (VE) vs MTOW",
+                wing_loading_speed: "Carga Alar vs Velocidade Real (TAS)",
+                wing_loading_speed_ve: "Carga Alar vs Velocidade Equivalente (VE)",
+                chart_options: "Opções do Gráfico",
+                log_scale_x: "Escala Log X",
+                log_scale_y: "Escala Log Y",
+                show_trendlines: "Mostrar Linhas de Tendência",
+                comparative_diagram: "Diagrama Comparativo",
+                description: "Este diagrama permite comparar diferentes aeronaves e aves com base em suas características aerodinâmicas. O gráfico usa escala logarítmica para permitir a visualização de aeronaves de tamanhos muito diferentes."
+            },
+            timeline: {
+                parameter: "Parâmetro",
+                chart_scale: "Escala do Gráfico",
+                log_scale: "Escala Logarítmica (eixo Y)"
+            }
+        },
         filters: {
             title: "Filtrar por Categoria",
             type: {
@@ -155,6 +331,92 @@ const translations = {
             },
             clear: "Limpar Filtros"
         },
+        aircraft: {
+            edit: {
+                title: "Adicionar/Editar Aeronave",
+                image_url: "URL da Imagem",
+                cancel: "Cancelar",
+                save: "Salvar",
+                select: "Selecione..."
+            },
+            details: {
+                title: "Detalhes da Aeronave",
+                close: "Fechar",
+                not_found: "Aeronave não encontrada.",
+                general: {
+                    title: "Informações Gerais",
+                    name: "Nome",
+                    manufacturer: "Fabricante",
+                    model: "Modelo",
+                    first_flight_year: "Ano do Primeiro Voo",
+                    engine_type: "Tipo de Motor",
+                    engine_count: "Número de Motores"
+                },
+                categories: {
+                    title: "Categorias",
+                    type: "Tipo/Função",
+                    era: "Era/Geração",
+                    engine: "Motorização",
+                    size: "Tamanho"
+                },
+                physical: {
+                    title: "Características Físicas",
+                    mtow: "Peso Máximo de Decolagem",
+                    wing_area: "Área da Asa",
+                    wingspan: "Envergadura",
+                    wing_loading: "Carga Alar",
+                    aspect_ratio: "Razão de Aspecto"
+                },
+                speeds: {
+                    title: "Velocidades",
+                    cruise: "Velocidade de Cruzeiro",
+                    takeoff: "Velocidade de Decolagem",
+                    landing: "Velocidade de Pouso"
+                },
+                performance: {
+                    title: "Outras Características",
+                    service_ceiling: "Teto de Serviço",
+                    cruise_altitude: "Altitude de Cruzeiro",
+                    max_thrust: "Tração Máxima",
+                    range: "Alcance"
+                }
+            },
+            categories: {
+                type: {
+                    comercial: "Aviação Comercial",
+                    executiva: "Aeronaves Executivas",
+                    carga: "Aviação de Carga",
+                    militar: "Aviação Militar",
+                    geral: "Aviação Geral",
+                    historica: "Aeronaves Históricas",
+                    experimental: "Aeronaves Experimentais",
+                    ave: "Ave"
+                },
+                era: {
+                    pioneiros: "Pioneiros (até 1930)",
+                    classica: "Era Clássica (1930-1950)",
+                    jato_inicial: "Era do Jato Inicial (1950-1970)",
+                    moderna: "Era Moderna (1970-2000)",
+                    contemporanea: "Era Contemporânea (2000+)",
+                    biologica: "Biológico"
+                },
+                engine: {
+                    pistao: "Motor a Pistão",
+                    turboelice: "Turboélice",
+                    turbojato: "Turbojato",
+                    turbofan: "Turbofan",
+                    especial: "Propulsão Especial",
+                    muscular: "Muscular (Biológico)"
+                },
+                size: {
+                    muito_leve: "Muito Leve (até 5.700 kg)",
+                    regional: "Regional (5.700-50.000 kg)",
+                    medio: "Médio Porte (50.000-150.000 kg)",
+                    grande: "Grande Porte (150.000-300.000 kg)",
+                    muito_grande: "Muito Grande (acima de 300.000 kg)"
+                }
+            }
+        },
         about: {
             intro: "Este banco de dados foi desenvolvido para apoiar cursos de desempenho de aeronaves, permitindo a visualização e análise de características técnicas de diversas aeronaves.",
             features: {
@@ -197,15 +459,30 @@ let currentLang = 'en';
 
 // Function to get a nested translation using a dot notation path
 function getTranslation(path) {
-    return path.split('.').reduce((obj, key) => obj && obj[key], translations[currentLang]) || path;
+    console.log('Getting translation for path:', path);
+    const result = path.split('.').reduce((obj, key) => obj && obj[key], translations[currentLang]);
+    console.log('Translation result:', result);
+    return result || path;
 }
 
 // Function to update all translations on the page
 function updatePageTranslations() {
+    console.log('Updating page translations. Current language:', currentLang);
+    
     // Update elements with data-i18n attribute
     document.querySelectorAll('[data-i18n]').forEach(element => {
         const path = element.getAttribute('data-i18n');
-        element.textContent = getTranslation(path);
+        console.log('Updating element with path:', path);
+        const translation = getTranslation(path);
+        element.textContent = translation;
+    });
+
+    // Update elements with data-i18n-placeholder attribute
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(element => {
+        const path = element.getAttribute('data-i18n-placeholder');
+        console.log('Updating placeholder with path:', path);
+        const translation = getTranslation(path);
+        element.placeholder = translation;
     });
 
     // Update page title
@@ -215,6 +492,8 @@ function updatePageTranslations() {
     document.querySelectorAll('.language-switcher img').forEach(img => {
         img.classList.toggle('active', img.getAttribute('data-lang') === currentLang);
     });
+    
+    console.log('Page translations updated');
 }
 
 // Function to change language

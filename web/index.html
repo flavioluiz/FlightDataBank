@@ -499,7 +499,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="aircraft-modal-title">Adicionar Aeronave</h5>
+                    <h5 class="modal-title" id="aircraft-modal-title" data-i18n="aircraft.edit.title">Add Aircraft</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
@@ -508,147 +508,147 @@
                         
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="name" class="form-label">Nome</label>
+                                <label for="name" class="form-label" data-i18n="aircraft.details.general.name">Name</label>
                                 <input type="text" class="form-control" id="name" required>
                             </div>
                             <div class="col-md-4">
-                                <label for="manufacturer" class="form-label">Fabricante</label>
+                                <label for="manufacturer" class="form-label" data-i18n="aircraft.details.general.manufacturer">Manufacturer</label>
                                 <input type="text" class="form-control" id="manufacturer" required>
                             </div>
                             <div class="col-md-4">
-                                <label for="model" class="form-label">Modelo</label>
+                                <label for="model" class="form-label" data-i18n="aircraft.details.general.model">Model</label>
                                 <input type="text" class="form-control" id="model" required>
                             </div>
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="first_flight_year" class="form-label">Ano do Primeiro Voo</label>
+                                <label for="first_flight_year" class="form-label" data-i18n="aircraft.details.general.first_flight_year">First Flight Year</label>
                                 <input type="number" class="form-control" id="first_flight_year">
                             </div>
                             <div class="col-md-4">
-                                <label for="engine_type" class="form-label">Tipo de Motor</label>
+                                <label for="engine_type" class="form-label" data-i18n="aircraft.details.general.engine_type">Engine Type</label>
                                 <input type="text" class="form-control" id="engine_type">
                             </div>
                             <div class="col-md-4">
-                                <label for="engine_count" class="form-label">Número de Motores</label>
+                                <label for="engine_count" class="form-label" data-i18n="aircraft.details.general.engine_count">Number of Engines</label>
                                 <input type="number" class="form-control" id="engine_count">
                             </div>
                         </div>
                         
-                        <h5 class="mt-4">Categorias</h5>
+                        <h5 class="mt-4" data-i18n="aircraft.details.categories.title">Categories</h5>
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="category_type" class="form-label">Tipo/Função</label>
+                                <label for="category_type" class="form-label" data-i18n="aircraft.details.categories.type">Type/Function</label>
                                 <select class="form-control" id="category_type">
-                                    <option value="">Selecione...</option>
-                                    <option value="comercial">Aviação Comercial</option>
-                                    <option value="executiva">Aeronaves Executivas</option>
-                                    <option value="carga">Aviação de Carga</option>
-                                    <option value="militar">Aviação Militar</option>
-                                    <option value="geral">Aviação Geral</option>
-                                    <option value="historica">Aeronaves Históricas/Pioneiras</option>
-                                    <option value="experimental">Aeronaves Experimentais</option>
-                                    <option value="ave">Aves (Biológico)</option>
+                                    <option value="" data-i18n="filters.type.all">Select...</option>
+                                    <option value="comercial" data-i18n="aircraft.categories.type.comercial">Commercial Aviation</option>
+                                    <option value="executiva" data-i18n="aircraft.categories.type.executiva">Business Aircraft</option>
+                                    <option value="carga" data-i18n="aircraft.categories.type.carga">Cargo Aviation</option>
+                                    <option value="militar" data-i18n="aircraft.categories.type.militar">Military Aviation</option>
+                                    <option value="geral" data-i18n="aircraft.categories.type.geral">General Aviation</option>
+                                    <option value="historica" data-i18n="aircraft.categories.type.historica">Historical Aircraft</option>
+                                    <option value="experimental" data-i18n="aircraft.categories.type.experimental">Experimental Aircraft</option>
+                                    <option value="ave" data-i18n="aircraft.categories.type.ave">Bird</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="category_era" class="form-label">Era/Geração</label>
+                                <label for="category_era" class="form-label" data-i18n="aircraft.details.categories.era">Era/Generation</label>
                                 <select class="form-control" id="category_era">
-                                    <option value="">Selecione...</option>
-                                    <option value="pioneiros">Pioneiros (até 1930)</option>
-                                    <option value="classica">Era Clássica (1930-1950)</option>
-                                    <option value="jato_inicial">Era do Jato Inicial (1950-1970)</option>
-                                    <option value="moderna">Era Moderna (1970-2000)</option>
-                                    <option value="contemporanea">Era Contemporânea (2000-presente)</option>
-                                    <option value="biologica">Biológico</option>
+                                    <option value="" data-i18n="filters.era.all">Select...</option>
+                                    <option value="pioneiros" data-i18n="aircraft.categories.era.pioneiros">Pioneers (until 1930)</option>
+                                    <option value="classica" data-i18n="aircraft.categories.era.classica">Classic Era (1930-1950)</option>
+                                    <option value="jato_inicial" data-i18n="aircraft.categories.era.jato_inicial">Early Jet Era (1950-1970)</option>
+                                    <option value="moderna" data-i18n="aircraft.categories.era.moderna">Modern Era (1970-2000)</option>
+                                    <option value="contemporanea" data-i18n="aircraft.categories.era.contemporanea">Contemporary Era (2000+)</option>
+                                    <option value="biologica" data-i18n="aircraft.categories.era.biologica">Biological</option>
                                 </select>
                             </div>
                         </div>
                         
                         <div class="row mb-3">
                             <div class="col-md-6">
-                                <label for="category_engine" class="form-label">Motorização</label>
+                                <label for="category_engine" class="form-label" data-i18n="aircraft.details.categories.engine">Engine Type</label>
                                 <select class="form-control" id="category_engine">
-                                    <option value="">Selecione...</option>
-                                    <option value="pistao">Motor a Pistão</option>
-                                    <option value="turboelice">Turboélice</option>
-                                    <option value="turbojato">Turbojato</option>
-                                    <option value="turbofan">Turbofan</option>
-                                    <option value="especial">Propulsão Especial</option>
-                                    <option value="muscular">Muscular (Biológico)</option>
+                                    <option value="" data-i18n="filters.engine.all">Select...</option>
+                                    <option value="pistao" data-i18n="aircraft.categories.engine.pistao">Piston Engine</option>
+                                    <option value="turboelice" data-i18n="aircraft.categories.engine.turboelice">Turboprop</option>
+                                    <option value="turbojato" data-i18n="aircraft.categories.engine.turbojato">Turbojet</option>
+                                    <option value="turbofan" data-i18n="aircraft.categories.engine.turbofan">Turbofan</option>
+                                    <option value="especial" data-i18n="aircraft.categories.engine.especial">Special Propulsion</option>
+                                    <option value="muscular" data-i18n="aircraft.categories.engine.muscular">Muscular (Biological)</option>
                                 </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="category_size" class="form-label">Tamanho</label>
+                                <label for="category_size" class="form-label" data-i18n="aircraft.details.categories.size">Size</label>
                                 <select class="form-control" id="category_size">
-                                    <option value="">Selecione...</option>
-                                    <option value="muito_leve">Muito Leve (até 5.700 kg)</option>
-                                    <option value="regional">Regional (5.700-50.000 kg)</option>
-                                    <option value="medio">Médio Porte (50.000-150.000 kg)</option>
-                                    <option value="grande">Grande Porte (150.000-300.000 kg)</option>
-                                    <option value="muito_grande">Muito Grande (acima de 300.000 kg)</option>
+                                    <option value="" data-i18n="filters.size.all">Select...</option>
+                                    <option value="muito_leve" data-i18n="aircraft.categories.size.muito_leve">Very Light (up to 5,700 kg)</option>
+                                    <option value="regional" data-i18n="aircraft.categories.size.regional">Regional (5,700-50,000 kg)</option>
+                                    <option value="medio" data-i18n="aircraft.categories.size.medio">Medium Size (50,000-150,000 kg)</option>
+                                    <option value="grande" data-i18n="aircraft.categories.size.grande">Large Size (150,000-300,000 kg)</option>
+                                    <option value="muito_grande" data-i18n="aircraft.categories.size.muito_grande">Very Large (above 300,000 kg)</option>
                                 </select>
                             </div>
                         </div>
                         
-                        <h5 class="mt-4">Características Físicas</h5>
+                        <h5 class="mt-4" data-i18n="aircraft.details.physical.title">Physical Characteristics</h5>
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="mtow" class="form-label">MTOW (kg)</label>
+                                <label for="mtow" class="form-label" data-i18n="aircraft.details.physical.mtow">MTOW (kg)</label>
                                 <input type="number" step="0.01" class="form-control" id="mtow">
                             </div>
                             <div class="col-md-4">
-                                <label for="wing_area" class="form-label">Área da Asa (m²)</label>
+                                <label for="wing_area" class="form-label" data-i18n="aircraft.details.physical.wing_area">Wing Area (m²)</label>
                                 <input type="number" step="0.01" class="form-control" id="wing_area">
                             </div>
                             <div class="col-md-4">
-                                <label for="wingspan" class="form-label">Envergadura (m)</label>
+                                <label for="wingspan" class="form-label" data-i18n="aircraft.details.physical.wingspan">Wingspan (m)</label>
                                 <input type="number" step="0.01" class="form-control" id="wingspan">
                             </div>
                         </div>
                         
-                        <h5 class="mt-4">Velocidades</h5>
+                        <h5 class="mt-4" data-i18n="aircraft.details.speeds.title">Speeds</h5>
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="cruise_speed" class="form-label">Velocidade de Cruzeiro (km/h)</label>
+                                <label for="cruise_speed" class="form-label" data-i18n="aircraft.details.speeds.cruise">Cruise Speed (km/h)</label>
                                 <input type="number" step="0.01" class="form-control" id="cruise_speed">
                             </div>
                             <div class="col-md-4">
-                                <label for="takeoff_speed" class="form-label">Velocidade de Decolagem (km/h)</label>
+                                <label for="takeoff_speed" class="form-label" data-i18n="aircraft.details.speeds.takeoff">Takeoff Speed (km/h)</label>
                                 <input type="number" step="0.01" class="form-control" id="takeoff_speed">
                             </div>
                             <div class="col-md-4">
-                                <label for="landing_speed" class="form-label">Velocidade de Pouso (km/h)</label>
+                                <label for="landing_speed" class="form-label" data-i18n="aircraft.details.speeds.landing">Landing Speed (km/h)</label>
                                 <input type="number" step="0.01" class="form-control" id="landing_speed">
                             </div>
                         </div>
                         
-                        <h5 class="mt-4">Outras Características</h5>
+                        <h5 class="mt-4" data-i18n="aircraft.details.performance.title">Other Characteristics</h5>
                         <div class="row mb-3">
                             <div class="col-md-4">
-                                <label for="service_ceiling" class="form-label">Teto de Serviço (m)</label>
+                                <label for="service_ceiling" class="form-label" data-i18n="aircraft.details.performance.service_ceiling">Service Ceiling (m)</label>
                                 <input type="number" step="0.01" class="form-control" id="service_ceiling">
                             </div>
                             <div class="col-md-4">
-                                <label for="cruise_altitude" class="form-label">Altitude de Cruzeiro (m)</label>
+                                <label for="cruise_altitude" class="form-label" data-i18n="aircraft.details.performance.cruise_altitude">Cruise Altitude (m)</label>
                                 <input type="number" step="0.01" class="form-control" id="cruise_altitude">
                             </div>
                             <div class="col-md-4">
-                                <label for="max_thrust" class="form-label">Tração Máxima (kN)</label>
+                                <label for="max_thrust" class="form-label" data-i18n="aircraft.details.performance.max_thrust">Maximum Thrust (kN)</label>
                                 <input type="number" step="0.01" class="form-control" id="max_thrust">
                             </div>
                         </div>
                         
                         <div class="mb-3">
-                            <label for="image_url" class="form-label">URL da Imagem</label>
+                            <label for="image_url" class="form-label" data-i18n="aircraft.edit.image_url">Image URL</label>
                             <input type="url" class="form-control" id="image_url">
                         </div>
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                    <button type="button" class="btn btn-primary" id="save-aircraft">Salvar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="aircraft.edit.cancel">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="save-aircraft" data-i18n="aircraft.edit.save">Save</button>
                 </div>
             </div>
         </div>
@@ -659,20 +659,20 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="aircraft-details-title">Detalhes da Aeronave</h5>
+                    <h5 class="modal-title" id="aircraft-details-title" data-i18n="aircraft.details.title">Aircraft Details</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" id="aircraft-details-body">
                     <!-- Conteúdo será preenchido via JavaScript -->
                     <div class="text-center py-5">
                         <div class="spinner-border text-primary" role="status">
-                            <span class="visually-hidden">Carregando...</span>
+                            <span class="visually-hidden">Loading...</span>
                         </div>
-                        <p class="mt-2">Carregando detalhes da aeronave...</p>
+                        <p class="mt-2">Loading aircraft details...</p>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" data-i18n="aircraft.details.close">Close</button>
                 </div>
             </div>
         </div>

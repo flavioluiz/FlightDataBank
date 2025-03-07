@@ -149,75 +149,88 @@ async function loadParameters() {
 // Função auxiliar para renderizar a tabela com segurança
 function renderTableSafely(data) {
     try {
-        // Verificar se temos dados
-        if (!data || data.length === 0) {
-            console.warn('Nenhum dado para renderizar na tabela');
-            const tbody = document.getElementById('aircraft-table-body');
-            if (tbody) {
-                tbody.innerHTML = '<tr><td colspan="8" class="text-center">Nenhum dado disponível.</td></tr>';
-            }
+        const tbody = document.getElementById('aircraft-table-body');
+        if (!tbody) {
+            console.error('Elemento tbody não encontrado');
             return;
         }
-        
-        // Verificar se temos aves nos dados
-        const birds = data.filter(item => item.category_type === 'ave');
-        console.log(`Dados para renderizar: ${data.length} itens, incluindo ${birds.length} aves`);
-        
-        // Usar a função global se disponível
-        if (window.renderAircraftTable && typeof window.renderAircraftTable === 'function') {
-            console.log('Usando função renderAircraftTable global');
-            window.renderAircraftTable(data);
-        } else {
-            console.warn('Função renderAircraftTable não encontrada, usando fallback');
-            // Fallback: renderização simples
-            const tbody = document.getElementById('aircraft-table-body');
-            if (tbody) {
-                tbody.innerHTML = '';
-                
-                data.forEach(aircraft => {
-                    if (!aircraft) return;  // Pular entradas nulas
-                    
-                    const row = document.createElement('tr');
-                    
-                    // Adicionar atributos de dados para filtragem
-                    if (aircraft.category_type) row.setAttribute('data-category-type', aircraft.category_type);
-                    if (aircraft.category_era) row.setAttribute('data-category-era', aircraft.category_era);
-                    if (aircraft.category_engine) row.setAttribute('data-category-engine', aircraft.category_engine);
-                    if (aircraft.category_size) row.setAttribute('data-category-size', aircraft.category_size);
-                    
-                    row.innerHTML = `
-                        <td>
-                            <a href="#" onclick="viewAircraftDetails(${aircraft.id || 0}); return false;" data-id="${aircraft.id}" class="aircraft-link">
-                                ${aircraft.name || 'Sem nome'}
-                            </a>
-                        </td>
-                        <td>${aircraft.manufacturer || '-'}</td>
-                        <td>${aircraft.model || '-'}</td>
-                        <td>${aircraft.first_flight_year || '-'}</td>
-                        <td>${aircraft.category_type || '-'}</td>
-                        <td>${aircraft.category_era || '-'}</td>
-                        <td>${aircraft.mtow_N ? aircraft.mtow_N.toLocaleString() : '-'}</td>
-                        <td>
-                            <button class="btn btn-sm btn-primary" onclick="editAircraft(${aircraft.id || 0})">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteAircraft(${aircraft.id || 0})">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </td>
-                    `;
-                    
-                    tbody.appendChild(row);
-                });
-            }
+
+        // Limpar a tabela antes de renderizar
+        tbody.innerHTML = '';
+
+        // Verificar se temos dados válidos
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center">
+                        ${getTranslation('table.no_data')}
+                    </td>
+                </tr>
+            `;
+            return;
         }
-        
+
+        // Criar todas as linhas de uma vez
+        const fragment = document.createDocumentFragment();
+
+        // Processar cada aeronave
+        data.forEach(aircraft => {
+            if (!aircraft) return;  // Pular entradas nulas
+
+            const row = document.createElement('tr');
+
+            // Adicionar categorias como atributos de dados para filtragem
+            if (aircraft.category_type) {
+                row.setAttribute('data-category-type', aircraft.category_type);
+            }
+            if (aircraft.category_era) row.setAttribute('data-category-era', aircraft.category_era);
+            if (aircraft.category_engine) row.setAttribute('data-category-engine', aircraft.category_engine);
+            if (aircraft.category_size) row.setAttribute('data-category-size', aircraft.category_size);
+
+            // Criar o HTML da célula do nome com tooltip
+            const nameCell = `
+                <a href="#" 
+                   onclick="viewAircraftDetails(${aircraft.id}); return false;" 
+                   class="aircraft-name"
+                   data-bs-toggle="tooltip" 
+                   data-bs-placement="right" 
+                   title="${aircraft.name}"
+                >
+                    ${aircraft.name || getTranslation('table.no_name')}
+                </a>
+            `;
+
+            row.innerHTML = `
+                <td>${nameCell}</td>
+                <td>${aircraft.manufacturer || '-'}</td>
+                <td>${aircraft.model || '-'}</td>
+                <td>${aircraft.first_flight_year || '-'}</td>
+                <td>${getTranslation(`aircraft.categories.type.${aircraft.category_type}`) || '-'}</td>
+                <td>${getTranslation(`aircraft.categories.era.${aircraft.category_era}`) || '-'}</td>
+                <td>${aircraft.mtow_N ? (aircraft.mtow_N / 9.81).toLocaleString() : '-'}</td>
+            `;
+
+            fragment.appendChild(row);
+        });
+
+        // Adicionar todas as linhas de uma vez
+        tbody.appendChild(fragment);
+
+        // Inicializar tooltips do Bootstrap
+        if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+            const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltips.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        }
+
         // Aplicar filtros se existirem
         if (window.applyFilters && typeof window.applyFilters === 'function') {
             window.applyFilters();
         }
     } catch (error) {
         console.error('Erro ao renderizar tabela:', error);
+        showAlert(getTranslation('table.error_rendering'), 'danger');
     }
 }
 
@@ -737,7 +750,7 @@ async function viewAircraftDetails(id) {
             console.warn(`Aeronave com ID ${id} não encontrada em nenhuma fonte de dados`);
             document.getElementById('aircraft-details-body').innerHTML = `
                 <div class="alert alert-warning">
-                    Aeronave não encontrada. ID: ${id}
+                    ${getTranslation('aircraft.details.not_found')} ID: ${id}
                 </div>
             `;
             return;
@@ -752,27 +765,6 @@ async function viewAircraftDetails(id) {
                 console.error('Erro ao validar URL da imagem:', error);
             }
         }
-        
-        // Mapear valores de categoria para texto legível
-        const categoryTypeMap = {
-            'comercial': 'Aviação Comercial',
-            'executiva': 'Aeronaves Executivas',
-            'carga': 'Aviação de Carga',
-            'militar': 'Aviação Militar',
-            'geral': 'Aviação Geral',
-            'historica': 'Aeronaves Históricas',
-            'experimental': 'Aeronaves Experimentais',
-            'ave': 'Ave (Comparação)'
-        };
-        
-        const categoryEraMap = {
-            'pioneiros': 'Pioneiros (até 1930)',
-            'classica': 'Era Clássica (1930-1950)',
-            'jato_inicial': 'Era do Jato (1950-1970)',
-            'moderna': 'Era Moderna (1970-2000)',
-            'contemporanea': 'Era Contemporânea (2000+)',
-            'biologica': 'Biológico'
-        };
         
         // Função auxiliar para formatar números com unidades
         const formatValue = (value, unit, decimals = 2) => {
@@ -804,28 +796,26 @@ async function viewAircraftDetails(id) {
                 <div class="col-md-7">
                     <h4>${aircraft.manufacturer || ''} ${aircraft.model || ''}</h4>
                     <p class="text-muted">
-                        ${categoryTypeMap[aircraft.category_type] || 'Categoria não especificada'} | 
-                        ${categoryEraMap[aircraft.category_era] || 'Era não especificada'}
+                        ${getTranslation(`aircraft.categories.type.${aircraft.category_type}`)} | 
+                        ${getTranslation(`aircraft.categories.era.${aircraft.category_era}`)}
                     </p>
                     
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <p><strong>Primeiro voo:</strong> ${aircraft.first_flight_year || 'N/A'}</p>
-                            <p><strong>MTOW:</strong> ${formatValue(aircraft.mtow_N / 9.81, 'kg')}</p>
-                            <p><strong>Área da asa:</strong> ${formatValue(aircraft.wing_area_m2, 'm²')}</p>
-                            <p><strong>Envergadura:</strong> ${formatValue(aircraft.wingspan_m, 'm')}</p>
-                            <p><strong>Carga alar:</strong> ${formatValue(wingLoading, 'N/m²')}</p>
-                            <p><strong>Razão de aspecto:</strong> ${formatValue(aspectRatio, '', 2)}</p>
+                            <p><strong>${getTranslation('aircraft.details.general.first_flight_year')}:</strong> ${aircraft.first_flight_year || 'N/A'}</p>
+                            <p><strong>${getTranslation('aircraft.details.physical.mtow')}:</strong> ${formatValue(aircraft.mtow_N / 9.81, 'kg')}</p>
+                            <p><strong>${getTranslation('aircraft.details.physical.wing_area')}:</strong> ${formatValue(aircraft.wing_area_m2, 'm²')}</p>
+                            <p><strong>${getTranslation('aircraft.details.physical.wingspan')}:</strong> ${formatValue(aircraft.wingspan_m, 'm')}</p>
+                            <p><strong>${getTranslation('aircraft.details.physical.wing_loading')}:</strong> ${formatValue(wingLoading, 'N/m²')}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Velocidade de cruzeiro:</strong> ${formatValue(msToKmh(aircraft.cruise_speed_ms), 'km/h')}</p>
-                            <p><strong>Velocidade de decolagem:</strong> ${formatValue(msToKmh(aircraft.takeoff_speed_ms), 'km/h')}</p>
-                            <p><strong>Velocidade de pouso:</strong> ${formatValue(msToKmh(aircraft.landing_speed_ms), 'km/h')}</p>
-                            <p><strong>Teto de serviço:</strong> ${formatValue(aircraft.service_ceiling_m, 'm')}</p>
-                            <p><strong>Altitude de cruzeiro:</strong> ${formatValue(aircraft.cruise_altitude_m, 'm')}</p>
-                            <p><strong>Motorização:</strong> ${aircraft.engine_count || 'N/A'} × ${aircraft.engine_type || 'N/A'}</p>
-                            ${aircraft.max_thrust ? `<p><strong>Empuxo máximo:</strong> ${formatValue(aircraft.max_thrust, 'kN')}</p>` : ''}
-                            ${aircraft.range_km ? `<p><strong>Alcance:</strong> ${formatValue(aircraft.range_km, 'km')}</p>` : ''}
+                            <p><strong>${getTranslation('aircraft.details.speeds.cruise')}:</strong> ${formatValue(msToKmh(aircraft.cruise_speed_ms), 'km/h')}</p>
+                            <p><strong>${getTranslation('aircraft.details.speeds.takeoff')}:</strong> ${formatValue(msToKmh(aircraft.takeoff_speed_ms), 'km/h')}</p>
+                            <p><strong>${getTranslation('aircraft.details.speeds.landing')}:</strong> ${formatValue(msToKmh(aircraft.landing_speed_ms), 'km/h')}</p>
+                            <p><strong>${getTranslation('aircraft.details.performance.service_ceiling')}:</strong> ${formatValue(aircraft.service_ceiling_m, 'm')}</p>
+                            <p><strong>${getTranslation('aircraft.details.performance.cruise_altitude')}:</strong> ${formatValue(aircraft.cruise_altitude_m, 'm')}</p>
+                            <p><strong>${getTranslation('aircraft.details.general.engine_type')}:</strong> ${aircraft.engine_count || 'N/A'} × ${aircraft.engine_type || 'N/A'}</p>
+                            ${aircraft.max_thrust ? `<p><strong>${getTranslation('aircraft.details.performance.max_thrust')}:</strong> ${formatValue(aircraft.max_thrust, 'kN')}</p>` : ''}
                         </div>
                     </div>
                 </div>

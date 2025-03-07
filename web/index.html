@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco de Dados de Aeronaves</title>
+    <title>AeroDataBank</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="/styles.css">
@@ -84,35 +84,55 @@
             font-size: 14px;
             color: #666;
         }
+        /* Language switcher styles */
+        .language-switcher {
+            display: flex;
+            align-items: center;
+            margin-left: 15px;
+        }
+        .language-switcher img {
+            width: 24px;
+            height: 16px;
+            margin: 0 5px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .language-switcher img.active {
+            border-color: white;
+        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="#">
-                <i class="bi bi-airplane"></i> Banco de Dados de Aeronaves
+                <i class="bi bi-airplane"></i> AeroDataBank
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link active" href="#" data-page="aircraft-list">Lista de Aeronaves</a>
+                        <a class="nav-link active" href="#" data-page="aircraft-list" data-i18n="nav.list">Aircraft List</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-page="scatter-plot">Gráficos Comparativos</a>
+                        <a class="nav-link" href="#" data-page="scatter-plot" data-i18n="nav.scatter">Comparative Charts</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-page="flight-diagram">Diagrama do Voo</a>
+                        <a class="nav-link" href="#" data-page="flight-diagram" data-i18n="nav.flight">Flight Diagram</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-page="timeline">Evolução Histórica</a>
+                        <a class="nav-link" href="#" data-page="timeline" data-i18n="nav.timeline">Historical Evolution</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-page="about">Sobre</a>
+                        <a class="nav-link" href="#" data-page="about" data-i18n="nav.about">About</a>
                     </li>
                 </ul>
+                <div class="language-switcher">
+                    <img src="/images/flags/uk.png" alt="English" data-lang="en" class="active" title="English">
+                    <img src="/images/flags/br.png" alt="Português" data-lang="pt" title="Português">
+                </div>
             </div>
         </div>
     </nav>
@@ -121,72 +141,72 @@
         <!-- Página: Lista de Aeronaves -->
         <div class="page" id="aircraft-list">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2>Lista de Aeronaves</h2>
+                <h2 data-i18n="titles.list">Aircraft List</h2>
             </div>
 
             <div class="mb-3">
-                <input type="text" class="form-control" id="aircraft-search" placeholder="Buscar aeronaves...">
+                <input type="text" class="form-control" id="aircraft-search" data-i18n-placeholder="filters.search" placeholder="Search aircraft...">
             </div>
 
             <div class="mb-4 category-filters">
-                <h5>Filtrar por Categoria</h5>
+                <h5 data-i18n="filters.title">Filter by Category</h5>
                 
                 <div class="row">
                     <div class="col-md-3 mb-2">
-                        <label for="filter-category-type" class="form-label">Tipo/Função:</label>
+                        <label for="filter-category-type" class="form-label" data-i18n="filters.type.label">Type/Function:</label>
                         <select class="form-control form-control-sm" id="filter-category-type">
-                            <option value="">Todos</option>
-                            <option value="comercial">Aviação Comercial</option>
-                            <option value="executiva">Aeronaves Executivas</option>
-                            <option value="carga">Aviação de Carga</option>
-                            <option value="militar">Aviação Militar</option>
-                            <option value="geral">Aviação Geral</option>
-                            <option value="historica">Aeronaves Históricas/Pioneiras</option>
-                            <option value="experimental">Aeronaves Experimentais</option>
-                            <option value="ave">Aves (Biológico)</option>
+                            <option value="" data-i18n="filters.type.all">All</option>
+                            <option value="comercial" data-i18n="filters.type.commercial">Commercial Aviation</option>
+                            <option value="executiva" data-i18n="filters.type.executive">Business Aircraft</option>
+                            <option value="carga" data-i18n="filters.type.cargo">Cargo Aviation</option>
+                            <option value="militar" data-i18n="filters.type.military">Military Aviation</option>
+                            <option value="geral" data-i18n="filters.type.general">General Aviation</option>
+                            <option value="historica" data-i18n="filters.type.historical">Historical/Pioneer Aircraft</option>
+                            <option value="experimental" data-i18n="filters.type.experimental">Experimental Aircraft</option>
+                            <option value="ave" data-i18n="filters.type.bird">Birds (Biological)</option>
                         </select>
                     </div>
                     
                     <div class="col-md-3 mb-2">
-                        <label for="filter-category-era" class="form-label">Era/Geração:</label>
+                        <label for="filter-category-era" class="form-label" data-i18n="filters.era.label">Era/Generation:</label>
                         <select class="form-control form-control-sm" id="filter-category-era">
-                            <option value="">Todos</option>
-                            <option value="pioneiros">Pioneiros (até 1930)</option>
-                            <option value="classica">Era Clássica (1930-1950)</option>
-                            <option value="jato_inicial">Era do Jato Inicial (1950-1970)</option>
-                            <option value="moderna">Era Moderna (1970-2000)</option>
-                            <option value="contemporanea">Era Contemporânea (2000-presente)</option>
-                            <option value="biologica">Biológico (Aves)</option>
+                            <option value="" data-i18n="filters.era.all">All</option>
+                            <option value="pioneiros" data-i18n="filters.era.pioneers">Pioneers (until 1930)</option>
+                            <option value="classica" data-i18n="filters.era.classic">Classic Era (1930-1950)</option>
+                            <option value="jato_inicial" data-i18n="filters.era.early_jet">Early Jet Era (1950-1970)</option>
+                            <option value="moderna" data-i18n="filters.era.modern">Modern Era (1970-2000)</option>
+                            <option value="contemporanea" data-i18n="filters.era.contemporary">Contemporary Era (2000+)</option>
+                            <option value="biologica" data-i18n="filters.era.biological">Biological (Birds)</option>
                         </select>
                     </div>
                     
                     <div class="col-md-3 mb-2">
-                        <label for="filter-category-engine" class="form-label">Motorização:</label>
+                        <label for="filter-category-engine" class="form-label" data-i18n="filters.engine.label">Engine Type:</label>
                         <select class="form-control form-control-sm" id="filter-category-engine">
-                            <option value="">Todos</option>
-                            <option value="pistao">Motor a Pistão</option>
-                            <option value="turboelice">Turboélice</option>
-                            <option value="turbojato">Turbojato</option>
-                            <option value="turbofan">Turbofan</option>
-                            <option value="especial">Propulsão Especial</option>
+                            <option value="" data-i18n="filters.engine.all">All</option>
+                            <option value="pistao" data-i18n="filters.engine.piston">Piston Engine</option>
+                            <option value="turboelice" data-i18n="filters.engine.turboprop">Turboprop</option>
+                            <option value="turbojato" data-i18n="filters.engine.turbojet">Turbojet</option>
+                            <option value="turbofan" data-i18n="filters.engine.turbofan">Turbofan</option>
+                            <option value="especial" data-i18n="filters.engine.special">Special Propulsion</option>
                         </select>
                     </div>
                     
                     <div class="col-md-3 mb-2">
-                        <label for="filter-category-size" class="form-label">Tamanho:</label>
+                        <label for="filter-category-size" class="form-label" data-i18n="filters.size.label">Size:</label>
                         <select class="form-control form-control-sm" id="filter-category-size">
-                            <option value="">Todos</option>
-                            <option value="muito_leve">Muito Leve (até 5.700 kg)</option>
-                            <option value="regional">Regional (5.700-50.000 kg)</option>
-                            <option value="medio">Médio Porte (50.000-150.000 kg)</option>
-                            <option value="grande">Grande Porte (150.000-300.000 kg)</option>
-                            <option value="muito_grande">Muito Grande (acima de 300.000 kg)</option>
+                            <option value="" data-i18n="filters.size.all">All</option>
+                            <option value="muito_leve" data-i18n="filters.size.very_light">Very Light (up to 5,700 kg)</option>
+                            <option value="regional" data-i18n="filters.size.regional">Regional (5,700-50,000 kg)</option>
+                            <option value="medio" data-i18n="filters.size.medium">Medium Size (50,000-150,000 kg)</option>
+                            <option value="grande" data-i18n="filters.size.large">Large Size (150,000-300,000 kg)</option>
+                            <option value="muito_grande" data-i18n="filters.size.very_large">Very Large (above 300,000 kg)</option>
                         </select>
                     </div>
                 </div>
                 
                 <div class="text-end mt-2">
-                    <button class="btn btn-sm btn-secondary" id="clear-filters">Limpar Filtros</button>
+                    <button class="btn btn-sm btn-secondary" id="clear-filters" data-i18n="filters.clear">Clear Filters</button>
                 </div>
             </div>
 
@@ -194,17 +214,17 @@
                 <table class="table table-striped table-hover">
                     <thead>
                         <tr>
-                            <th class="sortable" data-sort="name">Aeronave</th>
-                            <th class="sortable" data-sort="manufacturer">Fabricante</th>
-                            <th class="sortable" data-sort="model">Modelo</th>
-                            <th class="sortable" data-sort="first_flight_year">Ano</th>
-                            <th class="sortable" data-sort="category_type">Tipo</th>
-                            <th class="sortable" data-sort="category_era">Era</th>
-                            <th class="sortable" data-sort="mtow">MTOW (kg)</th>
+                            <th class="sortable" data-sort="name" data-i18n="table.headers.aircraft">Aircraft</th>
+                            <th class="sortable" data-sort="manufacturer" data-i18n="table.headers.manufacturer">Manufacturer</th>
+                            <th class="sortable" data-sort="model" data-i18n="table.headers.model">Model</th>
+                            <th class="sortable" data-sort="first_flight_year" data-i18n="table.headers.year">Year</th>
+                            <th class="sortable" data-sort="category_type" data-i18n="table.headers.type">Type</th>
+                            <th class="sortable" data-sort="category_era" data-i18n="table.headers.era">Era</th>
+                            <th class="sortable" data-sort="mtow" data-i18n="table.headers.mtow">MTOW (kg)</th>
                         </tr>
                     </thead>
                     <tbody id="aircraft-table-body">
-                        <!-- Dados serão carregados via JavaScript -->
+                        <!-- Data will be loaded via JavaScript -->
                     </tbody>
                 </table>
             </div>
@@ -212,39 +232,39 @@
 
         <!-- Página: Gráficos Comparativos -->
         <div class="page d-none" id="scatter-plot">
-            <h2>Gráficos Comparativos</h2>
+            <h2 data-i18n="titles.scatter">Comparative Charts</h2>
             
             <div class="row mb-4">
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="x-param">Parâmetro X:</label>
+                        <label for="x-param" data-i18n="charts.scatter.x_param">X Parameter:</label>
                         <select class="form-control" id="x-param">
-                            <!-- Opções serão carregadas via JavaScript -->
+                            <!-- Options will be loaded via JavaScript -->
                         </select>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label for="y-param">Parâmetro Y:</label>
+                        <label for="y-param" data-i18n="charts.scatter.y_param">Y Parameter:</label>
                         <select class="form-control" id="y-param">
-                            <!-- Opções serão carregadas via JavaScript -->
+                            <!-- Options will be loaded via JavaScript -->
                         </select>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Escala do Gráfico:</label>
+                        <label data-i18n="charts.scatter.scale">Chart Scale:</label>
                         <div class="d-flex">
                             <div class="form-check me-3">
                                 <input class="form-check-input" type="checkbox" id="x-log-scale">
-                                <label class="form-check-label" for="x-log-scale">
-                                    Escala Log X
+                                <label class="form-check-label" for="x-log-scale" data-i18n="charts.scatter.log_scale_x">
+                                    Log Scale X
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="y-log-scale">
-                                <label class="form-check-label" for="y-log-scale">
-                                    Escala Log Y
+                                <label class="form-check-label" for="y-log-scale" data-i18n="charts.scatter.log_scale_y">
+                                    Log Scale Y
                                 </label>
                             </div>
                         </div>
@@ -257,50 +277,50 @@
             </div>
             
             <div class="mt-4" id="selected-aircraft-info">
-                <h4>Aeronave Selecionada</h4>
-                <div id="selected-aircraft-details">
-                    Clique em um ponto no gráfico para ver detalhes da aeronave.
+                <h4 data-i18n="charts.scatter.selected_aircraft">Selected Aircraft</h4>
+                <div id="selected-aircraft-details" data-i18n="charts.scatter.click_point">
+                    Click on a point in the chart to see aircraft details.
                 </div>
             </div>
         </div>
 
         <!-- Página: Diagrama do Voo -->
         <div id="flight-diagram" class="page d-none">
-            <h2 class="mb-4">Diagrama do Voo</h2>
+            <h2 class="mb-4" data-i18n="titles.flight">Flight Diagram</h2>
             
             <div class="row mb-4">
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label for="x-axis-param">Selecione o Diagrama:</label>
+                        <label for="x-axis-param" data-i18n="charts.flight.select_diagram">Select Diagram:</label>
                         <select id="x-axis-param" class="form-select">
-                            <option value="wing_loading_mtow">Carga Alar vs MTOW</option>
-                            <option value="speed_mtow">Velocidade Real (TAS) vs MTOW</option>
-                            <option value="speed_mtow_ve">Velocidade Equivalente (VE) vs MTOW</option>
-                            <option value="wing_loading_speed">Carga Alar vs Velocidade Real (TAS)</option>
-                            <option value="wing_loading_speed_ve">Carga Alar vs Velocidade Equivalente (VE)</option>
+                            <option value="wing_loading_mtow" data-i18n="charts.flight.wing_loading_mtow">Wing Loading vs MTOW</option>
+                            <option value="speed_mtow" data-i18n="charts.flight.speed_mtow">True Airspeed (TAS) vs MTOW</option>
+                            <option value="speed_mtow_ve" data-i18n="charts.flight.speed_mtow_ve">Equivalent Speed (VE) vs MTOW</option>
+                            <option value="wing_loading_speed" data-i18n="charts.flight.wing_loading_speed">Wing Loading vs True Airspeed (TAS)</option>
+                            <option value="wing_loading_speed_ve" data-i18n="charts.flight.wing_loading_speed_ve">Wing Loading vs Equivalent Speed (VE)</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
-                        <label>Opções do Gráfico:</label>
+                        <label data-i18n="charts.flight.chart_options">Chart Options:</label>
                         <div class="d-flex">
                             <div class="form-check me-3">
                                 <input class="form-check-input" type="checkbox" id="xLogScale" checked>
-                                <label class="form-check-label" for="xLogScale">
-                                    Escala Log X
+                                <label class="form-check-label" for="xLogScale" data-i18n="charts.flight.log_scale_x">
+                                    Log Scale X
                                 </label>
                             </div>
                             <div class="form-check me-3">
                                 <input class="form-check-input" type="checkbox" id="yLogScale" checked>
-                                <label class="form-check-label" for="yLogScale">
-                                    Escala Log Y
+                                <label class="form-check-label" for="yLogScale" data-i18n="charts.flight.log_scale_y">
+                                    Log Scale Y
                                 </label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="showTrendlines" checked>
-                                <label class="form-check-label" for="showTrendlines">
-                                    Mostrar Tendências
+                                <label class="form-check-label" for="showTrendlines" data-i18n="charts.flight.show_trendlines">
+                                    Show Trendlines
                                 </label>
                             </div>
                         </div>
@@ -332,12 +352,12 @@
                 <div class="col-md-12">
                     <div class="card">
                         <div class="card-header">
-                            <h5 class="card-title mb-0">Diagrama Comparativo</h5>
+                            <h5 class="card-title mb-0" data-i18n="charts.flight.comparative_diagram">Comparative Diagram</h5>
                         </div>
                         <div class="card-body">
-                            <p class="card-text">
-                                Este diagrama permite comparar diferentes aeronaves e aves com base em suas características aerodinâmicas.
-                                O gráfico usa escala logarítmica para permitir a visualização de aeronaves de tamanhos muito diferentes.
+                            <p class="card-text" data-i18n="charts.flight.description">
+                                This diagram allows comparing different aircraft and birds based on their aerodynamic characteristics.
+                                The chart uses logarithmic scale to allow visualization of aircraft of very different sizes.
                             </p>
                             <div class="chart-container" style="position: relative; height:500px;">
                                 <canvas id="flight-diagram-chart"></canvas>
@@ -407,24 +427,24 @@
 
         <!-- Página: Evolução Histórica -->
         <div class="page d-none" id="timeline">
-            <h2>Evolução Histórica</h2>
+            <h2 data-i18n="titles.timeline">Historical Evolution</h2>
             
             <div class="row mb-4">
                 <div class="col-md-8">
                     <div class="form-group">
-                        <label for="timeline-param">Parâmetro:</label>
+                        <label for="timeline-param" data-i18n="charts.timeline.parameter">Parameter:</label>
                         <select class="form-control" id="timeline-param">
-                            <!-- Opções serão carregadas via JavaScript -->
+                            <!-- Options will be loaded via JavaScript -->
                         </select>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="form-group">
-                        <label>Escala do Gráfico:</label>
+                        <label data-i18n="charts.timeline.chart_scale">Chart Scale:</label>
                         <div class="form-check">
                             <input class="form-check-input" type="checkbox" id="timeline-log-scale">
-                            <label class="form-check-label" for="timeline-log-scale">
-                                Escala Logarítmica (eixo Y)
+                            <label class="form-check-label" for="timeline-log-scale" data-i18n="charts.timeline.log_scale">
+                                Logarithmic Scale (Y axis)
                             </label>
                         </div>
                     </div>
@@ -438,40 +458,38 @@
 
         <!-- Página: Sobre -->
         <div class="page d-none" id="about">
-            <h2>Sobre o Banco de Dados de Aeronaves</h2>
+            <h2 data-i18n="titles.about">About AeroDataBank</h2>
             
-            <p>Este banco de dados foi desenvolvido para apoiar cursos de desempenho de aeronaves, 
-               permitindo a visualização e análise de características técnicas de diversas aeronaves.</p>
+            <p data-i18n="about.intro">This database was developed to support aircraft performance courses, enabling visualization and analysis of technical characteristics of various aircraft.</p>
             
-            <h4>Funcionalidades</h4>
+            <h4 data-i18n="about.features.title">Features</h4>
             <ul>
-                <li>Armazenamento de dados técnicos de aeronaves (MTOW, área da asa, envergadura, velocidades, etc.)</li>
-                <li>Cálculo automático de parâmetros de desempenho (coeficiente de sustentação, carga alar, etc.)</li>
-                <li>Interface web para visualização, adição, remoção e modificação de aeronaves</li>
-                <li>Gráficos comparativos entre diferentes aeronaves</li>
-                <li>Visualização da evolução histórica das características de desempenho</li>
+                <li data-i18n="about.features.items.0">Storage of aircraft technical data (MTOW, wing area, wingspan, speeds, etc.)</li>
+                <li data-i18n="about.features.items.1">Automatic calculation of performance parameters (lift coefficient, wing loading, etc.)</li>
+                <li data-i18n="about.features.items.2">Web interface for viewing, adding, removing, and modifying aircraft</li>
+                <li data-i18n="about.features.items.3">Comparative charts between different aircraft</li>
+                <li data-i18n="about.features.items.4">Historical evolution visualization of performance characteristics</li>
             </ul>
             
-            <h4>Escalas dos Gráficos</h4>
-            <p>O sistema permite visualizar os dados em escalas lineares ou logarítmicas:</p>
+            <h4 data-i18n="about.scales.title">Chart Scales</h4>
+            <p data-i18n="about.scales.intro">The system allows data visualization in linear or logarithmic scales:</p>
             <ul>
-                <li><strong>Escala Linear:</strong> Mostra os valores em uma progressão uniforme. Útil para comparar diferenças absolutas entre aeronaves.</li>
-                <li><strong>Escala Logarítmica:</strong> Mostra os valores em uma progressão onde cada incremento representa uma multiplicação por um fator constante. 
-                Útil para visualizar dados que variam em várias ordens de magnitude, como comparar o MTOW do Wright Flyer (338 kg) com o do Airbus A380 (575.000 kg).</li>
+                <li><strong>Linear Scale:</strong> <span data-i18n="about.scales.linear">Shows values in a uniform progression. Useful for comparing absolute differences between aircraft.</span></li>
+                <li><strong>Logarithmic Scale:</strong> <span data-i18n="about.scales.log">Shows values in a progression where each increment represents multiplication by a constant factor. Useful for viewing data that varies by several orders of magnitude, such as comparing the MTOW of the Wright Flyer (338 kg) with that of the Airbus A380 (575,000 kg).</span></li>
             </ul>
-            <p>Quando usar cada escala:</p>
+            <p data-i18n="about.scales.when_to_use.title">When to use each scale:</p>
             <ul>
-                <li><strong>Linear-Linear:</strong> Para comparar aeronaves similares ou quando as diferenças absolutas são importantes.</li>
-                <li><strong>Log-Linear ou Linear-Log:</strong> Quando um dos parâmetros varia em ordens de magnitude muito diferentes.</li>
-                <li><strong>Log-Log:</strong> Para identificar relações de potência entre parâmetros (ex: relação entre peso e potência) ou quando ambos os parâmetros variam em ordens de magnitude muito diferentes.</li>
+                <li><strong>Linear-Linear:</strong> <span data-i18n="about.scales.when_to_use.lin_lin">For comparing similar aircraft or when absolute differences are important.</span></li>
+                <li><strong>Log-Linear or Linear-Log:</strong> <span data-i18n="about.scales.when_to_use.log_lin">When one parameter varies by very different orders of magnitude.</span></li>
+                <li><strong>Log-Log:</strong> <span data-i18n="about.scales.when_to_use.log_log">To identify power relationships between parameters (e.g., weight-power relationship) or when both parameters vary by very different orders of magnitude.</span></li>
             </ul>
             
-            <h4>Fontes de Dados</h4>
-            <p>Os dados das aeronaves podem ser obtidos de várias fontes, incluindo:</p>
+            <h4 data-i18n="about.data_sources.title">Data Sources</h4>
+            <p data-i18n="about.data_sources.intro">Aircraft data can be obtained from various sources, including:</p>
             <ul>
-                <li><a href="https://contentzone.eurocontrol.int/aircraftperformance/default.aspx" target="_blank">EUROCONTROL Aircraft Performance Database</a></li>
-                <li>Manuais de fabricantes</li>
-                <li>Publicações técnicas da indústria aeronáutica</li>
+                <li><a href="https://contentzone.eurocontrol.int/aircraftperformance/default.aspx" target="_blank" data-i18n="about.data_sources.sources.0">EUROCONTROL Aircraft Performance Database</a></li>
+                <li data-i18n="about.data_sources.sources.1">Manufacturer manuals</li>
+                <li data-i18n="about.data_sources.sources.2">Aviation industry technical publications</li>
             </ul>
         </div>
     </div>
@@ -662,6 +680,7 @@
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/i18n.js"></script>
     <script src="/app.js"></script>
     
     <!-- Script para implementar a ordenação da tabela e outras funcionalidades -->

@@ -1,21 +1,22 @@
 // Configuração da API
-const API_URL = '/api';
+const BASE_URL = window.location.hostname === 'flavioluiz.github.io' ? '/FlightDataBank' : '';
+const API_URL = BASE_URL + '/api';
 const DEV_API_URL = 'http://localhost:5001/api';
-const JSON_DATA_PATH = '/data/aircraft.json';
+const JSON_DATA_PATH = BASE_URL + '/data/aircraft.json';
 
 // Configurações globais
 const FALLBACK_IMAGES = {
-    'comercial': '/images/fallback/comercial.jpg',
-    'executiva': '/images/fallback/executiva.jpg',
-    'carga': '/images/fallback/carga.jpg',
-    'militar': '/images/fallback/militar.jpg',
-    'geral': '/images/fallback/geral.jpg',
-    'historica': '/images/fallback/historica.jpg',
-    'experimental': '/images/fallback/experimental.jpg',
-    'ave': '/images/fallback/ave.jpg'
+    'comercial': BASE_URL + '/images/fallback/comercial.jpg',
+    'executiva': BASE_URL + '/images/fallback/executiva.jpg',
+    'carga': BASE_URL + '/images/fallback/carga.jpg',
+    'militar': BASE_URL + '/images/fallback/militar.jpg',
+    'geral': BASE_URL + '/images/fallback/geral.jpg',
+    'historica': BASE_URL + '/images/fallback/historica.jpg',
+    'experimental': BASE_URL + '/images/fallback/experimental.jpg',
+    'ave': BASE_URL + '/images/fallback/ave.jpg'
 };
 
-const DEFAULT_FALLBACK_IMAGE = '/images/fallback/geral.jpg';
+const DEFAULT_FALLBACK_IMAGE = BASE_URL + '/images/fallback/geral.jpg';
 
 // Make aircraftData globally available
 window.aircraftData = [];
@@ -106,8 +107,8 @@ async function loadAircraftData() {
     try {
         // Carregar aeronaves e aves
         const [aircraftResponse, birdsResponse] = await Promise.all([
-            fetch('data/aircraft.json'),
-            fetch('data/birds.json')
+            fetch(BASE_URL + '/data/aircraft.json'),
+            fetch(BASE_URL + '/data/birds.json')
         ]);
 
         if (!aircraftResponse.ok) throw new Error(`Falha ao carregar dados de aeronaves: ${aircraftResponse.status}`);
@@ -732,7 +733,7 @@ async function viewAircraftDetails(id) {
         // Se não encontrou nos dados carregados, tentar carregar do arquivo JSON
         if (!aircraft) {
             try {
-                const response = await fetch('data/aircraft.json');
+                const response = await fetch(BASE_URL + '/data/aircraft.json');
                 if (response.ok) {
                     const jsonData = await response.json();
                     if (jsonData && jsonData.aircraft && Array.isArray(jsonData.aircraft)) {

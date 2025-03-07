@@ -105,28 +105,18 @@ async function loadAircraftData() {
     
     try {
         // Carregar aeronaves e aves
-        console.log('Tentando carregar aircraft.json...');
-        const aircraftResponse = await fetch('data/aircraft.json');
-        console.log('Status da resposta aircraft.json:', aircraftResponse.status);
-        
-        if (!aircraftResponse.ok) {
-            throw new Error(`Falha ao carregar dados de aeronaves: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
-        }
-        
-        const aircraftData = await aircraftResponse.json();
-        console.log('Dados de aeronaves carregados com sucesso:', aircraftData.aircraft.length, 'aeronaves');
+        const [aircraftResponse, birdsResponse] = await Promise.all([
+            fetch('data/aircraft.json'),
+            fetch('data/birds.json')
+        ]);
 
-        console.log('Tentando carregar birds.json...');
-        const birdsResponse = await fetch('data/birds.json');
-        console.log('Status da resposta birds.json:', birdsResponse.status);
+        if (!aircraftResponse.ok) throw new Error(`Falha ao carregar dados de aeronaves: ${aircraftResponse.status}`);
+        const aircraftData = await aircraftResponse.json();
 
         let birds = [];
         if (birdsResponse.ok) {
             const birdsData = await birdsResponse.json();
             birds = birdsData.birds || [];
-            console.log('Dados de aves carregados com sucesso:', birds.length, 'aves');
-        } else {
-            console.warn('Falha ao carregar dados de aves:', birdsResponse.status, birdsResponse.statusText);
         }
 
         // Processar e combinar dados
@@ -135,14 +125,12 @@ async function loadAircraftData() {
         
         // Combinar e armazenar dados
         window.aircraftData = [...processedAircraft, ...processedBirds];
-        console.log('Total de dados processados:', window.aircraftData.length, 'itens');
         
         // Atualizar interface
         renderTableSafely(window.aircraftData);
         return window.aircraftData;
     } catch (error) {
-        console.error('Erro detalhado ao carregar dados:', error);
-        console.error('Stack trace:', error.stack);
+        console.error('Erro ao carregar dados:', error);
         showAlert('Erro ao carregar dados: ' + error.message, 'danger');
         return [];
     }

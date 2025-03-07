@@ -1,21 +1,21 @@
 // Configuração da API
-const API_URL = '/api';
+const API_URL = 'api';
 const DEV_API_URL = 'http://localhost:5001/api';
-const JSON_DATA_PATH = '/data/aircraft.json';
+const JSON_DATA_PATH = 'data/aircraft.json';
 
 // Configurações globais
 const FALLBACK_IMAGES = {
-    'comercial': '/images/fallback/comercial.jpg',
-    'executiva': '/images/fallback/executiva.jpg',
-    'carga': '/images/fallback/carga.jpg',
-    'militar': '/images/fallback/militar.jpg',
-    'geral': '/images/fallback/geral.jpg',
-    'historica': '/images/fallback/historica.jpg',
-    'experimental': '/images/fallback/experimental.jpg',
-    'ave': '/images/fallback/ave.jpg'
+    'comercial': 'images/fallback/comercial.jpg',
+    'executiva': 'images/fallback/executiva.jpg',
+    'carga': 'images/fallback/carga.jpg',
+    'militar': 'images/fallback/militar.jpg',
+    'geral': 'images/fallback/geral.jpg',
+    'historica': 'images/fallback/historica.jpg',
+    'experimental': 'images/fallback/experimental.jpg',
+    'ave': 'images/fallback/ave.jpg'
 };
 
-const DEFAULT_FALLBACK_IMAGE = '/images/fallback/geral.jpg';
+const DEFAULT_FALLBACK_IMAGE = 'images/fallback/geral.jpg';
 
 // Make aircraftData globally available
 window.aircraftData = [];

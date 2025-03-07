@@ -1,0 +1,9 @@
+{
+  "id": 23,
+  "name": "Boeing 747",
+  "manufacturer": "Boeing",
+  "model": "747-400",
+  "category": "comercial",
+  "original_url": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Lufthansa_Boeing_747-400_D-ABVX.jpg",
+  "local_path": "/images/fallback/comercial.jpg"
+}

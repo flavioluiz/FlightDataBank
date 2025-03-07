@@ -1,0 +1,9 @@
+{
+  "id": 20,
+  "name": "Boeing 707",
+  "manufacturer": "Boeing",
+  "model": "707-320",
+  "category": "comercial",
+  "original_url": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Pan_Am_Boeing_707-321B_N880PA.jpg",
+  "local_path": "/images/fallback/comercial.jpg"
+}

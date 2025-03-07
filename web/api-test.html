@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de API</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1>Teste de Conexão com a API</h1>
+        <p>Esta página testa se a API está respondendo corretamente.</p>
+        
+        <div class="mb-3">
+            <button class="btn btn-primary" id="btn-test-api">Testar API</button>
+            <button class="btn btn-success" id="btn-import-sample">Importar Exemplos</button>
+        </div>
+        
+        <div class="card mt-3">
+            <div class="card-header">Resposta da API</div>
+            <div class="card-body">
+                <pre id="api-response">Clique no botão para testar a API</pre>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const btnTestApi = document.getElementById('btn-test-api');
+            const btnImportSample = document.getElementById('btn-import-sample');
+            const apiResponse = document.getElementById('api-response');
+            
+            // URLs da API
+            const apiUrl = '/api/aircraft';
+            const devApiUrl = 'http://localhost:5001/api/aircraft';
+            const importUrl = '/api/import/sample';
+            const devImportUrl = 'http://localhost:5001/api/import/sample';
+            
+            // Função para testar a API
+            btnTestApi.addEventListener('click', async function() {
+                apiResponse.textContent = 'Conectando à API...';
+                
+                try {
+                    // Tentar primeiro a URL relativa
+                    let response;
+                    try {
+                        response = await fetch(apiUrl);
+                        if (!response.ok) throw new Error('Falha na requisição');
+                    } catch (e) {
+                        console.log('Tentando URL de desenvolvimento:', devApiUrl);
+                        response = await fetch(devApiUrl);
+                    }
+                    
+                    const data = await response.json();
+                    apiResponse.textContent = JSON.stringify(data, null, 2);
+                } catch (error) {
+                    console.error('Erro ao conectar à API:', error);
+                    apiResponse.textContent = 'Erro ao conectar à API: ' + error.message;
+                }
+            });
+            
+            // Função para importar exemplos
+            btnImportSample.addEventListener('click', async function() {
+                apiResponse.textContent = 'Importando dados de exemplo...';
+                
+                try {
+                    // Tentar primeiro a URL relativa
+                    let response;
+                    try {
+                        response = await fetch(importUrl, { method: 'POST' });
+                        if (!response.ok) throw new Error('Falha na requisição');
+                    } catch (e) {
+                        console.log('Tentando URL de desenvolvimento:', devImportUrl);
+                        response = await fetch(devImportUrl, { method: 'POST' });
+                    }
+                    
+                    const data = await response.json();
+                    apiResponse.textContent = JSON.stringify(data, null, 2);
+                } catch (error) {
+                    console.error('Erro ao importar dados:', error);
+                    apiResponse.textContent = 'Erro ao importar dados: ' + error.message;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

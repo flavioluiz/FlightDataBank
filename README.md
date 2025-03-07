@@ -1,66 +1,84 @@
-# Aircraft Performance Database
+# FlightDataBank
 
-Um banco de dados de aeronaves com interface web para apoiar cursos de desempenho de aeronaves.
+Um banco de dados abrangente de aeronaves com visualizações interativas de dados de desempenho.
 
-## Funcionalidades
+## Sobre o Projeto
 
-- Armazenamento de dados técnicos de aeronaves (MTOW, área da asa, envergadura, velocidades, etc.)
-- Cálculo automático de parâmetros de desempenho (coeficiente de sustentação, carga alar, etc.)
-- Interface web para visualização, adição, remoção e modificação de aeronaves
-- Gráficos comparativos entre diferentes aeronaves
-- Tabelas com filtros para análise de dados
-- Visualização da evolução histórica das características de desempenho
-- **Importação de dados online** de várias fontes (EUROCONTROL, Wikipedia, etc.)
+FlightDataBank é uma aplicação web que permite visualizar e comparar dados de desempenho de diferentes aeronaves. O projeto inclui:
+
+- Visualização de dados em gráficos interativos
+- Comparação de velocidades, pesos e outros parâmetros
+- Diagrama de voo mostrando a relação entre diferentes tipos de aeronaves
+- Visualização de dados históricos e modernos
 
 ## Estrutura do Projeto
 
-- `database/`: Esquema e scripts do banco de dados
-- `api/`: API Python para acesso ao banco de dados
-- `web/`: Interface web em HTML/CSS/JavaScript
-- `scripts/`: Scripts para importação de dados de fontes externas
-
-## Instalação
-
-```bash
-# Clone o repositório
-git clone https://github.com/seu-usuario/aircraft_databank.git
-cd aircraft_databank
-
-# Instale as dependências
-pip install -r requirements.txt
-
-# Inicie o servidor
-python run.py
+```
+aircraft_databank/
+├── web/                  # Aplicação web
+│   ├── index.html        # Página principal
+│   ├── app.js            # Lógica da aplicação
+│   ├── styles.css        # Estilos
+│   ├── data/             # Dados em formato JSON
+│   └── images/           # Imagens de aeronaves
+├── scripts/              # Scripts de utilidade
+└── README.md             # Este arquivo
 ```
 
-Acesse a interface web em `http://localhost:5001`
+## Funcionalidades
 
-## Importação de Dados Online
+- **Visualização de Dados**: Gráficos interativos mostrando relações entre diferentes parâmetros de aeronaves.
+- **Diagrama de Voo**: Visualização que mostra como diferentes tipos de aeronaves se comparam em termos de velocidade e peso.
+- **Detalhes de Aeronaves**: Informações detalhadas sobre cada aeronave, incluindo especificações técnicas e imagens.
+- **Comparação de Velocidades**: Alternância entre velocidade verdadeira (TAS) e velocidade equivalente (VE) para comparações mais precisas.
 
-O sistema permite importar dados de aeronaves de várias fontes online:
+## Dados
 
-1. **EUROCONTROL Aircraft Performance Database**: Dados técnicos e de desempenho de aeronaves.
-2. **Wikipedia**: Informações sobre aeronaves comerciais.
+Os dados das aeronaves são armazenados em um único arquivo JSON (`web/data/aircraft.json`), facilitando a manutenção e atualização. Este arquivo contém informações detalhadas sobre cada aeronave, incluindo:
 
-Para importar dados online:
+- Nome, fabricante e modelo
+- Ano do primeiro voo
+- Categoria e tipo
+- Especificações técnicas (MTOW, área da asa, envergadura)
+- Dados de desempenho (velocidades de cruzeiro, decolagem e pouso)
+- Altitude de cruzeiro e teto de serviço
+- Informações sobre motores
+- Caminhos para imagens
 
-1. Clique no botão "Importar Online" na página principal
-2. Selecione a fonte de dados
-3. Defina o número máximo de aeronaves para importar
-4. Clique em "Iniciar Importação"
+## Scripts de Utilidade
 
-Você também pode importar dados usando a linha de comando:
+O projeto inclui vários scripts para facilitar a manutenção dos dados:
 
-```bash
-python scripts/import_aircraft_data.py --source eurocontrol --max 10
-```
+- `scripts/create_aircraft_json.py`: Cria o arquivo JSON principal a partir dos dados existentes
+- `scripts/update_cruise_altitudes.py`: Atualiza as altitudes de cruzeiro das aeronaves
+- `scripts/download_aircraft_images.py`: Baixa imagens de aeronaves para uso local
 
-Para mais informações sobre os scripts de importação, consulte o [README dos scripts](scripts/README.md).
+## Como Usar
 
-## Fontes de Dados
+1. Clone o repositório
+2. Abra o arquivo `web/index.html` em um navegador web
+3. Explore os dados e visualizações
 
-Os dados das aeronaves podem ser obtidos de várias fontes, incluindo:
-- [EUROCONTROL Aircraft Performance Database](https://contentzone.eurocontrol.int/aircraftperformance/default.aspx)
-- Wikipedia
-- Manuais de fabricantes
-- Publicações técnicas da indústria aeronáutica 
+Para atualizar os dados:
+
+1. Edite o arquivo `web/data/aircraft.json` diretamente
+2. Ou use os scripts de utilidade para gerar um novo arquivo JSON
+
+## Tecnologias Utilizadas
+
+- HTML, CSS e JavaScript para a interface do usuário
+- Chart.js para visualizações de dados
+- Bootstrap para estilos e componentes
+- Python para scripts de utilidade
+
+## Contribuindo
+
+Contribuições são bem-vindas! Se você quiser adicionar novas aeronaves ou melhorar os dados existentes, siga estas etapas:
+
+1. Edite o arquivo `web/data/aircraft.json`
+2. Adicione imagens na pasta `web/images/aircraft/`
+3. Teste as alterações abrindo a aplicação no navegador
+
+## Licença
+
+Este projeto é distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes. 

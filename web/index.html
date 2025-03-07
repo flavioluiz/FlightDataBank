@@ -122,17 +122,6 @@
         <div class="page" id="aircraft-list">
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <h2>Lista de Aeronaves</h2>
-                <div>
-                    <button class="btn btn-success" id="btn-add-aircraft" data-bs-toggle="modal" data-bs-target="#aircraft-modal">
-                        <i class="bi bi-plus-circle"></i> Adicionar Aeronave
-                    </button>
-                    <button class="btn btn-primary" id="btn-import-sample">
-                        <i class="bi bi-database-fill"></i> Importar Exemplos
-                    </button>
-                    <button class="btn btn-info" id="btn-import-birds">
-                        <i class="bi bi-feather"></i> Importar Aves
-                    </button>
-                </div>
             </div>
 
             <div class="mb-3">
@@ -212,7 +201,6 @@
                             <th class="sortable" data-sort="category_type">Tipo</th>
                             <th class="sortable" data-sort="category_era">Era</th>
                             <th class="sortable" data-sort="mtow">MTOW (kg)</th>
-                            <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody id="aircraft-table-body">
@@ -294,6 +282,29 @@
                     </div>
                 </div>
                 <div class="col-md-6">
+                    <div class="form-group">
+                        <label>Opções do Gráfico:</label>
+                        <div class="d-flex">
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="xLogScale" checked>
+                                <label class="form-check-label" for="xLogScale">
+                                    Escala Log X
+                                </label>
+                            </div>
+                            <div class="form-check me-3">
+                                <input class="form-check-input" type="checkbox" id="yLogScale" checked>
+                                <label class="form-check-label" for="yLogScale">
+                                    Escala Log Y
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="showTrendlines" checked>
+                                <label class="form-check-label" for="showTrendlines">
+                                    Mostrar Tendências
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                     <div id="wingLoadingMtowControls">
                         <div class="form-group">
                             <label for="mtow-coefficient">Coeficiente para W/S = k * W^(1/3):</label>
@@ -880,163 +891,8 @@
 
     <!-- Função para visualizar detalhes da aeronave -->
     <script>
-        function viewAircraftDetails(id) {
-            console.log('Visualizando detalhes da aeronave ID:', id);
-            
-            // Buscar detalhes da aeronave na API
-            fetch(`http://localhost:5001/api/aircraft/${id}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Erro ao buscar detalhes: ${response.status}`);
-                    }
-                    return response.json();
-                })
-                .then(async aircraft => {
-                    if (!aircraft) {
-                        throw new Error('Aeronave não encontrada');
-                    }
-                    
-                    // Validate the image URL
-                    if (typeof getValidImageUrl === 'function' && aircraft.image_url) {
-                        try {
-                            aircraft.image_url = await getValidImageUrl(aircraft);
-                        } catch (error) {
-                            console.error(`Error validating image for details view:`, error);
-                        }
-                    }
-                    
-                    // Mostrar modal com detalhes
-                    const modalTitle = document.getElementById('aircraft-details-title');
-                    const modalBody = document.getElementById('aircraft-details-body');
-                    
-                    if (!modalTitle || !modalBody) {
-                        throw new Error('Elementos do modal não encontrados');
-                    }
-                    
-                    modalTitle.textContent = aircraft.name;
-                    
-                    // Mapear valores de categoria para texto legível
-                    const categoryTypeMap = {
-                        'comercial': 'Aviação Comercial',
-                        'executiva': 'Aeronaves Executivas',
-                        'carga': 'Aviação de Carga',
-                        'militar': 'Aviação Militar',
-                        'geral': 'Aviação Geral',
-                        'historica': 'Aeronaves Históricas',
-                        'experimental': 'Aeronaves Experimentais',
-                        'ave': 'Ave (Biológico)'
-                    };
-                    
-                    const categoryEraMap = {
-                        'pioneiros': 'Pioneiros (até 1930)',
-                        'classica': 'Era Clássica (1930-1950)',
-                        'jato_inicial': 'Era do Jato (1950-1970)',
-                        'moderna': 'Era Moderna (1970-2000)',
-                        'contemporanea': 'Era Contemporânea (2000+)',
-                        'biologica': 'Biológico (Aves)'
-                    };
-                    
-                    // Criar conteúdo do modal
-                    let content = `
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <th>Fabricante:</th>
-                                        <td>${aircraft.manufacturer || '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Modelo:</th>
-                                        <td>${aircraft.model || '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Primeiro Voo:</th>
-                                        <td>${aircraft.first_flight_year || '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Categoria:</th>
-                                        <td>${categoryTypeMap[aircraft.category_type] || '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Era:</th>
-                                        <td>${categoryEraMap[aircraft.category_era] || '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tipo de Motor:</th>
-                                        <td>${aircraft.engine_type || '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Número de Motores:</th>
-                                        <td>${aircraft.engine_count || '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>MTOW:</th>
-                                        <td>${aircraft.mtow ? aircraft.mtow.toLocaleString() + ' kg' : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Área da Asa:</th>
-                                        <td>${aircraft.wing_area ? aircraft.wing_area.toLocaleString() + ' m²' : '-'}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <table class="table table-sm">
-                                    <tr>
-                                        <th>Envergadura:</th>
-                                        <td>${aircraft.wingspan ? aircraft.wingspan.toLocaleString() + ' m' : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Velocidade de Cruzeiro:</th>
-                                        <td>${aircraft.cruise_speed ? aircraft.cruise_speed.toLocaleString() + ' km/h' : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Velocidade de Decolagem:</th>
-                                        <td>${aircraft.takeoff_speed ? aircraft.takeoff_speed.toLocaleString() + ' km/h' : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Velocidade de Pouso:</th>
-                                        <td>${aircraft.landing_speed ? aircraft.landing_speed.toLocaleString() + ' km/h' : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Teto de Serviço:</th>
-                                        <td>${aircraft.service_ceiling ? aircraft.service_ceiling.toLocaleString() + ' m' : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Altitude de Cruzeiro:</th>
-                                        <td>${aircraft.cruise_altitude ? aircraft.cruise_altitude.toLocaleString() + ' m' : '-'}</td>
-                                    </tr>
-                                    <tr>
-                                        <th>Tração Máxima:</th>
-                                        <td>${aircraft.max_thrust ? aircraft.max_thrust.toLocaleString() + ' kN' : '-'}</td>
-                                    </tr>
-                                </table>
-                            </div>
-                        </div>
-                    `;
-                    
-                    // Adicionar imagem se disponível
-                    if (aircraft.image_url) {
-                        content = `
-                            <div class="text-center mb-4">
-                                <img src="${aircraft.image_url}" alt="${aircraft.name}" class="img-fluid" style="max-height: 300px;">
-                            </div>
-                        ` + content;
-                    }
-                    
-                    modalBody.innerHTML = content;
-                    
-                    // Exibir modal
-                    const modal = new bootstrap.Modal(document.getElementById('aircraft-details-modal'));
-                    modal.show();
-                })
-                .catch(error => {
-                    console.error('Erro ao buscar detalhes da aeronave:', error);
-                    if (typeof showAlert === 'function') {
-                        showAlert('Erro ao carregar detalhes da aeronave: ' + error.message, 'danger');
-                    }
-                });
-        }
-
+        // Função removida - agora usando a implementação do app.js
+        
         // Função para configurar tooltips de imagens
         window.setupImageTooltip = function(element, aircraft) {
             if (!element || !aircraft || !aircraft.image_url) return;
@@ -1126,7 +982,9 @@
                 return;
             }
             
-            console.log('Renderizando tabela com', data.length, 'aeronaves');
+            // Verificar se temos aves nos dados
+            const birds = data.filter(item => item.category_type === 'ave');
+            console.log(`Renderizando tabela com ${data.length} itens, incluindo ${birds.length} aves`);
             
             const tbody = document.getElementById('aircraft-table-body');
             if (!tbody) {
@@ -1134,6 +992,7 @@
                 return;
             }
             
+            // Limpar a tabela antes de renderizar
             tbody.innerHTML = '';
             
             // Mapear valores de categoria para texto legível
@@ -1157,9 +1016,17 @@
                 'biologica': 'Biológico'
             };
             
-            // Process each aircraft and create rows
-            const processAircraft = async (aircraft, index) => {
+            // Criar todas as linhas de uma vez (sem async/await)
+            const fragment = document.createDocumentFragment();
+            
+            // Processar cada aeronave
+            data.forEach(aircraft => {
                 if (!aircraft) return;  // Pular entradas nulas
+                
+                // Log para debug de aves
+                if (aircraft.category_type === 'ave') {
+                    console.log('Renderizando ave:', aircraft.name);
+                }
                 
                 const row = document.createElement('tr');
                 
@@ -1171,79 +1038,27 @@
                 if (aircraft.category_engine) row.setAttribute('data-category-engine', aircraft.category_engine);
                 if (aircraft.category_size) row.setAttribute('data-category-size', aircraft.category_size);
                 
-                // Get a valid image URL (original or fallback)
+                // Usar a URL da imagem diretamente (sem validação assíncrona)
                 let imageUrl = aircraft.image_url;
                 if (typeof getValidImageUrl === 'function') {
                     try {
-                        imageUrl = await getValidImageUrl(aircraft);
+                        // Versão síncrona da validação
+                        const category = aircraft.category_type || 'geral';
+                        imageUrl = imageUrl || `/images/fallback/${category}.jpg`;
                     } catch (error) {
-                        console.error(`Error validating image for ${aircraft.name}:`, error);
-                        // Use a fallback if there's an error
-                        const fallbackImages = {
-                            'comercial': 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Boeing_737-700_interior.jpg/1200px-Boeing_737-700_interior.jpg',
-                            'executiva': 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9c/Gulfstream_G650ER_interior.jpg/1200px-Gulfstream_G650ER_interior.jpg',
-                            'carga': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/FedEx_Express_Boeing_777F.jpg/1200px-FedEx_Express_Boeing_777F.jpg',
-                            'militar': 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e2/F-22_Raptor.jpg/1200px-F-22_Raptor.jpg',
-                            'geral': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Cessna_172_Skyhawk_%28flying%29.jpg/1200px-Cessna_172_Skyhawk_%28flying%29.jpg',
-                            'historica': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Replica_Wright_Flyer_in_flight.jpg/1200px-Replica_Wright_Flyer_in_flight.jpg',
-                            'experimental': 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Solar_Impulse_2_in_flight.jpg/1200px-Solar_Impulse_2_in_flight.jpg',
-                            'ave': 'https://upload.wikimedia.org/wikipedia/commons/thumb/3/39/Bald_Eagle_in_flight.jpg/1200px-Bald_Eagle_in_flight.jpg'
-                        };
-                        imageUrl = aircraft.category_type ? fallbackImages[aircraft.category_type] || fallbackImages['geral'] : fallbackImages['geral'];
+                        console.error(`Error with image for ${aircraft.name}:`, error);
+                        imageUrl = `/images/fallback/${aircraft.category_type || 'geral'}.jpg`;
                     }
                 }
                 
-                // Create the HTML for the row with inline tooltip setup
-                let nameCell = `
-                    <a href="#" onclick="viewAircraftDetails(${aircraft.id}); return false;" class="aircraft-name">
-                        ${aircraft.name || 'Sem nome'}
-                    </a>
-                `;
-                
-                // Add tooltip with the validated image URL
-                nameCell = `
+                // Criar o HTML da célula do nome com tooltip simplificado
+                const nameCell = `
                     <a href="#" 
                        onclick="viewAircraftDetails(${aircraft.id}); return false;" 
                        class="aircraft-name"
-                       onmouseover="
-                           const tooltip = document.createElement('div');
-                           tooltip.id = 'tooltip-${aircraft.id}';
-                           tooltip.style.position = 'absolute';
-                           tooltip.style.zIndex = '9999';
-                           tooltip.style.backgroundColor = 'white';
-                           tooltip.style.border = '1px solid #ccc';
-                           tooltip.style.borderRadius = '4px';
-                           tooltip.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-                           tooltip.style.width = '200px';
-                           tooltip.style.overflow = 'hidden';
-                           
-                           const img = document.createElement('img');
-                           img.src = '${imageUrl}';
-                           img.alt = '${aircraft.name}';
-                           img.style.width = '100%';
-                           img.style.height = '120px';
-                           img.style.objectFit = 'cover';
-                           
-                           const caption = document.createElement('div');
-                           caption.textContent = '${aircraft.name}';
-                           caption.style.padding = '5px';
-                           caption.style.backgroundColor = 'rgba(0,0,0,0.7)';
-                           caption.style.color = 'white';
-                           caption.style.fontSize = '12px';
-                           caption.style.textAlign = 'center';
-                           
-                           tooltip.appendChild(img);
-                           tooltip.appendChild(caption);
-                           document.body.appendChild(tooltip);
-                           
-                           const rect = this.getBoundingClientRect();
-                           tooltip.style.left = rect.left + 'px';
-                           tooltip.style.top = (rect.bottom + window.scrollY + 5) + 'px';
-                       "
-                       onmouseout="
-                           const tooltip = document.getElementById('tooltip-${aircraft.id}');
-                           if (tooltip) tooltip.remove();
-                       "
+                       data-bs-toggle="tooltip" 
+                       data-bs-placement="right" 
+                       title="${aircraft.name}"
                     >
                         ${aircraft.name || 'Sem nome'}
                     </a>
@@ -1256,191 +1071,37 @@
                     <td>${aircraft.first_flight_year || '-'}</td>
                     <td>${categoryTypeMap[aircraft.category_type] || '-'}</td>
                     <td>${categoryEraMap[aircraft.category_era] || '-'}</td>
-                    <td>${aircraft.mtow ? aircraft.mtow.toLocaleString() : '-'}</td>
-                    <td class="action-buttons">
-                        <button class="btn btn-sm btn-primary" onclick="editAircraft(${aircraft.id})">
-                            <i class="bi bi-pencil"></i>
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteAircraft(${aircraft.id})">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </td>
+                    <td>${aircraft.mtow_N ? (aircraft.mtow_N).toLocaleString() : '-'}</td>
                 `;
                 
-                tbody.appendChild(row);
-            };
+                fragment.appendChild(row);
+            });
             
-            // Process all aircraft asynchronously
-            const processAllAircraft = async () => {
-                for (let i = 0; i < data.length; i++) {
-                    await processAircraft(data[i], i);
-                }
-                
-                // After rendering the table, apply filters if they exist
-                if (window.applyFilters && typeof window.applyFilters === 'function') {
-                    window.applyFilters();
-                }
-            };
+            // Adicionar todas as linhas de uma vez
+            tbody.appendChild(fragment);
             
-            // Start processing
-            processAllAircraft();
+            // Inicializar tooltips do Bootstrap
+            if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                const tooltips = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltips.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }
+            
+            // Aplicar filtros se existirem
+            if (window.applyFilters && typeof window.applyFilters === 'function') {
+                window.applyFilters();
+            }
         }
     </script>
 
     <!-- Função para editar e remover aeronaves -->
     <script>
-        // Função global para editar aeronave
-        window.editAircraft = function(id) {
-            console.log('Editando aeronave com ID:', id);
-            
-            // Verificar se aircraftData está disponível globalmente
-            if (!window.aircraftData) {
-                console.error('Dados de aeronaves não disponíveis');
-                window.showAlert('Erro ao editar: dados de aeronaves não carregados', 'danger');
-                return;
-            }
-            
-            // Buscar dados da aeronave
-            const aircraft = window.aircraftData.find(a => a.id === id);
-            if (!aircraft) {
-                console.error('Aeronave não encontrada com ID:', id);
-                window.showAlert('Erro ao editar: aeronave não encontrada', 'danger');
-                return;
-            }
-            
-            // Preencher formulário
-            document.getElementById('aircraft-id').value = aircraft.id;
-            document.getElementById('name').value = aircraft.name || '';
-            document.getElementById('manufacturer').value = aircraft.manufacturer || '';
-            document.getElementById('model').value = aircraft.model || '';
-            document.getElementById('first_flight_year').value = aircraft.first_flight_year || '';
-            document.getElementById('mtow').value = aircraft.mtow || '';
-            document.getElementById('wing_area').value = aircraft.wing_area || '';
-            document.getElementById('wingspan').value = aircraft.wingspan || '';
-            document.getElementById('cruise_speed').value = aircraft.cruise_speed || '';
-            document.getElementById('takeoff_speed').value = aircraft.takeoff_speed || '';
-            document.getElementById('landing_speed').value = aircraft.landing_speed || '';
-            document.getElementById('service_ceiling').value = aircraft.service_ceiling || '';
-            document.getElementById('cruise_altitude').value = aircraft.cruise_altitude || '';
-            document.getElementById('max_thrust').value = aircraft.max_thrust || '';
-            document.getElementById('engine_type').value = aircraft.engine_type || '';
-            document.getElementById('engine_count').value = aircraft.engine_count || '';
-            document.getElementById('image_url').value = aircraft.image_url || '';
-            
-            // Preencher campos de categoria
-            document.getElementById('category_type').value = aircraft.category_type || '';
-            document.getElementById('category_era').value = aircraft.category_era || '';
-            document.getElementById('category_engine').value = aircraft.category_engine || '';
-            document.getElementById('category_size').value = aircraft.category_size || '';
-            
-            // Atualizar título do modal
-            document.getElementById('aircraft-modal-title').textContent = 'Editar Aeronave';
-            
-            // Mostrar modal
-            const modal = new bootstrap.Modal(document.getElementById('aircraft-modal'));
-            modal.show();
-        };
+        // Função global para importar dados de aves - REMOVIDA
+        // As aves agora são carregadas automaticamente junto com as aeronaves
         
-        // Função global para excluir aeronave
-        window.deleteAircraft = function(id) {
-            console.log('Excluindo aeronave com ID:', id);
-            
-            if (!confirm('Tem certeza que deseja excluir esta aeronave?')) {
-                return;
-            }
-            
-            fetch(`http://localhost:5001/api/aircraft/${id}`, {
-                method: 'DELETE'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erro ao excluir: ${response.status}`);
-                }
-                
-                window.showAlert('Aeronave excluída com sucesso!', 'success');
-                
-                // Recarregar dados
-                if (typeof loadAircraftData === 'function') {
-                    loadAircraftData();
-                } else {
-                    // Fallback: recarregar a página
-                    setTimeout(() => window.location.reload(), 1500);
-                }
-            })
-            .catch(error => {
-                console.error('Erro ao excluir aeronave:', error);
-                window.showAlert('Erro ao excluir aeronave: ' + error.message, 'danger');
-            });
-        };
-        
-        // Função global para importar dados de exemplo
-        window.importSampleData = function() {
-            console.log('Importando dados de exemplo...');
-            
-            window.showAlert('Iniciando importação dos dados. Por favor, aguarde...', 'info');
-            
-            fetch('http://localhost:5001/api/import/sample', {
-                method: 'POST'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erro na importação: ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                window.showAlert(`Importação concluída: ${data.count || 0} aeronaves importadas`, 'success');
-                
-                // Recarregar a página após 1.5 segundos
-                setTimeout(() => window.location.reload(), 1500);
-            })
-            .catch(error => {
-                console.error('Erro na importação:', error);
-                window.showAlert(`Erro na importação: ${error.message}`, 'danger');
-            });
-        };
-        
-        // Função global para importar dados de aves
-        window.importBirdData = function() {
-            console.log('Importando dados de aves...');
-            
-            window.showAlert('Iniciando importação de dados de aves. Por favor, aguarde...', 'info');
-            
-            fetch('http://localhost:5001/api/import/birds', {
-                method: 'POST'
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Erro na importação: ${response.status} ${response.statusText}`);
-                }
-                return response.json();
-            })
-            .then(data => {
-                window.showAlert(`Importação concluída: ${data.count || 0} aves importadas`, 'success');
-                
-                // Recarregar a página após 1.5 segundos
-                setTimeout(() => window.location.reload(), 1500);
-            })
-            .catch(error => {
-                console.error('Erro na importação de aves:', error);
-                window.showAlert(`Erro na importação de aves: ${error.message}`, 'danger');
-            });
-        };
-        
-        // Configurar evento para o botão de importação
-        document.addEventListener('DOMContentLoaded', function() {
-            const importButton = document.getElementById('btn-import-sample');
-            if (importButton) {
-                importButton.addEventListener('click', window.importSampleData);
-                console.log('Event listener do botão Importar Exemplos configurado');
-            }
-            
-            const importBirdsButton = document.getElementById('btn-import-birds');
-            if (importBirdsButton) {
-                importBirdsButton.addEventListener('click', window.importBirdData);
-                console.log('Event listener do botão Importar Aves configurado');
-            }
-        });
+        // Configurar evento para o botão de importação - REMOVIDO
+        // O botão de importação de aves não é mais necessário
     </script>
 </body>
 </html> 

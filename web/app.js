@@ -3,10 +3,7 @@ const API_URL = '/api';
 const DEV_API_URL = 'http://localhost:5001/api';
 const JSON_DATA_PATH = '/data/aircraft.json';
 
-// Make aircraftData globally available
-window.aircraftData = [];
-
-// Fallback images by category - these are now local paths
+// Configurações globais
 const FALLBACK_IMAGES = {
     'comercial': '/images/fallback/comercial.jpg',
     'executiva': '/images/fallback/executiva.jpg',
@@ -18,8 +15,10 @@ const FALLBACK_IMAGES = {
     'ave': '/images/fallback/ave.jpg'
 };
 
-// Default fallback image
 const DEFAULT_FALLBACK_IMAGE = '/images/fallback/geral.jpg';
+
+// Make aircraftData globally available
+window.aircraftData = [];
 
 // Elementos DOM
 const navLinks = document.querySelectorAll('.nav-link');
@@ -60,225 +59,81 @@ let speedYearChartInstance = null;
 let speedType = 'tas'; // 'tas' para True Airspeed, 've' para Equivalent Airspeed
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM carregado, inicializando aplicação...');
     
-    // Inicializar modais do Bootstrap
-    const modalElement = document.getElementById('aircraft-modal');
+    // Inicializar modal de detalhes
     const detailsModalElement = document.getElementById('aircraft-details-modal');
-    
-    if (modalElement) {
-        aircraftModal = new bootstrap.Modal(modalElement);
-        console.log('Modal de aeronave inicializado');
-    } else {
-        console.error('Elemento modal de aeronave não encontrado');
-    }
-    
     if (detailsModalElement) {
         aircraftDetailsModal = new bootstrap.Modal(detailsModalElement);
-        console.log('Modal de detalhes inicializado');
-    } else {
-        console.error('Elemento modal de detalhes não encontrado');
     }
     
     // Configurar switches de velocidade
     const speedToggles = document.querySelectorAll('.speed-type-toggle');
-    console.log('Encontrados switches de velocidade:', speedToggles.length);
-    
     speedToggles.forEach(toggle => {
         toggle.addEventListener('change', (event) => {
-            console.log('Switch de velocidade alterado. Novo estado:', event.target.checked);
             showEquivalentSpeed = event.target.checked;
             
             // Sincronizar todos os switches
-            speedToggles.forEach(t => {
-                t.checked = showEquivalentSpeed;
-            });
+            speedToggles.forEach(t => t.checked = showEquivalentSpeed);
             
             // Atualizar gráficos
-            console.log('Atualizando gráficos com novo tipo de velocidade:', showEquivalentSpeed ? 'VE' : 'TAS');
-            
-            // Force chart recreation
-            if (aircraftData && aircraftData.length > 0) {
-                console.log('Recriando gráficos com dados existentes');
-                
-                // Destroy existing charts first
-                if (speedWeightChartInstance) {
-                    speedWeightChartInstance.destroy();
-                    speedWeightChartInstance = null;
-                }
-                
-                if (speedYearChartInstance) {
-                    speedYearChartInstance.destroy();
-                    speedYearChartInstance = null;
-                }
-                
-                if (flightDiagramChartInstance) {
-                    flightDiagramChartInstance.destroy();
-                    flightDiagramChartInstance = null;
-                }
-                
-                // Recreate charts
-                createSpeedWeightChart(aircraftData);
-                createSpeedYearChart(aircraftData);
-                
-                // Update flight diagram if on that page
-                const flightDiagramPage = document.getElementById('flight-diagram');
-                if (flightDiagramPage && !flightDiagramPage.classList.contains('d-none')) {
-                    updateFlightDiagram();
-                }
-            } else {
-                console.log('Buscando novos dados para os gráficos');
-                fetch('http://localhost:5001/api/aircraft')
-                    .then(response => response.json())
-                    .then(data => {
-                        aircraftData = data;
-                        createSpeedWeightChart(data);
-                        createSpeedYearChart(data);
-                        updateFlightDiagram();
-                    })
-                    .catch(error => {
-                        console.error('Erro ao atualizar gráficos:', error);
-                        showAlert('Erro ao atualizar gráficos: ' + error.message, 'danger');
-                    });
-            }
+            updateCharts();
         });
     });
     
-    // Configurar navegação
+    // Configurar navegação e event listeners
     setupNavigation();
-    
-    // Configurar event listeners
     setupEventListeners();
     
-    // Carregar dados de aeronaves
-    loadAircraftData().then(() => {
-        // Preencher selects de parâmetros
+    try {
+        // Carregar dados e inicializar interface
+        await loadAircraftData();
         populateParameterSelects();
-        
-        // Inicializar gráficos
-        updateScatterChart();
-        updateTimelineChart();
-        updateFlightDiagram();
+        updateCharts();
         
         console.log('Aplicação inicializada com sucesso');
-    }).catch(error => {
+    } catch (error) {
         console.error('Erro ao inicializar aplicação:', error);
         showAlert('Erro ao inicializar aplicação: ' + error.message, 'danger');
-    });
+    }
 });
 
 // Função para carregar dados de aeronaves
-function loadAircraftData() {
+async function loadAircraftData() {
     console.log('Carregando dados de aeronaves e aves...');
     
-    // Verificar se já temos dados carregados
-    if (window.aircraftData && window.aircraftData.length > 0) {
-        const birds = window.aircraftData.filter(item => item.category_type === 'ave');
-        console.log(`Usando dados já carregados: ${window.aircraftData.length} itens, incluindo ${birds.length} aves`);
-        renderTableSafely(window.aircraftData);
-        return Promise.resolve(window.aircraftData);
-    }
-    
-    // Carregar aeronaves e aves usando Promise.all
-    console.log('Buscando dados de aeronaves e aves...');
-    
-    return Promise.all([
-        fetch('data/aircraft.json')
-            .then(response => {
-                console.log('Resposta aircraft.json:', response.status);
-                if (!response.ok) throw new Error(`Falha ao carregar dados de aeronaves: ${response.status}`);
-                return response.json();
-            }),
-        fetch('data/birds.json')
-            .then(response => {
-                console.log('Resposta birds.json:', response.status);
-                if (!response.ok) throw new Error(`Falha ao carregar dados de aves: ${response.status}`);
-                return response.json();
-            })
-            .catch(error => {
-                console.warn('Erro ao carregar aves:', error);
-                return { birds: [] };
-            })
-    ])
-    .then(([aircraftData, birdsData]) => {
-        // Verificar dados de aeronaves
-        if (!aircraftData || !aircraftData.aircraft || !Array.isArray(aircraftData.aircraft)) {
-            console.error('Formato de dados de aeronaves inválido:', aircraftData);
-            throw new Error('Formato de dados de aeronaves inválido');
+    try {
+        // Carregar aeronaves e aves
+        const [aircraftResponse, birdsResponse] = await Promise.all([
+            fetch('data/aircraft.json'),
+            fetch('data/birds.json')
+        ]);
+
+        if (!aircraftResponse.ok) throw new Error(`Falha ao carregar dados de aeronaves: ${aircraftResponse.status}`);
+        const aircraftData = await aircraftResponse.json();
+
+        let birds = [];
+        if (birdsResponse.ok) {
+            const birdsData = await birdsResponse.json();
+            birds = birdsData.birds || [];
         }
+
+        // Processar e combinar dados
+        const processedAircraft = aircraftData.aircraft.map(categorizeAircraft);
+        const processedBirds = birds.map(bird => categorizeAircraft({...bird, category_type: 'ave'}));
         
-        // Verificar dados de aves
-        const birds = (birdsData && birdsData.birds && Array.isArray(birdsData.birds)) 
-            ? birdsData.birds 
-            : [];
+        // Combinar e armazenar dados
+        window.aircraftData = [...processedAircraft, ...processedBirds];
         
-        console.log(`Dados carregados: ${aircraftData.aircraft.length} aeronaves, ${birds.length} aves`);
-        
-        // Processar dados de aeronaves
-        const processedAircraft = aircraftData.aircraft.map(aircraft => {
-            return categorizeAircraft(aircraft);
-        });
-        
-        // Processar dados de aves
-        const processedBirds = birds.map(bird => {
-            // Garantir que as aves têm o tipo correto
-            bird.category_type = 'ave';
-            return categorizeAircraft(bird);
-        });
-        
-        // Combinar dados de aeronaves e aves
-        const combinedData = [...processedAircraft, ...processedBirds];
-        console.log(`Dados combinados: ${combinedData.length} itens totais`);
-        
-        // Verificar se temos aves nos dados combinados
-        const birdsInCombined = combinedData.filter(item => item.category_type === 'ave');
-        console.log(`Aves nos dados combinados: ${birdsInCombined.length}`);
-        
-        // Armazenar dados globalmente
-        window.aircraftData = combinedData;
-        
-        // Renderizar a tabela com os dados combinados
+        // Atualizar interface
         renderTableSafely(window.aircraftData);
-        
         return window.aircraftData;
-    })
-    .catch(error => {
-        console.error('Erro ao carregar dados combinados:', error);
-        
-        // Tentar carregar pelo menos aeronaves como fallback
-        return fetch('data/aircraft.json')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Falha ao carregar dados locais');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (!data || !data.aircraft || !Array.isArray(data.aircraft)) {
-                    throw new Error('Formato de dados inválido');
-                }
-                
-                console.log('Dados fallback carregados:', data.aircraft.length, 'registros');
-                
-                const processedData = data.aircraft.map(aircraft => {
-                    return categorizeAircraft(aircraft);
-                });
-                
-                window.aircraftData = processedData;
-                renderTableSafely(window.aircraftData);
-                
-                return window.aircraftData;
-            })
-            .catch(fallbackError => {
-                console.error('Erro ao carregar dados fallback:', fallbackError);
-                const tbody = document.getElementById('aircraft-table-body');
-                if (tbody) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center">Falha ao carregar dados. Verifique a conexão e tente novamente.</td></tr>';
-                }
-                return [];
-            });
-    });
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        showAlert('Erro ao carregar dados: ' + error.message, 'danger');
+        return [];
+    }
 }
 
 async function loadParameters() {
@@ -1178,57 +1033,28 @@ function createSpeedYearChart(data) {
 
 // Função para atualizar todos os gráficos
 function updateCharts() {
-    console.log('Atualizando todos os gráficos...');
-    
-    try {
-        // Verificar se temos dados carregados
-        if (!window.aircraftData || window.aircraftData.length === 0) {
-            console.log('Carregando dados para atualizar os gráficos...');
-            loadAircraftData().then(() => {
-                console.log('Dados carregados, atualizando gráficos...');
-                updateAllGraphs();
-            });
-        } else {
-            updateAllGraphs();
-        }
-    } catch (error) {
-        console.error('Erro ao atualizar gráficos:', error);
-    }
-}
-
-// Função auxiliar para atualizar todos os gráficos
-function updateAllGraphs() {
-    // Verificar qual página está ativa
     const activePage = document.querySelector('.page:not(.d-none)');
     if (!activePage) return;
     
     const pageId = activePage.id;
-    console.log('Página ativa:', pageId);
+    console.log('Atualizando gráficos para página:', pageId);
     
-    // Atualizar o gráfico apropriado
-    if (pageId === 'scatter-plot') {
-        if (typeof updateScatterChart === 'function') {
-            updateScatterChart();
-        } else {
-            console.error('Função updateScatterChart não encontrada');
+    try {
+        switch (pageId) {
+            case 'scatter-plot':
+                updateScatterChart();
+                break;
+            case 'timeline':
+                updateTimelineChart();
+                break;
+            case 'flight-diagram':
+                updateFlightDiagram();
+                break;
         }
-    } else if (pageId === 'timeline') {
-        if (typeof updateTimelineChart === 'function') {
-            updateTimelineChart();
-        } else {
-            console.error('Função updateTimelineChart não encontrada');
-        }
-    } else if (pageId === 'flight-diagram') {
-        if (typeof updateFlightDiagram === 'function') {
-            updateFlightDiagram();
-        } else {
-            console.error('Função updateFlightDiagram não encontrada');
-        }
-    } else {
-        console.log('Nenhum gráfico para atualizar na página atual:', pageId);
+    } catch (error) {
+        console.error('Erro ao atualizar gráficos:', error);
+        showAlert('Erro ao atualizar gráficos: ' + error.message, 'danger');
     }
-    
-    console.log('Gráficos atualizados com sucesso');
 }
 
 // Function to check if an image exists and provide a fallback if it doesn't
@@ -1316,104 +1142,32 @@ function setupNavigation() {
             // Mostrar página correspondente
             const targetPage = link.getAttribute('data-page');
             pages.forEach(page => {
-                if (page.id === targetPage) {
-                    page.classList.remove('d-none');
-                } else {
-                    page.classList.add('d-none');
-                }
+                page.classList.toggle('d-none', page.id !== targetPage);
             });
             
-            // Atualizar gráficos se necessário
-            if (targetPage === 'scatter-plot') {
-                updateScatterChart();
-            } else if (targetPage === 'timeline') {
-                updateTimelineChart();
-            } else if (targetPage === 'flight-diagram') {
-                updateFlightDiagram();
-            }
+            // Atualizar gráficos da nova página
+            updateCharts();
         });
     });
 }
 
 function setupEventListeners() {
-    console.log('Configurando event listeners...');
+    // Event listeners para gráficos
+    const chartControls = [
+        { element: xParamSelect, callback: updateScatterChart },
+        { element: yParamSelect, callback: updateScatterChart },
+        { element: xLogScale, callback: updateScatterChart },
+        { element: yLogScale, callback: updateScatterChart },
+        { element: timelineParamSelect, callback: updateTimelineChart },
+        { element: timelineLogScale, callback: updateTimelineChart },
+        { element: xAxisParamSelect, callback: updateFlightDiagram }
+    ];
     
-    // Configurar event listeners para navegação
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetPage = this.getAttribute('data-page');
-            showPage(targetPage);
-        });
+    chartControls.forEach(control => {
+        if (control.element) {
+            control.element.addEventListener('change', control.callback);
+        }
     });
-    
-    // Configurar event listeners para filtros
-    const searchInput = document.getElementById('aircraft-search');
-    if (searchInput) {
-        searchInput.addEventListener('input', function() {
-            if (window.applyFilters && typeof window.applyFilters === 'function') {
-                window.applyFilters();
-            }
-        });
-    }
-    
-    // Configurar event listeners para gráficos
-    const xParam = document.getElementById('x-param');
-    const yParam = document.getElementById('y-param');
-    const xLogScale = document.getElementById('x-log-scale');
-    const yLogScale = document.getElementById('y-log-scale');
-    
-    if (xParam) xParam.addEventListener('change', updateScatterChart);
-    if (yParam) yParam.addEventListener('change', updateScatterChart);
-    if (xLogScale) xLogScale.addEventListener('change', updateScatterChart);
-    if (yLogScale) yLogScale.addEventListener('change', updateScatterChart);
-    
-    // Configurar event listeners para timeline
-    const timelineParam = document.getElementById('timeline-param');
-    const timelineLogScale = document.getElementById('timeline-log-scale');
-    
-    if (timelineParam) timelineParam.addEventListener('change', updateTimelineChart);
-    if (timelineLogScale) timelineLogScale.addEventListener('change', updateTimelineChart);
-    
-    // Configurar event listeners para diagrama de voo
-    const xAxisParam = document.getElementById('x-axis-param');
-    const showTrendlines = document.getElementById('showTrendlines');
-    const xLogScaleFlight = document.getElementById('xLogScale');
-    const yLogScaleFlight = document.getElementById('yLogScale');
-    
-    if (xAxisParam) xAxisParam.addEventListener('change', updateFlightDiagram);
-    if (showTrendlines) showTrendlines.addEventListener('change', updateFlightDiagram);
-    if (xLogScaleFlight) xLogScaleFlight.addEventListener('change', updateFlightDiagram);
-    if (yLogScaleFlight) yLogScaleFlight.addEventListener('change', updateFlightDiagram);
-    
-    // Configurar event listeners para coeficientes
-    const mtowCoefficient = document.getElementById('mtow-coefficient');
-    const applyMtowCoefficient = document.getElementById('apply-mtow-coefficient');
-    const speedCoefficient = document.getElementById('speed-coefficient');
-    const applySpeedCoefficient = document.getElementById('apply-speed-coefficient');
-    
-    if (applyMtowCoefficient) {
-        applyMtowCoefficient.addEventListener('click', function() {
-            updateFlightDiagram();
-        });
-    }
-    
-    if (applySpeedCoefficient) {
-        applySpeedCoefficient.addEventListener('click', function() {
-            updateFlightDiagram();
-        });
-    }
-    
-    // Configurar event listeners para toggle de velocidade
-    const speedToggle = document.getElementById('speed-toggle');
-    if (speedToggle) {
-        speedToggle.addEventListener('change', function() {
-            showEquivalentSpeed = this.checked;
-            updateFlightDiagram();
-        });
-    }
-    
-    console.log('Event listeners configurados com sucesso');
 }
 
 function showAlert(message, type = 'info') {
@@ -1881,86 +1635,61 @@ function setupFlightDiagramEvents() {
             }
         });
     }
-} 
-
-// Função para atualizar todos os gráficos
-function updateCharts() {
-    console.log('Atualizando todos os gráficos...');
-    
-    // Verificar qual página está ativa
-    const activePage = document.querySelector('.page:not(.d-none)');
-    if (!activePage) return;
-    
-    const pageId = activePage.id;
-    
-    // Atualizar o gráfico apropriado
-    if (pageId === 'scatter-plot' && typeof updateScatterChart === 'function') {
-        updateScatterChart();
-    } else if (pageId === 'timeline' && typeof updateTimelineChart === 'function') {
-        updateTimelineChart();
-    } else if (pageId === 'flight-diagram' && typeof updateFlightDiagram === 'function') {
-        updateFlightDiagram();
-    }
-    
-    console.log('Gráficos atualizados com sucesso');
 }
 
-// Função para categorizar aeronaves com base em seus dados
+// Função para categorizar aeronaves
 function categorizeAircraft(aircraft) {
-    // Criar uma cópia para não modificar o objeto original
     const result = { ...aircraft };
     
-    // Categorizar por tamanho com base no MTOW
+    // Se for uma ave, aplicar categorias padrão
+    if (result.category_type === 'ave') {
+        return {
+            ...result,
+            category_era: 'biologica',
+            category_engine: 'muscular',
+            category_size: 'muito_leve'
+        };
+    }
+    
+    // Categorização por tamanho (MTOW)
+    const mtowRanges = [
+        { max: 5700, size: 'muito_leve' },
+        { max: 50000, size: 'regional' },
+        { max: 150000, size: 'medio' },
+        { max: 300000, size: 'grande' },
+        { max: Infinity, size: 'muito_grande' }
+    ];
+    
     if (!result.category_size && result.mtow) {
-        if (result.mtow <= 5700) {
-            result.category_size = 'muito_leve';
-        } else if (result.mtow <= 50000) {
-            result.category_size = 'regional';
-        } else if (result.mtow <= 150000) {
-            result.category_size = 'medio';
-        } else if (result.mtow <= 300000) {
-            result.category_size = 'grande';
-        } else {
-            result.category_size = 'muito_grande';
-        }
+        result.category_size = mtowRanges.find(range => result.mtow <= range.max)?.size || 'desconhecido';
     }
     
-    // Categorizar por era com base no ano do primeiro voo
+    // Categorização por era
+    const eraRanges = [
+        { max: 1930, era: 'pioneiros' },
+        { max: 1950, era: 'classica' },
+        { max: 1970, era: 'jato_inicial' },
+        { max: 2000, era: 'moderna' },
+        { max: Infinity, era: 'contemporanea' }
+    ];
+    
     if (!result.category_era && result.first_flight_year) {
-        if (result.first_flight_year <= 1930) {
-            result.category_era = 'pioneiros';
-        } else if (result.first_flight_year <= 1950) {
-            result.category_era = 'classica';
-        } else if (result.first_flight_year <= 1970) {
-            result.category_era = 'jato_inicial';
-        } else if (result.first_flight_year <= 2000) {
-            result.category_era = 'moderna';
-        } else {
-            result.category_era = 'contemporanea';
-        }
+        result.category_era = eraRanges.find(range => result.first_flight_year <= range.max)?.era || 'desconhecido';
     }
     
-    // Categorizar por tipo de motor
+    // Categorização por tipo de motor
     if (!result.category_engine && result.engine_type) {
         const engineType = result.engine_type.toLowerCase();
-        if (engineType.includes('pistão') || engineType.includes('piston')) {
-            result.category_engine = 'pistao';
-        } else if (engineType.includes('turboélice') || engineType.includes('turboprop')) {
-            result.category_engine = 'turboelice';
-        } else if (engineType.includes('turbojato') || engineType.includes('turbojet')) {
-            result.category_engine = 'turbojato';
-        } else if (engineType.includes('turbofan')) {
-            result.category_engine = 'turbofan';
-        } else if (engineType.includes('especial') || engineType.includes('special')) {
-            result.category_engine = 'especial';
-        }
-    }
-    
-    // Garantir que aves tenham as categorias corretas
-    if (result.category_type === 'ave') {
-        result.category_era = 'biologica';
-        result.category_engine = 'muscular';
-        result.category_size = 'muito_leve';
+        const engineMap = {
+            'pist': 'pistao',
+            'turbo': 'turboelice',
+            'turbojato': 'turbojato',
+            'turbofan': 'turbofan',
+            'especial': 'especial'
+        };
+        
+        result.category_engine = Object.entries(engineMap)
+            .find(([key]) => engineType.includes(key))?.[1] || 'desconhecido';
     }
     
     return result;

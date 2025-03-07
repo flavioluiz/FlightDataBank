@@ -2,8 +2,8 @@ import http.server
 import socketserver
 import os
 
-# Configurar o diretório web como diretório de trabalho
-os.chdir('web')
+# Configurar o diretório docs como diretório de trabalho
+os.chdir('docs')
 
 # Configurar o servidor
 PORT = 8000

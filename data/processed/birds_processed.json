@@ -18,7 +18,7 @@
       "takeoff_speed_ms": 5.5,
       "landing_speed_ms": 4.0,
       "service_ceiling_m": 1000,
-      "max_thrust_kN": null,
+      "max_thrust_kN_kN": null,
       "engine_type": null,
       "engine_count": null,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Common_Tern_in_flight_2.jpg/1280px-Common_Tern_in_flight_2.jpg",

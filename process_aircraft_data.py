@@ -57,11 +57,11 @@ def rename_fields_with_units(aircraft: dict) -> dict:
         'takeoff_speed_ms': 'takeoff_speed_ms',  # Already has units
         'landing_speed_ms': 'landing_speed_ms',  # Already has units
         'service_ceiling_m': 'service_ceiling_m',  # Already has units
-        'max_thrust': 'max_thrust_kN',  # Adding kN unit
+        'max_thrust_kN': 'max_thrust_kN',  # Adding kN unit
         'cruise_altitude_m': 'cruise_altitude_m',  # Already has units
         'max_speed_ms': 'max_speed_ms',  # Already has units
         'range_km': 'range_km',  # Already has units
-        'max_roc': 'max_roc_ms',  # Adding m/s unit for rate of climb
+        'max_roc_ms': 'max_roc_ms',  # Adding m/s unit for rate of climb
     }
     
     processed = {}
@@ -69,7 +69,7 @@ def rename_fields_with_units(aircraft: dict) -> dict:
         new_key = field_mapping.get(key, key)
         # Convert max_thrust from kN to N if present
         if key == 'max_thrust' and value is not None:
-            processed[new_key] = value * 1000
+            processed[new_key] = value
         else:
             processed[new_key] = value
     
@@ -153,6 +153,15 @@ def compute_derived_values(aircraft):
         
         if processed['fuel_capacity_kg'] is not None:
             processed['max_fuel_weight_N'] = processed['fuel_capacity_kg'] * 9.81
+
+        # Compute thrust-to-weight ratio (dimensionless)
+        if 'max_thrust_kN' in processed and processed['max_thrust_kN'] is not None:
+            # Convert max_thrust from kN to N by multiplying by 1000
+            total_thrust_N = processed['max_thrust_kN'] * 1000 
+            processed['thrust_to_weight_ratio'] = total_thrust_N / processed['mtow_N']
+            print(f"Computing T/W ratio for {processed['name']}: {processed['thrust_to_weight_ratio']:.3f}")
+        else:
+            print(f"Warning: Cannot compute T/W ratio for {processed['name']}, missing thrust or engine count data")
         
         return processed
     except Exception as e:

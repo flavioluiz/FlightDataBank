@@ -1,38 +1,97 @@
 // Global variables
-window.aircraftData = [];
+let chartParameters = null;
+let aircraftData = [];
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initializeControls();
-    loadAircraftData();
+    loadChartParameters().then(() => {
+        initializeControls();
+        loadAircraftData();
+    });
 });
+
+// Load chart parameters configuration
+async function loadChartParameters() {
+    try {
+        const response = await fetch('data/chart_parameters.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load chart parameters: ${response.status}`);
+        }
+        chartParameters = await response.json();
+        return chartParameters;
+    } catch (error) {
+        console.error('Error loading chart parameters:', error);
+        showAlert('Error loading chart parameters: ' + error.message, 'danger');
+    }
+}
 
 // Initialize controls
 function initializeControls() {
-    console.log('Initializing comparative chart controls...');
+    if (!chartParameters) {
+        console.error('Chart parameters not loaded');
+        return;
+    }
+
+    const xSelect = document.getElementById('x-param');
+    const ySelect = document.getElementById('y-param');
     
-    // Get chart controls
-    const controls = {
-        xParam: document.getElementById('x-param'),
-        yParam: document.getElementById('y-param'),
-        colorGroup: document.getElementById('color-group'),
-        xLogScale: document.getElementById('x-log-scale'),
-        yLogScale: document.getElementById('y-log-scale')
-    };
+    if (!xSelect || !ySelect) {
+        console.error('Parameter select elements not found');
+        return;
+    }
 
-    // Set default values
-    if (controls.xParam) controls.xParam.value = 'mtow_N';
-    if (controls.yParam) controls.yParam.value = 'cruise_speed_ms';
-    if (controls.colorGroup) controls.colorGroup.value = 'category_type';
+    // Clear existing options
+    xSelect.innerHTML = '';
+    ySelect.innerHTML = '';
 
-    // Add event listeners
-    Object.entries(controls).forEach(([key, element]) => {
-        if (element) {
-            element.addEventListener('change', updateScatterChart);
+    // Group parameters by category
+    const parametersByCategory = {};
+    Object.entries(chartParameters.parameters).forEach(([key, param]) => {
+        if (!parametersByCategory[param.category]) {
+            parametersByCategory[param.category] = [];
         }
+        parametersByCategory[param.category].push({key, ...param});
     });
 
-    console.log('Comparative chart controls initialized successfully');
+    // Add options grouped by category
+    Object.entries(parametersByCategory).forEach(([category, params]) => {
+        const categoryInfo = chartParameters.categories[category];
+        const xGroup = document.createElement('optgroup');
+        const yGroup = document.createElement('optgroup');
+        xGroup.label = categoryInfo.label;
+        yGroup.label = categoryInfo.label;
+
+        params.forEach(param => {
+            const xOption = document.createElement('option');
+            const yOption = document.createElement('option');
+            xOption.value = param.key;
+            yOption.value = param.key;
+            xOption.textContent = param.label;
+            yOption.textContent = param.label;
+            xGroup.appendChild(xOption);
+            yGroup.appendChild(yOption);
+        });
+
+        xSelect.appendChild(xGroup);
+        ySelect.appendChild(yGroup);
+    });
+
+    // Set default values
+    xSelect.value = 'mtow_N';
+    ySelect.value = 'wing_loading_Nm2';
+
+    // Add event listeners
+    const controls = {
+        xParam: xSelect,
+        yParam: ySelect,
+        colorGroup: document.getElementById('color-group')
+    };
+
+    Object.values(controls).forEach(control => {
+        if (control) {
+            control.addEventListener('change', updateChart);
+        }
+    });
 }
 
 // Load aircraft data
@@ -71,11 +130,11 @@ async function loadAircraftData() {
         const processedBirds = birds.map(bird => categorizeAircraft({...bird, category_type: 'ave'}));
         
         // Store data globally
-        window.aircraftData = [...processedAircraft, ...processedBirds];
-        console.log('Total processed data:', window.aircraftData.length, 'items');
+        aircraftData = [...processedAircraft, ...processedBirds];
+        console.log('Total processed data:', aircraftData.length, 'items');
         
         // Update chart
-        updateScatterChart();
+        updateChart();
     } catch (error) {
         console.error('Detailed error loading data:', error);
         console.error('Stack trace:', error.stack);
@@ -83,53 +142,36 @@ async function loadAircraftData() {
     }
 }
 
-// Update scatter chart
-function updateScatterChart() {
-    console.log('Updating scatter chart...');
-    
-    // Get selected parameters
+// Update chart
+function updateChart() {
     const xParam = document.getElementById('x-param')?.value;
     const yParam = document.getElementById('y-param')?.value;
     const colorGroup = document.getElementById('color-group')?.value;
-    
-    if (!xParam || !yParam || !colorGroup) {
-        console.error('Missing parameters for scatter chart');
+
+    if (!xParam || !yParam || !colorGroup || !chartParameters) {
+        console.error('Missing parameters for chart update');
         return;
     }
 
-    try {
-        // Check if data is loaded
-        if (!window.aircraftData || window.aircraftData.length === 0) {
-            console.log('No data available for scatter chart...');
-            return;
-        }
+    const xConfig = chartParameters.parameters[xParam];
+    const yConfig = chartParameters.parameters[yParam];
 
-        // Process data for the chart
-        const data = window.aircraftData.filter(aircraft => {
-            const hasXParam = aircraft[xParam] !== undefined && aircraft[xParam] !== null && !isNaN(aircraft[xParam]);
-            const hasYParam = aircraft[yParam] !== undefined && aircraft[yParam] !== null && !isNaN(aircraft[yParam]);
-            
-            if (!hasXParam || !hasYParam) {
-                if (aircraft.category_type === 'ave') {
-                    console.log(`Bird ${aircraft.name} missing data: ${xParam}=${aircraft[xParam]}, ${yParam}=${aircraft[yParam]}`);
-                }
-                return false;
-            }
-            return true;
-        }).map(aircraft => ({
-            x: parseFloat(aircraft[xParam]),
-            y: parseFloat(aircraft[yParam]),
-            id: aircraft.id,
-            name: aircraft.name,
-            category: aircraft[colorGroup] || 'unknown'
-        }));
-
-        console.log(`Processed ${data.length} valid data points for scatter plot`);
-        renderScatterChart(data, xParam, yParam, colorGroup);
-    } catch (error) {
-        console.error('Error updating scatter chart:', error);
-        showAlert('Error updating scatter chart: ' + error.message, 'danger');
+    if (!xConfig || !yConfig) {
+        console.error('Invalid parameters selected');
+        return;
     }
+
+    const data = aircraftData.filter(aircraft => {
+        return aircraft[xParam] != null && aircraft[yParam] != null;
+    }).map(aircraft => ({
+        x: aircraft[xParam],
+        y: aircraft[yParam],
+        id: aircraft.id,
+        name: aircraft.name,
+        category: aircraft[colorGroup] || 'unknown'
+    }));
+
+    renderScatterChart(data, xParam, yParam, colorGroup);
 }
 
 // Render scatter chart
@@ -147,6 +189,10 @@ function renderScatterChart(data, xParam, yParam, colorGroup) {
     if (existingChart) {
         existingChart.destroy();
     }
+
+    // Get parameter configurations
+    const xConfig = chartParameters.parameters[xParam];
+    const yConfig = chartParameters.parameters[yParam];
 
     // Color palettes for different groupings
     const colorPalettes = {
@@ -222,32 +268,6 @@ function renderScatterChart(data, xParam, yParam, colorGroup) {
         pointHoverRadius: 8
     }));
 
-    // Parameter labels
-    const paramLabels = {
-        'mtow_N': 'MTOW (N)',
-        'wing_area_m2': 'Wing Area (m²)',
-        'wingspan_m': 'Wingspan (m)',
-        'cruise_speed_ms': 'Cruise Speed (m/s)',
-        'VE_cruise_ms': 'Equivalent Cruise Speed (m/s)',
-        'takeoff_speed_ms': 'Takeoff Speed (m/s)',
-        'landing_speed_ms': 'Landing Speed (m/s)',
-        'service_ceiling_m': 'Service Ceiling (m)',
-        'max_thrust': 'Max Thrust (kN)',
-        'engine_count': 'Engine Count',
-        'first_flight_year': 'First Flight Year',
-        'range_km': 'Range (km)',
-        'max_speed_ms': 'Max Speed (m/s)',
-        'wing_loading_Nm2': 'Wing Loading (N/m²)',
-        'CL_cruise': 'Lift Coefficient - Cruise',
-        'CL_takeoff': 'Lift Coefficient - Takeoff',
-        'CL_landing': 'Lift Coefficient - Landing',
-        'aspect_ratio': 'Aspect Ratio'
-    };
-
-    // Get log scale settings
-    const xLogScale = document.getElementById('x-log-scale')?.checked || false;
-    const yLogScale = document.getElementById('y-log-scale')?.checked || false;
-
     // Create chart
     new Chart(canvas, {
         type: 'scatter',
@@ -257,17 +277,17 @@ function renderScatterChart(data, xParam, yParam, colorGroup) {
             maintainAspectRatio: false,
             scales: {
                 x: {
-                    type: xLogScale ? 'logarithmic' : 'linear',
+                    type: xConfig.scale === 'log' ? 'logarithmic' : 'linear',
                     title: {
                         display: true,
-                        text: paramLabels[xParam] || xParam
+                        text: xConfig.label
                     }
                 },
                 y: {
-                    type: yLogScale ? 'logarithmic' : 'linear',
+                    type: yConfig.scale === 'log' ? 'logarithmic' : 'linear',
                     title: {
                         display: true,
-                        text: paramLabels[yParam] || yParam
+                        text: yConfig.label
                     }
                 }
             },

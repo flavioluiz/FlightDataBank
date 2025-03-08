@@ -21,7 +21,7 @@
       "takeoff_speed_ms": 69.44,
       "landing_speed_ms": 63.89,
       "service_ceiling_m": 12500,
-      "max_thrust_kN": 121400.0,
+      "max_thrust_kN": 121.4,
       "max_power_kW": null,
       "engine_type": "Turbofan",
       "engine_count": 2,
@@ -42,7 +42,8 @@
       "CL_landing": 2.487651652884334,
       "useful_load_N": 369968.1,
       "max_fuel_load_N": 219968.09999999998,
-      "max_fuel_weight_N": 204685.65000000002
+      "max_fuel_weight_N": 204685.65000000002,
+      "thrust_to_weight_ratio": 0.15665160927269137
     },
     {
       "name": "Airbus A320neo",
@@ -56,7 +57,7 @@
       "takeoff_speed_ms": 72.22,
       "landing_speed_ms": 66.67,
       "service_ceiling_m": 12000,
-      "max_thrust_kN": 120000,
+      "max_thrust_kN": 120,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/A320neo_LUFTHANSA_D-AINC_310715.jpg",
@@ -75,7 +76,8 @@
       "VE_cruise_ms": 122.65155731081765,
       "CL_cruise": 0.686039391734556,
       "CL_takeoff": 1.9787012069464158,
-      "CL_landing": 2.321850627174213
+      "CL_landing": 2.321850627174213,
+      "thrust_to_weight_ratio": 0.15484070762203384
     },
     {
       "name": "Embraer E190-E2",
@@ -89,7 +91,7 @@
       "takeoff_speed_ms": 66.67,
       "landing_speed_ms": 61.11,
       "service_ceiling_m": 12500,
-      "max_thrust_kN": 100000,
+      "max_thrust_kN": 100,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/9f/E190-E2_landing_at_Zurich_Airport.jpg",
@@ -108,7 +110,8 @@
       "VE_cruise_ms": 114.25364095140333,
       "CL_cruise": 0.7480934280513709,
       "CL_takeoff": 2.1970251413867805,
-      "CL_landing": 2.614998051235429
+      "CL_landing": 2.614998051235429,
+      "thrust_to_weight_ratio": 0.18073900564628653
     },
     {
       "name": "Cessna 172",
@@ -122,7 +125,7 @@
       "takeoff_speed_ms": 27.78,
       "landing_speed_ms": 23.61,
       "service_ceiling_m": 4100,
-      "max_thrust_kN": 2200.0,
+      "max_thrust_kN": 2.2,
       "engine_type": "Pist\u00e3o",
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg",
@@ -141,7 +144,8 @@
       "VE_cruise_ms": 52.7005614737682,
       "CL_cruise": 0.4118569753169422,
       "CL_takeoff": 1.4822191752044025,
-      "CL_landing": 2.0520358130251437
+      "CL_landing": 2.0520358130251437,
+      "thrust_to_weight_ratio": 0.19382969594288016
     },
     {
       "name": "Boeing 787-9",
@@ -155,7 +159,7 @@
       "takeoff_speed_ms": 77.78,
       "landing_speed_ms": 69.44,
       "service_ceiling_m": 13100,
-      "max_thrust_kN": 320000,
+      "max_thrust_kN": 320,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/All_Nippon_Airways_Boeing_787-9_Dreamliner_JA873A_OKJ.jpg",
@@ -174,7 +178,8 @@
       "VE_cruise_ms": 118.61509094699113,
       "CL_cruise": 0.8031744586638003,
       "CL_takeoff": 1.8679012123594387,
-      "CL_landing": 2.343529135985624
+      "CL_landing": 2.343529135985624,
+      "thrust_to_weight_ratio": 0.12842431393323542
     },
     {
       "name": "Airbus A350-900",
@@ -188,7 +193,7 @@
       "takeoff_speed_ms": 76.39,
       "landing_speed_ms": 66.67,
       "service_ceiling_m": 13100,
-      "max_thrust_kN": 375000,
+      "max_thrust_kN": 375,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Qatar_Airways_A350-941_%28A7-ALA%29_landing_at_Frankfurt_Airport.jpg",
@@ -207,7 +212,8 @@
       "VE_cruise_ms": 121.18419291942647,
       "CL_cruise": 0.690879614158118,
       "CL_takeoff": 1.7386866025901764,
-      "CL_landing": 2.2826189452327275
+      "CL_landing": 2.2826189452327275,
+      "thrust_to_weight_ratio": 0.13652249890782
     },
     {
       "name": "Bombardier CRJ-900",
@@ -221,7 +227,7 @@
       "takeoff_speed_ms": 61.11,
       "landing_speed_ms": 55.56,
       "service_ceiling_m": 12500,
-      "max_thrust_kN": 64000,
+      "max_thrust_kN": 64,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/52/Lufthansa_CityLine_Bombardier_CRJ900_D-ACNM.jpg",
@@ -240,7 +246,8 @@
       "VE_cruise_ms": 119.88301332592422,
       "CL_cruise": 0.6084781274944193,
       "CL_takeoff": 2.3417239916364827,
-      "CL_landing": 2.832929708077159
+      "CL_landing": 2.832929708077159,
+      "thrust_to_weight_ratio": 0.17020493471975892
     },
     {
       "name": "ATR 72-600",
@@ -254,7 +261,7 @@
       "takeoff_speed_ms": 51.39,
       "landing_speed_ms": 47.22,
       "service_ceiling_m": 7600,
-      "max_thrust_kN": 50000,
+      "max_thrust_kN": 50,
       "engine_type": "Turboprop",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/58/ATR_72-600_of_Air_New_Zealand_Link.jpg",
@@ -273,7 +280,8 @@
       "VE_cruise_ms": 94.83581718590422,
       "CL_cruise": 0.6714470732803111,
       "CL_takeoff": 2.2866480825380915,
-      "CL_landing": 2.7083488386201187
+      "CL_landing": 2.7083488386201187,
+      "thrust_to_weight_ratio": 0.22160173735762087
     },
     {
       "name": "Embraer Phenom 300",
@@ -287,7 +295,7 @@
       "takeoff_speed_ms": 52.78,
       "landing_speed_ms": 47.22,
       "service_ceiling_m": 13700,
-      "max_thrust_kN": 15600.0,
+      "max_thrust_kN": 15.6,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Embraer_Phenom_300_photographed_at_Farnborough.jpg",
@@ -306,7 +314,8 @@
       "VE_cruise_ms": 101.92925825555466,
       "CL_cruise": 0.4408324815137604,
       "CL_takeoff": 1.6441163291380727,
-      "CL_landing": 2.0540894357284394
+      "CL_landing": 2.0540894357284394,
+      "thrust_to_weight_ratio": 0.19511829046359355
     },
     {
       "name": "Airbus A380",
@@ -320,7 +329,7 @@
       "takeoff_speed_ms": 77.78,
       "landing_speed_ms": 69.44,
       "service_ceiling_m": 13100,
-      "max_thrust_kN": 374000,
+      "max_thrust_kN": 374,
       "engine_type": "Jet",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/A6-EDY_A380_Emirates_31_jan_2013_jfk_%288442269364%29_%28cropped%29.jpg",
@@ -339,7 +348,8 @@
       "VE_cruise_ms": 115.85148287736864,
       "CL_cruise": 0.8120195912241608,
       "CL_takeoff": 1.8014981640889152,
-      "CL_landing": 2.260217728877716
+      "CL_landing": 2.260217728877716,
+      "thrust_to_weight_ratio": 0.06630323981740018
     },
     {
       "name": "Boeing 747-8",
@@ -353,7 +363,7 @@
       "takeoff_speed_ms": 80.56,
       "landing_speed_ms": 69.44,
       "service_ceiling_m": 13100,
-      "max_thrust_kN": 1000000,
+      "max_thrust_kN": 1000,
       "engine_type": "Turbofan",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/LUFTHANSA_B747-8_%2840272913674%29.jpg",
@@ -372,7 +382,8 @@
       "VE_cruise_ms": 117.20935139166927,
       "CL_cruise": 0.942131164772688,
       "CL_takeoff": 1.9943298074715918,
-      "CL_landing": 2.684209883062871
+      "CL_landing": 2.684209883062871,
+      "thrust_to_weight_ratio": 0.22768996914117848
     },
     {
       "name": "Cirrus SR22",
@@ -386,7 +397,7 @@
       "takeoff_speed_ms": 33.33,
       "landing_speed_ms": 27.78,
       "service_ceiling_m": 5300,
-      "max_thrust_kN": 2500.0,
+      "max_thrust_kN": 2.5,
       "engine_type": "Piston",
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Cirrus_SR22_N545CD.jpg",
@@ -405,7 +416,8 @@
       "VE_cruise_ms": 70.66999068645941,
       "CL_cruise": 0.36628731315374513,
       "CL_takeoff": 1.6467259044809206,
-      "CL_landing": 2.3704317848485488
+      "CL_landing": 2.3704317848485488,
+      "thrust_to_weight_ratio": 0.16527373958940714
     },
     {
       "name": "Pilatus PC-12",
@@ -419,7 +431,7 @@
       "takeoff_speed_ms": 47.22,
       "landing_speed_ms": 41.67,
       "service_ceiling_m": 9150,
-      "max_thrust_kN": 15000,
+      "max_thrust_kN": 15,
       "engine_type": "Turboprop",
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Pilatus_PC-12_HB-FVD.jpg",
@@ -438,7 +450,8 @@
       "VE_cruise_ms": 84.95342834961691,
       "CL_cruise": 0.40771377230573025,
       "CL_takeoff": 1.319669671719955,
-      "CL_landing": 1.6946116999784204
+      "CL_landing": 1.6946116999784204,
+      "thrust_to_weight_ratio": 0.3225848075459038
     },
     {
       "name": "Beechcraft King Air 350",
@@ -452,7 +465,7 @@
       "takeoff_speed_ms": 48.61,
       "landing_speed_ms": 44.44,
       "service_ceiling_m": 10700,
-      "max_thrust_kN": 30000,
+      "max_thrust_kN": 30,
       "engine_type": "Turboprop",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Beechcraft_B300_King_Air_350.jpg",
@@ -471,7 +484,8 @@
       "VE_cruise_ms": 89.37734574243927,
       "CL_cruise": 0.47339109523261796,
       "CL_takeoff": 1.600382333351777,
-      "CL_landing": 1.914815305211233
+      "CL_landing": 1.914815305211233,
+      "thrust_to_weight_ratio": 0.4497211728728189
     },
     {
       "name": "Dassault Falcon 7X",
@@ -485,7 +499,7 @@
       "takeoff_speed_ms": 58.33,
       "landing_speed_ms": 52.78,
       "service_ceiling_m": 15500,
-      "max_thrust_kN": 63000,
+      "max_thrust_kN": 63,
       "engine_type": "Turbofan",
       "engine_count": 3,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Dassault_Falcon_7X_at_EBACE_2019.jpg",
@@ -504,7 +518,8 @@
       "VE_cruise_ms": 95.65303434594179,
       "CL_cruise": 0.7861137247297002,
       "CL_takeoff": 2.1139705301495004,
-      "CL_landing": 2.581927896024528
+      "CL_landing": 2.581927896024528,
+      "thrust_to_weight_ratio": 0.20226829444484576
     },
     {
       "name": "Gulfstream G650",
@@ -518,7 +533,7 @@
       "takeoff_speed_ms": 61.11,
       "landing_speed_ms": 55.56,
       "service_ceiling_m": 15500,
-      "max_thrust_kN": 146000,
+      "max_thrust_kN": 146,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Gulfstream_G650ER_N650GD.jpg",
@@ -537,7 +552,8 @@
       "VE_cruise_ms": 101.15734061131894,
       "CL_cruise": 0.6898688290941345,
       "CL_takeoff": 1.8903262344642437,
-      "CL_landing": 2.2868456601621108
+      "CL_landing": 2.2868456601621108,
+      "thrust_to_weight_ratio": 0.3294255044835714
     },
     {
       "name": "Wright Flyer",
@@ -551,7 +567,7 @@
       "takeoff_speed_ms": 12.5,
       "landing_speed_ms": 11.11,
       "service_ceiling_m": 30,
-      "max_thrust_kN": 500.0,
+      "max_thrust_kN": 0.5,
       "engine_type": "Piston",
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Wright_Flyer_in_flight_1903.jpg",
@@ -570,7 +586,8 @@
       "VE_cruise_ms": 13.31081132104583,
       "CL_cruise": 0.6500823175732123,
       "CL_takeoff": 0.7371525667458683,
-      "CL_landing": 0.9331453370236911
+      "CL_landing": 0.9331453370236911,
+      "thrust_to_weight_ratio": 0.15079408163388403
     },
     {
       "name": "Santos-Dumont 14-bis",
@@ -584,7 +601,7 @@
       "takeoff_speed_ms": 10.28,
       "landing_speed_ms": 9.72,
       "service_ceiling_m": 60,
-      "max_thrust_kN": 400.0,
+      "max_thrust_kN": 0.4,
       "engine_type": "Piston",
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/60/14bis_-_Primeiro_voo_-_1906.jpg",
@@ -603,7 +620,8 @@
       "VE_cruise_ms": 11.07802628154591,
       "CL_cruise": 0.7529249600303921,
       "CL_takeoff": 0.8743599317807741,
-      "CL_landing": 0.9780114673269376
+      "CL_landing": 0.9780114673269376,
+      "thrust_to_weight_ratio": 0.13591573224600748
     },
     {
       "name": "Douglas DC-3",
@@ -617,7 +635,7 @@
       "takeoff_speed_ms": 33.33,
       "landing_speed_ms": 27.78,
       "service_ceiling_m": 7300,
-      "max_thrust_kN": 25000,
+      "max_thrust_kN": 25,
       "engine_type": "Piston",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Douglas_DC-3%2C_N18121%2C_in_flight.jpg",
@@ -636,7 +654,8 @@
       "VE_cruise_ms": 79.68635028689408,
       "CL_cruise": 0.3143891779527963,
       "CL_takeoff": 1.7970693335917904,
-      "CL_landing": 2.586848397982395
+      "CL_landing": 2.586848397982395,
+      "thrust_to_weight_ratio": 0.22295887835631148
     },
     {
       "name": "Boeing 707",
@@ -650,7 +669,7 @@
       "takeoff_speed_ms": 80.56,
       "landing_speed_ms": 66.67,
       "service_ceiling_m": 13100,
-      "max_thrust_kN": 75600.0,
+      "max_thrust_kN": 75.6,
       "engine_type": "Jet",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Pan_Am_Boeing_707-321B_N880PA.jpg",
@@ -669,7 +688,8 @@
       "VE_cruise_ms": 147.91904614471852,
       "CL_cruise": 0.39138630447827233,
       "CL_takeoff": 1.3195167415014757,
-      "CL_landing": 1.9266060049550646
+      "CL_landing": 1.9266060049550646,
+      "thrust_to_weight_ratio": 0.05092969771641274
     },
     {
       "name": "Concorde",
@@ -683,7 +703,7 @@
       "takeoff_speed_ms": 111.11,
       "landing_speed_ms": 80.56,
       "service_ceiling_m": 18300,
-      "max_thrust_kN": 169200.0,
+      "max_thrust_kN": 169.2,
       "engine_type": "Jet",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/British_Airways_Concorde_G-BOAC_03.jpg",
@@ -702,7 +722,8 @@
       "VE_cruise_ms": 185.67892660231624,
       "CL_cruise": 0.23998448086424146,
       "CL_takeoff": 0.6701964089356932,
-      "CL_landing": 1.2748804945846168
+      "CL_landing": 1.2748804945846168,
+      "thrust_to_weight_ratio": 0.09319558233110903
     },
     {
       "name": "Airbus A320",
@@ -716,7 +737,7 @@
       "takeoff_speed_ms": 76.39,
       "landing_speed_ms": 66.67,
       "service_ceiling_m": 11900,
-      "max_thrust_kN": 120000,
+      "max_thrust_kN": 120,
       "engine_type": "Jet",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Airbus_A320-232%2C_Lufthansa_JP7436571.jpg",
@@ -735,7 +756,8 @@
       "VE_cruise_ms": 122.62254933698776,
       "CL_cruise": 0.6700246822282746,
       "CL_takeoff": 1.7264677220881026,
-      "CL_landing": 2.266577498728212
+      "CL_landing": 2.266577498728212,
+      "thrust_to_weight_ratio": 0.1568258448992394
     },
     {
       "name": "Boeing 747",
@@ -749,7 +771,7 @@
       "takeoff_speed_ms": 80.56,
       "landing_speed_ms": 72.22,
       "service_ceiling_m": 13700,
-      "max_thrust_kN": 282000,
+      "max_thrust_kN": 282,
       "engine_type": "Jet",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Lufthansa_Boeing_747-400_D-ABVX.jpg",
@@ -768,7 +790,8 @@
       "VE_cruise_ms": 117.13548846840274,
       "CL_cruise": 0.8560391239822235,
       "CL_takeoff": 1.809804587411363,
-      "CL_landing": 2.2519338631941412
+      "CL_landing": 2.2519338631941412,
+      "thrust_to_weight_ratio": 0.07242863140784385
     },
     {
       "name": "Embraer E190",
@@ -782,7 +805,7 @@
       "takeoff_speed_ms": 69.44,
       "landing_speed_ms": 63.89,
       "service_ceiling_m": 12500,
-      "max_thrust_kN": 82000,
+      "max_thrust_kN": 82,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Embraer_190_KLM_Cityhopper.jpg",
@@ -804,7 +827,8 @@
       "VE_cruise_ms": 128.6899516755573,
       "CL_cruise": 0.5454014855284928,
       "CL_takeoff": 1.8732087068889995,
-      "CL_landing": 2.2127880420613755
+      "CL_landing": 2.2127880420613755,
+      "thrust_to_weight_ratio": 0.16023452080791808
     },
     {
       "name": "Cessna Citation X",
@@ -818,7 +842,7 @@
       "takeoff_speed_ms": 61.11,
       "landing_speed_ms": 50,
       "service_ceiling_m": 15545,
-      "max_thrust_kN": 31300.0,
+      "max_thrust_kN": 31.3,
       "engine_type": "Jet",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Cessna_Citation_X_N750GF.jpg",
@@ -837,7 +861,8 @@
       "VE_cruise_ms": 102.84052039437537,
       "CL_cruise": 0.5064865377238734,
       "CL_takeoff": 1.4344052634573274,
-      "CL_landing": 2.1426756241056006
+      "CL_landing": 2.1426756241056006,
+      "thrust_to_weight_ratio": 0.19484804342683548
     },
     {
       "name": "Boeing 757-200",
@@ -851,7 +876,7 @@
       "takeoff_speed_ms": 72.22,
       "landing_speed_ms": 61.11,
       "service_ceiling_m": 12800,
-      "max_thrust_kN": 400000,
+      "max_thrust_kN": 400,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/44/American_Airlines_Boeing_757-200.jpg",
@@ -870,7 +895,8 @@
       "VE_cruise_ms": 119.96906778600302,
       "CL_cruise": 0.6947090148696682,
       "CL_takeoff": 1.9170195184478627,
-      "CL_landing": 2.677422665074789
+      "CL_landing": 2.677422665074789,
+      "thrust_to_weight_ratio": 0.3524784966087163
     },
     {
       "name": "Boeing 767-200",
@@ -884,7 +910,7 @@
       "takeoff_speed_ms": 75,
       "landing_speed_ms": 63.89,
       "service_ceiling_m": 13100,
-      "max_thrust_kN": 480000,
+      "max_thrust_kN": 480,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/88/United_Airlines_Boeing_767-222_N606UA.jpg",
@@ -903,7 +929,8 @@
       "VE_cruise_ms": 114.47124380683015,
       "CL_cruise": 0.6164398289345075,
       "CL_takeoff": 1.4360215852539333,
-      "CL_landing": 1.978872068218228
+      "CL_landing": 1.978872068218228,
+      "thrust_to_weight_ratio": 0.34245280393934874
     },
     {
       "name": "Boeing 777-200",
@@ -917,7 +944,7 @@
       "takeoff_speed_ms": 77.78,
       "landing_speed_ms": 66.67,
       "service_ceiling_m": 13100,
-      "max_thrust_kN": 770000,
+      "max_thrust_kN": 770,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/United_Airlines_Boeing_777-200_N786UA.jpg",
@@ -936,7 +963,8 @@
       "VE_cruise_ms": 114.4427717073492,
       "CL_cruise": 0.7066258435542645,
       "CL_takeoff": 1.5297849157775838,
-      "CL_landing": 2.0821180144392937
+      "CL_landing": 2.0821180144392937,
+      "thrust_to_weight_ratio": 0.3175215832203451
     },
     {
       "name": "Airbus A300B4",
@@ -950,7 +978,7 @@
       "takeoff_speed_ms": 75,
       "landing_speed_ms": 63.89,
       "service_ceiling_m": 12200,
-      "max_thrust_kN": 480000,
+      "max_thrust_kN": 480,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Lufthansa_Airbus_A300B4-603_D-AIAS.jpg",
@@ -969,7 +997,8 @@
       "VE_cruise_ms": 134.51103889211018,
       "CL_cruise": 0.561763228513414,
       "CL_takeoff": 1.806952079576382,
-      "CL_landing": 2.4900231553624197
+      "CL_landing": 2.4900231553624197,
+      "thrust_to_weight_ratio": 0.29654341580947086
     },
     {
       "name": "Airbus A310-300",
@@ -983,7 +1012,7 @@
       "takeoff_speed_ms": 72.22,
       "landing_speed_ms": 63.89,
       "service_ceiling_m": 12500,
-      "max_thrust_kN": 420000,
+      "max_thrust_kN": 420,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Air_Transat_Airbus_A310-308_C-GTSF.jpg",
@@ -1002,7 +1031,8 @@
       "VE_cruise_ms": 119.96906778600302,
       "CL_cruise": 0.7621968359109744,
       "CL_takeoff": 2.103249245462377,
-      "CL_landing": 2.6874471581329558
+      "CL_landing": 2.6874471581329558,
+      "thrust_to_weight_ratio": 0.2854230377166157
     },
     {
       "name": "Airbus A330-300",
@@ -1016,7 +1046,7 @@
       "takeoff_speed_ms": 75,
       "landing_speed_ms": 66.67,
       "service_ceiling_m": 12500,
-      "max_thrust_kN": 640000,
+      "max_thrust_kN": 640,
       "engine_type": "Turbofan",
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Turkish_Airlines_Airbus_A330-300_TC-JNL.jpg",
@@ -1035,7 +1065,8 @@
       "VE_cruise_ms": 117.15881689844954,
       "CL_cruise": 0.7518584934739466,
       "CL_takeoff": 1.8346935669874163,
-      "CL_landing": 2.3218018597279713
+      "CL_landing": 2.3218018597279713,
+      "thrust_to_weight_ratio": 0.27999807501323426
     },
     {
       "name": "Airbus A340-300",
@@ -1049,7 +1080,7 @@
       "takeoff_speed_ms": 77.78,
       "landing_speed_ms": 66.67,
       "service_ceiling_m": 12500,
-      "max_thrust_kN": 680000,
+      "max_thrust_kN": 680,
       "engine_type": "Turbofan",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/81/Lufthansa_Airbus_A340-300_D-AIGO.jpg",
@@ -1068,7 +1099,8 @@
       "VE_cruise_ms": 117.15881689844954,
       "CL_cruise": 0.8920295631613201,
       "CL_takeoff": 2.0239199204124483,
-      "CL_landing": 2.7546618368447695
+      "CL_landing": 2.7546618368447695,
+      "thrust_to_weight_ratio": 0.2507499451484495
     },
     {
       "name": "Boeing 314 Clipper",
@@ -1082,7 +1114,7 @@
       "takeoff_speed_ms": 38.89,
       "landing_speed_ms": 36.11,
       "service_ceiling_m": 6000,
-      "max_thrust_kN": 30000,
+      "max_thrust_kN": 30,
       "engine_type": "Piston",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Boeing_314_Clipper_on_the_water.jpg",
@@ -1101,7 +1133,8 @@
       "VE_cruise_ms": 68.28488396468019,
       "CL_cruise": 0.5220991692615635,
       "CL_takeoff": 1.6096307770127323,
-      "CL_landing": 1.867012290212043
+      "CL_landing": 1.867012290212043,
+      "thrust_to_weight_ratio": 0.08047642040882022
     },
     {
       "name": "Boeing 377 Stratocruiser",
@@ -1115,7 +1148,7 @@
       "takeoff_speed_ms": 50,
       "landing_speed_ms": 44.44,
       "service_ceiling_m": 9700,
-      "max_thrust_kN": 40000,
+      "max_thrust_kN": 40,
       "engine_type": "Piston",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Boeing_377_Stratocruiser_Pan_Am_Clipper_Rainbow.jpg",
@@ -1134,7 +1167,8 @@
       "VE_cruise_ms": 98.06121601760016,
       "CL_cruise": 0.6678487562428139,
       "CL_takeoff": 2.568814013492548,
-      "CL_landing": 3.251805564421335
+      "CL_landing": 3.251805564421335,
+      "thrust_to_weight_ratio": 0.06177987829363976
     },
     {
       "name": "Boeing 307 Stratoliner",
@@ -1148,7 +1182,7 @@
       "takeoff_speed_ms": 41.67,
       "landing_speed_ms": 38.89,
       "service_ceiling_m": 7900,
-      "max_thrust_kN": 25000,
+      "max_thrust_kN": 25,
       "engine_type": "Piston",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Boeing_307_Stratoliner_NC19903_TWA.jpg",
@@ -1167,7 +1201,8 @@
       "VE_cruise_ms": 70.9486153008602,
       "CL_cruise": 0.4380717349439209,
       "CL_takeoff": 1.2699484121100435,
-      "CL_landing": 1.4579988922216778
+      "CL_landing": 1.4579988922216778,
+      "thrust_to_weight_ratio": 0.13412736734803368
     },
     {
       "name": "Lockheed Constellation",
@@ -1181,7 +1216,7 @@
       "takeoff_speed_ms": 47.22,
       "landing_speed_ms": 41.67,
       "service_ceiling_m": 7600,
-      "max_thrust_kN": 35000,
+      "max_thrust_kN": 35,
       "engine_type": "Piston",
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Lockheed_L-1049G_Super_Constellation_HB-RSC.jpg",
@@ -1200,7 +1235,8 @@
       "VE_cruise_ms": 105.34081876703242,
       "CL_cruise": 0.507750741773612,
       "CL_takeoff": 2.5269228365428895,
-      "CL_landing": 3.2448673296910835
+      "CL_landing": 3.2448673296910835,
+      "thrust_to_weight_ratio": 0.06607014761958696
     },
     {
       "name": "Hawker Siddeley Trident",
@@ -1214,7 +1250,7 @@
       "takeoff_speed_ms": 72.22,
       "landing_speed_ms": 63.89,
       "service_ceiling_m": 11900,
-      "max_thrust_kN": 180000,
+      "max_thrust_kN": 180,
       "engine_type": "Jet",
       "engine_count": 3,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Hawker_Siddeley_Trident_1C_G-ARPO.jpg",
@@ -1233,7 +1269,8 @@
       "VE_cruise_ms": 136.05279243094887,
       "CL_cruise": 0.39024848380096105,
       "CL_takeoff": 1.3849725827766348,
-      "CL_landing": 1.7696621737557674
+      "CL_landing": 1.7696621737557674,
+      "thrust_to_weight_ratio": 0.286697247706422
     }
   ]
 }

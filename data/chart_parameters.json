@@ -1,0 +1,180 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "description": "Configuration file for comparative chart parameters"
+  },
+  "parameters": {
+    "mtow_N": {
+      "label": "Maximum Takeoff Weight (N)",
+      "description": "Maximum allowed weight for takeoff",
+      "scale": "log",
+      "category": "weight"
+    },
+    "empty_weight_N": {
+      "label": "Empty Weight (N)",
+      "description": "Aircraft weight without fuel, payload, or crew",
+      "scale": "log",
+      "category": "weight"
+    },
+    "max_payload_N": {
+      "label": "Maximum Payload (N)",
+      "description": "Maximum allowed payload weight",
+      "scale": "log",
+      "category": "weight"
+    },
+    "useful_load_N": {
+      "label": "Useful Load (N)",
+      "description": "Difference between MTOW and empty weight",
+      "scale": "log",
+      "category": "weight"
+    },
+    "wing_area_m2": {
+      "label": "Wing Area (m²)",
+      "description": "Total wing planform area",
+      "scale": "log",
+      "category": "geometry"
+    },
+    "wingspan_m": {
+      "label": "Wingspan (m)",
+      "description": "Total wing span",
+      "scale": "linear",
+      "category": "geometry"
+    },
+    "length_m": {
+      "label": "Length (m)",
+      "description": "Aircraft total length",
+      "scale": "linear",
+      "category": "geometry"
+    },
+    "height_m": {
+      "label": "Height (m)",
+      "description": "Aircraft total height",
+      "scale": "linear",
+      "category": "geometry"
+    },
+    "aspect_ratio": {
+      "label": "Aspect Ratio",
+      "description": "Wing span squared divided by wing area",
+      "scale": "linear",
+      "category": "geometry"
+    },
+    "wing_loading_Nm2": {
+      "label": "Wing Loading (N/m²)",
+      "description": "Weight force per unit wing area",
+      "scale": "log",
+      "category": "performance"
+    },
+    "cruise_speed_ms": {
+      "label": "True Airspeed (m/s)",
+      "description": "Cruise speed relative to the air",
+      "scale": "log",
+      "category": "performance"
+    },
+    "VE_cruise_ms": {
+      "label": "Equivalent Airspeed (m/s)",
+      "description": "Equivalent airspeed at cruise conditions",
+      "scale": "log",
+      "category": "performance"
+    },
+    "takeoff_speed_ms": {
+      "label": "Takeoff Speed (m/s)",
+      "description": "Typical takeoff speed",
+      "scale": "log",
+      "category": "performance"
+    },
+    "landing_speed_ms": {
+      "label": "Landing Speed (m/s)",
+      "description": "Typical landing speed",
+      "scale": "log",
+      "category": "performance"
+    },
+    "max_speed_ms": {
+      "label": "Maximum Speed (m/s)",
+      "description": "Maximum achievable speed",
+      "scale": "log",
+      "category": "performance"
+    },
+    "max_thrust_kN": {
+      "label": "Maximum Thrust (kN)",
+      "description": "Maximum thrust per engine",
+      "scale": "log",
+      "category": "propulsion"
+    },
+    "thrust_to_weight_ratio": {
+      "label": "Thrust-to-Weight Ratio",
+      "description": "Ratio of total thrust to maximum takeoff weight",
+      "scale": "log",
+      "category": "propulsion"
+    },
+    "max_power_kW": {
+      "label": "Maximum Power (kW)",
+      "description": "Maximum engine power output",
+      "scale": "log",
+      "category": "propulsion"
+    },
+    "cruise_altitude_m": {
+      "label": "Cruise Altitude (m)",
+      "description": "Typical cruise altitude",
+      "scale": "log",
+      "category": "performance"
+    },
+    "service_ceiling_m": {
+      "label": "Service Ceiling (m)",
+      "description": "Maximum operational altitude",
+      "scale": "log",
+      "category": "performance"
+    },
+    "range_km": {
+      "label": "Range (km)",
+      "description": "Maximum flight range",
+      "scale": "log",
+      "category": "performance"
+    },
+    "max_roc_ms": {
+      "label": "Maximum Rate of Climb (m/s)",
+      "description": "Maximum vertical speed",
+      "scale": "log",
+      "category": "performance"
+    },
+    "CL_cruise": {
+      "label": "Cruise Lift Coefficient",
+      "description": "Lift coefficient at cruise conditions",
+      "scale": "log",
+      "category": "aerodynamics"
+    },
+    "CL_takeoff": {
+      "label": "Takeoff Lift Coefficient",
+      "description": "Lift coefficient at takeoff",
+      "scale": "log",
+      "category": "aerodynamics"
+    },
+    "CL_landing": {
+      "label": "Landing Lift Coefficient",
+      "description": "Lift coefficient at landing",
+      "scale": "log",
+      "category": "aerodynamics"
+    }
+  },
+  "categories": {
+    "weight": {
+      "label": "Weight Parameters",
+      "color": "#1f77b4"
+    },
+    "geometry": {
+      "label": "Geometric Parameters",
+      "color": "#2ca02c"
+    },
+    "performance": {
+      "label": "Performance Parameters",
+      "color": "#ff7f0e"
+    },
+    "propulsion": {
+      "label": "Propulsion Parameters",
+      "color": "#d62728"
+    },
+    "aerodynamics": {
+      "label": "Aerodynamic Parameters",
+      "color": "#9467bd"
+    }
+  }
+} 

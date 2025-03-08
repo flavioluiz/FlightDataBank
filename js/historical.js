@@ -14,12 +14,16 @@ function initializeControls() {
     // Get timeline controls
     const controls = {
         param: document.getElementById('timeline-param'),
+        colorGroup: document.getElementById('color-group'),
         logScale: document.getElementById('timeline-log-scale')
     };
     
     // Set default values
     if (controls.param) {
         controls.param.value = 'cruise_speed_ms';
+    }
+    if (controls.colorGroup) {
+        controls.colorGroup.value = 'category_type';
     }
     
     // Add event listeners
@@ -86,10 +90,11 @@ function updateTimelineChart() {
     
     // Get selected parameter and scale
     const param = document.getElementById('timeline-param')?.value;
+    const colorGroup = document.getElementById('color-group')?.value;
     const logScale = document.getElementById('timeline-log-scale')?.checked || false;
     
-    if (!param) {
-        console.error('Missing parameter for timeline chart');
+    if (!param || !colorGroup) {
+        console.error('Missing parameters for timeline chart');
         return;
     }
 
@@ -119,11 +124,11 @@ function updateTimelineChart() {
             y: parseFloat(aircraft[param]),
             id: aircraft.id,
             name: aircraft.name,
-            category: aircraft.category_type
+            category: aircraft[colorGroup] || 'unknown'
         }));
 
         console.log(`Processed ${data.length} valid data points for timeline`);
-        renderTimelineChart(data, param, logScale);
+        renderTimelineChart(data, param, colorGroup, logScale);
     } catch (error) {
         console.error('Error updating timeline chart:', error);
         showAlert('Error updating timeline chart: ' + error.message, 'danger');
@@ -131,7 +136,7 @@ function updateTimelineChart() {
 }
 
 // Render timeline chart
-function renderTimelineChart(data, param, logScale) {
+function renderTimelineChart(data, param, colorGroup, logScale) {
     console.log(`Rendering timeline chart with ${data.length} items`);
     
     const canvas = document.getElementById('timeline-chart');
@@ -146,16 +151,60 @@ function renderTimelineChart(data, param, logScale) {
         existingChart.destroy();
     }
 
-    // Category colors
-    const categoryColors = {
-        'ave': 'rgba(255, 99, 132, 0.7)',
-        'comercial': 'rgba(54, 162, 235, 0.7)',
-        'militar': 'rgba(255, 206, 86, 0.7)',
-        'geral': 'rgba(75, 192, 192, 0.7)',
-        'historica': 'rgba(153, 102, 255, 0.7)',
-        'executiva': 'rgba(255, 159, 64, 0.7)',
-        'carga': 'rgba(201, 203, 207, 0.7)',
-        'experimental': 'rgba(255, 99, 71, 0.7)'
+    // Color palettes for different groupings
+    const colorPalettes = {
+        category_type: {
+            'ave': 'rgba(255, 99, 132, 0.7)',
+            'comercial': 'rgba(54, 162, 235, 0.7)',
+            'militar': 'rgba(255, 206, 86, 0.7)',
+            'geral': 'rgba(75, 192, 192, 0.7)',
+            'historica': 'rgba(153, 102, 255, 0.7)',
+            'executiva': 'rgba(255, 159, 64, 0.7)',
+            'carga': 'rgba(201, 203, 207, 0.7)',
+            'experimental': 'rgba(255, 99, 71, 0.7)'
+        },
+        category_era: {
+            'pioneiro': 'rgba(141, 110, 99, 0.7)',
+            'classico': 'rgba(120, 144, 156, 0.7)',
+            'jato': 'rgba(38, 166, 154, 0.7)',
+            'moderno': 'rgba(121, 134, 203, 0.7)',
+            'contemporaneo': 'rgba(3, 169, 244, 0.7)',
+            'ave': 'rgba(255, 99, 132, 0.7)'
+        },
+        category_size: {
+            'muito_leve': 'rgba(156, 204, 101, 0.7)',
+            'regional': 'rgba(255, 183, 77, 0.7)',
+            'medio': 'rgba(229, 115, 115, 0.7)',
+            'grande': 'rgba(124, 77, 255, 0.7)',
+            'muito_grande': 'rgba(0, 151, 167, 0.7)'
+        },
+        engine_type: {
+            'pistao': 'rgba(141, 110, 99, 0.7)',
+            'turboprop': 'rgba(96, 125, 139, 0.7)',
+            'jato': 'rgba(0, 151, 167, 0.7)',
+            'eletrico': 'rgba(76, 175, 80, 0.7)',
+            'foguete': 'rgba(244, 67, 54, 0.7)',
+            'nenhum': 'rgba(189, 189, 189, 0.7)'
+        }
+    };
+
+    // Get the appropriate color palette
+    const categoryColors = colorPalettes[colorGroup] || {};
+
+    // Get the appropriate category name function
+    const getCategoryLabel = (category) => {
+        switch (colorGroup) {
+            case 'category_type':
+                return getCategoryName(category);
+            case 'category_era':
+                return getCategoryEra(category);
+            case 'category_size':
+                return getCategorySize(category);
+            case 'engine_type':
+                return category.charAt(0).toUpperCase() + category.slice(1);
+            default:
+                return category;
+        }
     };
 
     // Group data by category
@@ -168,7 +217,7 @@ function renderTimelineChart(data, param, logScale) {
             return acc;
         }, {})
     ).map(([category, items]) => ({
-        label: getCategoryName(category),
+        label: getCategoryLabel(category),
         data: items,
         backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
         borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
@@ -223,6 +272,12 @@ function renderTimelineChart(data, param, logScale) {
                             const point = context.raw;
                             return `${point.name}: ${point.x.toLocaleString()}, ${point.y.toLocaleString()}`;
                         }
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    labels: {
+                        padding: 20
                     }
                 }
             },

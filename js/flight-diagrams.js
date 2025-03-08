@@ -14,6 +14,7 @@ function initializeControls() {
     // Get controls
     const controls = {
         chartType: document.getElementById('x-axis-param'),
+        colorGroup: document.getElementById('color-group'),
         showTrendlines: document.getElementById('showTrendlines'),
         xLogScale: document.getElementById('xLogScale'),
         yLogScale: document.getElementById('yLogScale')
@@ -21,6 +22,7 @@ function initializeControls() {
 
     // Set default values
     if (controls.chartType) controls.chartType.value = 'wing_loading_mtow';
+    if (controls.colorGroup) controls.colorGroup.value = 'category_type';
 
     // Add event listeners
     Object.entries(controls).forEach(([key, element]) => {
@@ -86,12 +88,13 @@ function updateFlightDiagram() {
     
     // Get selected parameters
     const chartType = document.getElementById('x-axis-param')?.value;
+    const colorGroup = document.getElementById('color-group')?.value;
     const showTrendlines = document.getElementById('showTrendlines')?.checked || false;
     const xLogScale = document.getElementById('xLogScale')?.checked || false;
     const yLogScale = document.getElementById('yLogScale')?.checked || false;
     
-    if (!chartType) {
-        console.error('Missing chart type for flight diagram');
+    if (!chartType || !colorGroup) {
+        console.error('Missing parameters for flight diagram');
         return;
     }
 
@@ -106,18 +109,18 @@ function updateFlightDiagram() {
         let data = [];
         switch (chartType) {
             case 'wing_loading_mtow':
-                data = processWingLoadingMTOWData(window.aircraftData);
+                data = processWingLoadingMTOWData(window.aircraftData, colorGroup);
                 break;
             case 'speed_mtow':
-                data = processSpeedMTOWData(window.aircraftData);
+                data = processSpeedMTOWData(window.aircraftData, colorGroup);
                 break;
             case 'wing_loading_speed':
-                data = processWingLoadingSpeedData(window.aircraftData);
+                data = processWingLoadingSpeedData(window.aircraftData, colorGroup);
                 break;
         }
 
         console.log(`Processed ${data.length} valid data points for flight diagram`);
-        renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogScale);
+        renderFlightDiagram(data, chartType, colorGroup, showTrendlines, xLogScale, yLogScale);
     } catch (error) {
         console.error('Error updating flight diagram:', error);
         showAlert('Error updating flight diagram: ' + error.message, 'danger');
@@ -125,7 +128,7 @@ function updateFlightDiagram() {
 }
 
 // Process data for Wing Loading vs MTOW chart
-function processWingLoadingMTOWData(data) {
+function processWingLoadingMTOWData(data, colorGroup) {
     return data.filter(aircraft => {
         const hasMTOW = aircraft.mtow_N !== undefined && aircraft.mtow_N !== null && !isNaN(aircraft.mtow_N);
         const hasWingArea = aircraft.wing_area_m2 !== undefined && aircraft.wing_area_m2 !== null && !isNaN(aircraft.wing_area_m2);
@@ -142,12 +145,12 @@ function processWingLoadingMTOWData(data) {
         y: parseFloat(aircraft.mtow_N) / parseFloat(aircraft.wing_area_m2),
         id: aircraft.id,
         name: aircraft.name,
-        category: aircraft.category_type
+        category: aircraft[colorGroup] || 'unknown'
     }));
 }
 
 // Process data for Speed vs MTOW chart
-function processSpeedMTOWData(data) {
+function processSpeedMTOWData(data, colorGroup) {
     return data.filter(aircraft => {
         const hasMTOW = aircraft.mtow_N !== undefined && aircraft.mtow_N !== null && !isNaN(aircraft.mtow_N);
         const hasSpeed = aircraft.cruise_speed_ms !== undefined && aircraft.cruise_speed_ms !== null && !isNaN(aircraft.cruise_speed_ms);
@@ -164,13 +167,13 @@ function processSpeedMTOWData(data) {
         y: parseFloat(aircraft.cruise_speed_ms),
         id: aircraft.id,
         name: aircraft.name,
-        category: aircraft.category_type,
+        category: aircraft[colorGroup] || 'unknown',
         cruiseAltitude: aircraft.cruise_altitude_m
     }));
 }
 
 // Process data for Wing Loading vs Speed chart
-function processWingLoadingSpeedData(data) {
+function processWingLoadingSpeedData(data, colorGroup) {
     return data.filter(aircraft => {
         const hasMTOW = aircraft.mtow_N !== undefined && aircraft.mtow_N !== null && !isNaN(aircraft.mtow_N);
         const hasWingArea = aircraft.wing_area_m2 !== undefined && aircraft.wing_area_m2 !== null && !isNaN(aircraft.wing_area_m2);
@@ -188,13 +191,13 @@ function processWingLoadingSpeedData(data) {
         y: parseFloat(aircraft.mtow_N) / parseFloat(aircraft.wing_area_m2),
         id: aircraft.id,
         name: aircraft.name,
-        category: aircraft.category_type,
+        category: aircraft[colorGroup] || 'unknown',
         cruiseAltitude: aircraft.cruise_altitude_m
     }));
 }
 
 // Render flight diagram
-function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogScale) {
+function renderFlightDiagram(data, chartType, colorGroup, showTrendlines, xLogScale, yLogScale) {
     console.log(`Rendering flight diagram with ${data.length} items`);
     
     const canvas = document.getElementById('flight-diagram');
@@ -209,16 +212,60 @@ function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogSca
         existingChart.destroy();
     }
 
-    // Category colors
-    const categoryColors = {
-        'ave': 'rgba(255, 99, 132, 0.7)',
-        'comercial': 'rgba(54, 162, 235, 0.7)',
-        'militar': 'rgba(255, 206, 86, 0.7)',
-        'geral': 'rgba(75, 192, 192, 0.7)',
-        'historica': 'rgba(153, 102, 255, 0.7)',
-        'executiva': 'rgba(255, 159, 64, 0.7)',
-        'carga': 'rgba(201, 203, 207, 0.7)',
-        'experimental': 'rgba(255, 99, 71, 0.7)'
+    // Color palettes for different groupings
+    const colorPalettes = {
+        category_type: {
+            'ave': 'rgba(255, 99, 132, 0.7)',
+            'comercial': 'rgba(54, 162, 235, 0.7)',
+            'militar': 'rgba(255, 206, 86, 0.7)',
+            'geral': 'rgba(75, 192, 192, 0.7)',
+            'historica': 'rgba(153, 102, 255, 0.7)',
+            'executiva': 'rgba(255, 159, 64, 0.7)',
+            'carga': 'rgba(201, 203, 207, 0.7)',
+            'experimental': 'rgba(255, 99, 71, 0.7)'
+        },
+        category_era: {
+            'pioneiro': 'rgba(141, 110, 99, 0.7)',
+            'classico': 'rgba(120, 144, 156, 0.7)',
+            'jato': 'rgba(38, 166, 154, 0.7)',
+            'moderno': 'rgba(121, 134, 203, 0.7)',
+            'contemporaneo': 'rgba(3, 169, 244, 0.7)',
+            'ave': 'rgba(255, 99, 132, 0.7)'
+        },
+        category_size: {
+            'muito_leve': 'rgba(156, 204, 101, 0.7)',
+            'regional': 'rgba(255, 183, 77, 0.7)',
+            'medio': 'rgba(229, 115, 115, 0.7)',
+            'grande': 'rgba(124, 77, 255, 0.7)',
+            'muito_grande': 'rgba(0, 151, 167, 0.7)'
+        },
+        engine_type: {
+            'pistao': 'rgba(141, 110, 99, 0.7)',
+            'turboprop': 'rgba(96, 125, 139, 0.7)',
+            'jato': 'rgba(0, 151, 167, 0.7)',
+            'eletrico': 'rgba(76, 175, 80, 0.7)',
+            'foguete': 'rgba(244, 67, 54, 0.7)',
+            'nenhum': 'rgba(189, 189, 189, 0.7)'
+        }
+    };
+
+    // Get the appropriate color palette
+    const categoryColors = colorPalettes[colorGroup] || {};
+
+    // Get the appropriate category name function
+    const getCategoryLabel = (category) => {
+        switch (colorGroup) {
+            case 'category_type':
+                return getCategoryName(category);
+            case 'category_era':
+                return getCategoryEra(category);
+            case 'category_size':
+                return getCategorySize(category);
+            case 'engine_type':
+                return category.charAt(0).toUpperCase() + category.slice(1);
+            default:
+                return category;
+        }
     };
 
     // Group data by category
@@ -231,7 +278,7 @@ function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogSca
             return acc;
         }, {})
     ).map(([category, items]) => ({
-        label: getCategoryName(category),
+        label: getCategoryLabel(category),
         data: items,
         backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
         borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
@@ -270,16 +317,17 @@ function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogSca
             scales: {
                 x: {
                     type: xLogScale ? 'logarithmic' : 'linear',
+                    position: 'bottom',
                     title: {
                         display: true,
-                        text: axisLabels[chartType]?.x || 'X'
+                        text: axisLabels[chartType]?.x || ''
                     }
                 },
                 y: {
                     type: yLogScale ? 'logarithmic' : 'linear',
                     title: {
                         display: true,
-                        text: axisLabels[chartType]?.y || 'Y'
+                        text: axisLabels[chartType]?.y || ''
                     }
                 }
             },
@@ -288,30 +336,14 @@ function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogSca
                     callbacks: {
                         label: function(context) {
                             const point = context.raw;
-                            if (point.isTrendline) {
-                                return point.name;
-                            }
-                            
-                            let label = `${point.name}: `;
-                            switch (chartType) {
-                                case 'wing_loading_mtow':
-                                    label += `MTOW ${point.x.toLocaleString()} N, Wing Loading ${point.y.toLocaleString()} N/m²`;
-                                    break;
-                                case 'speed_mtow':
-                                    label += `MTOW ${point.x.toLocaleString()} N, Speed ${point.y.toFixed(1)} m/s`;
-                                    if (point.cruiseAltitude) {
-                                        label += ` (Alt: ${point.cruiseAltitude.toLocaleString()}m)`;
-                                    }
-                                    break;
-                                case 'wing_loading_speed':
-                                    label += `Speed ${point.x.toFixed(1)} m/s, Wing Loading ${point.y.toLocaleString()} N/m²`;
-                                    if (point.cruiseAltitude) {
-                                        label += ` (Alt: ${point.cruiseAltitude.toLocaleString()}m)`;
-                                    }
-                                    break;
-                            }
-                            return label;
+                            return `${point.name}: ${point.x.toLocaleString()}, ${point.y.toLocaleString()}`;
                         }
+                    }
+                },
+                legend: {
+                    position: 'right',
+                    labels: {
+                        padding: 20
                     }
                 }
             },
@@ -320,9 +352,7 @@ function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogSca
                     const index = elements[0].index;
                     const datasetIndex = elements[0].datasetIndex;
                     const point = datasets[datasetIndex].data[index];
-                    if (!point.isTrendline) {
-                        viewAircraftDetails(point.id);
-                    }
+                    viewAircraftDetails(point.id);
                 }
             }
         }

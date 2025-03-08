@@ -1,26 +1,24 @@
 #!/bin/bash
 
-echo "Atualizando branch gh-pages..."
+echo "Updating gh-pages branch..."
 
-# Salvar o branch atual
+# Save current branch
 CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
 
-# Mudar para o branch gh-pages
+# Switch to gh-pages branch
 git checkout gh-pages
 
-# Atualizar o branch gh-pages com o conteúdo da pasta docs do main
-git checkout main -- docs/* data/* images/* js/*
-mv docs/* .
-rmdir docs
+# Copy all necessary files from main branch
+git checkout main -- *.html data/* images/* js/* styles.css
 
-# Commitar as alterações
+# Commit changes
 git add .
-git commit -m "chore: sync with docs folder"
+git commit -m "chore: sync with main branch"
 
-# Fazer push das alterações
+# Push changes
 git push origin gh-pages
 
-# Voltar para o branch original
+# Return to original branch
 git checkout $CURRENT_BRANCH
 
-echo "Deploy concluído! O site estará disponível em alguns minutos em https://flavioluiz.github.io/FlightDataBank/" 
+echo "Deployment completed! The site will be available in a few minutes at https://flavioluiz.github.io/FlightDataBank/" 

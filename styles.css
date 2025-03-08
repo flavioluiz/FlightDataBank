@@ -1,12 +1,284 @@
-/* Estilos gerais */
+/* General styles */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     background-color: #f8f9fa;
     color: #333;
 }
 
+.navbar-nav {
+    margin-right: 20px;
+}
+
+.navbar-brand i {
+    margin-right: 5px;
+}
+
+/* Table styles */
+.table th[data-sort] {
+    cursor: pointer;
+    user-select: none;
+}
+
+.table th[data-sort]:hover {
+    background-color: #f8f9fa;
+}
+
+.table th[data-sort]::after {
+    content: '⇅';
+    margin-left: 5px;
+    opacity: 0.3;
+}
+
+.table th[data-sort].sort-asc::after {
+    content: '↑';
+    opacity: 1;
+}
+
+.table th[data-sort].sort-desc::after {
+    content: '↓';
+    opacity: 1;
+}
+
+/* Chart container styles */
+.chart-container {
+    position: relative;
+    height: 70vh;
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+/* Filter styles */
+.filter-section {
+    margin-bottom: 2rem;
+}
+
+.filter-section .form-label {
+    font-weight: 500;
+}
+
+/* Modal styles */
+.modal-body img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Alert styles */
+.alert {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 400px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 50vh;
+    }
+
+    .alert {
+        left: 20px;
+        right: 20px;
+    }
+}
+
+/* Navbar styles */
+.navbar {
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: 500;
+    font-size: 1.4rem;
+}
+
 .navbar-brand i {
     margin-right: 8px;
+    font-size: 1.2rem;
+}
+
+.navbar-light .navbar-nav .nav-link {
+    color: rgba(255,255,255,0.9) !important;
+    font-weight: 500;
+}
+
+.navbar-light .navbar-nav .nav-link:hover {
+    color: rgba(255,255,255,1) !important;
+}
+
+.navbar-light .navbar-nav .nav-link.active {
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+.navbar-light .navbar-toggler {
+    border-color: rgba(255,255,255,0.5);
+}
+
+.navbar-light .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 0.9%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* Card styles */
+.card {
+    margin-bottom: 2rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.card-title {
+    font-weight: 500;
+}
+
+/* Button styles */
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Form control styles */
+.form-control:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Table hover effect */
+.table-hover tbody tr:hover {
+    background-color: rgba(0,0,0,.075);
+    cursor: pointer;
+}
+
+/* Aircraft name link styles */
+.aircraft-name a {
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.aircraft-name a:hover {
+    text-decoration: underline;
+}
+
+/* Chart legend styles */
+.chart-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+}
+
+/* Loading indicator styles */
+.loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #0d6efd;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Tooltip styles */
+[data-bs-toggle="tooltip"] {
+    cursor: help;
+}
+
+/* Modal transition styles */
+.modal.fade .modal-dialog {
+    transition: transform .3s ease-out;
+    transform: translate(0,-50px);
+}
+
+.modal.show .modal-dialog {
+    transform: none;
+}
+
+/* Chart control styles */
+.chart-controls {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.chart-controls .form-check {
+    margin-bottom: 0.5rem;
+}
+
+/* Table responsive styles */
+.table-responsive {
+    margin-bottom: 1rem;
+    border-radius: 0.25rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Search input styles */
+.input-group .form-control:focus {
+    z-index: 3;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+/* Filter select styles */
+.form-select:focus {
+    border-color: #86b7fe;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Page header styles */
+h2 {
+    color: #212529;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+/* Chart axis label styles */
+.chart-axis-label {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Modal header styles */
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.modal-title {
+    color: #212529;
+    font-weight: 500;
 }
 
 /* Estilos para os gráficos */
@@ -216,4 +488,49 @@ body {
     .chart-container {
         height: 40vh;
     }
+}
+
+/* Home page styles */
+.display-4 {
+    color: #1a237e;
+    font-weight: 600;
+}
+
+.lead {
+    color: #455a64;
+    font-size: 1.25rem;
+    line-height: 1.8;
+}
+
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+.card-title {
+    color: #1a237e;
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.card-title i {
+    color: #1976d2;
+}
+
+.card-text {
+    color: #455a64;
+    line-height: 1.6;
+}
+
+.btn-primary {
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 } 

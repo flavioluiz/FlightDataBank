@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlightDataBank - Aircraft List</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="index.html">
+                <i class="fas fa-plane"></i> FlightDataBank
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="aircraft-list.html">Aircraft List</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="comparative.html">Comparative Charts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="flight-diagrams.html">Flight Diagrams</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="historical.html">Historical Evolution</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="about.html">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h2>Aircraft List</h2>
+        
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label for="category-type-filter" class="form-label">Category Type</label>
+                    <select class="form-select" id="category-type-filter">
+                        <option value="all">All Types</option>
+                        <option value="comercial">Commercial Aviation</option>
+                        <option value="executiva">Business Aircraft</option>
+                        <option value="carga">Cargo Aviation</option>
+                        <option value="militar">Military Aviation</option>
+                        <option value="geral">General Aviation</option>
+                        <option value="historica">Historical Aircraft</option>
+                        <option value="experimental">Experimental Aircraft</option>
+                        <option value="ave">Bird</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label for="category-era-filter" class="form-label">Era</label>
+                    <select class="form-select" id="category-era-filter">
+                        <option value="all">All Eras</option>
+                        <option value="pioneiro">Pioneer</option>
+                        <option value="entreguerras">Interwar</option>
+                        <option value="ww2">World War II</option>
+                        <option value="pos-guerra">Post-War</option>
+                        <option value="jato">Jet Age</option>
+                        <option value="moderno">Modern</option>
+                        <option value="contemporaneo">Contemporary</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label for="category-engine-filter" class="form-label">Engine Type</label>
+                    <select class="form-select" id="category-engine-filter">
+                        <option value="all">All Types</option>
+                        <option value="pistao">Piston</option>
+                        <option value="turbohelice">Turboprop</option>
+                        <option value="jato">Jet</option>
+                        <option value="eletrico">Electric</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="mb-3">
+                    <label for="category-size-filter" class="form-label">Size</label>
+                    <select class="form-select" id="category-size-filter">
+                        <option value="all">All Sizes</option>
+                        <option value="pequeno">Small</option>
+                        <option value="medio">Medium</option>
+                        <option value="grande">Large</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col">
+                <div class="input-group">
+                    <span class="input-group-text">Search</span>
+                    <input type="text" class="form-control" id="aircraft-search" placeholder="Search by name...">
+                </div>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-hover" id="aircraft-table">
+                <thead>
+                    <tr>
+                        <th data-sort="name">Name</th>
+                        <th data-sort="category_type">Category</th>
+                        <th data-sort="category_era">Era</th>
+                        <th data-sort="first_flight_year">First Flight</th>
+                        <th data-sort="mtow_N">MTOW (N)</th>
+                        <th data-sort="wing_area_m2">Wing Area (m²)</th>
+                        <th data-sort="wingspan_m">Wingspan (m)</th>
+                        <th data-sort="cruise_speed_ms">Cruise Speed (m/s)</th>
+                        <th data-sort="range_km">Range (km)</th>
+                    </tr>
+                </thead>
+                <tbody id="aircraft-table-body">
+                    <!-- Data will be dynamically loaded -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal for aircraft details -->
+    <div class="modal fade" id="aircraft-details-modal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Aircraft Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="aircraft-details-content">
+                    <!-- Content will be dynamically loaded -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/aircraft-list.js"></script>
+</body>
+</html> 

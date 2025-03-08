@@ -59,74 +59,205 @@ let speedYearChartInstance = null;
 let speedType = 'tas'; // 'tas' para True Airspeed, 've' para Equivalent Airspeed
 
 // Inicialização
-document.addEventListener('DOMContentLoaded', async function() {
-    console.log('DOM carregado, inicializando aplicação...');
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize components
+    initializeNavigation();
+    initializeFilters();
+    initializeTable();
+    initializeCharts();
+    initializeTimeline();
+    initializeAircraftModal();
     
-    // Inicializar modal de detalhes
-    const detailsModalElement = document.getElementById('aircraft-details-modal');
-    if (detailsModalElement) {
-        aircraftDetailsModal = new bootstrap.Modal(detailsModalElement);
+    // Load data
+    loadAircraftData();
+});
+
+// Function to initialize navigation
+function initializeNavigation() {
+    console.log('Initializing navigation...');
+    setupNavigation();
+    
+    // Set initial active page
+    const defaultPage = 'scatter-plot';
+    const defaultLink = document.querySelector(`[data-page="${defaultPage}"]`);
+    if (defaultLink) {
+        defaultLink.classList.add('active');
+        pages.forEach(page => {
+            page.classList.toggle('d-none', page.id !== defaultPage);
+        });
     }
     
-    // Configurar switches de velocidade
-    const speedToggles = document.querySelectorAll('.speed-type-toggle');
-    speedToggles.forEach(toggle => {
-        toggle.addEventListener('change', (event) => {
-            showEquivalentSpeed = event.target.checked;
+    console.log('Navigation initialized successfully');
+}
+
+// Function to initialize filters
+function initializeFilters() {
+    console.log('Initializing filters...');
+    
+    // Get filter elements
+    const categoryTypeFilter = document.getElementById('category-type-filter');
+    const categoryEraFilter = document.getElementById('category-era-filter');
+    const categoryEngineFilter = document.getElementById('category-engine-filter');
+    const categorySizeFilter = document.getElementById('category-size-filter');
+    
+    // Add event listeners to filters
+    [categoryTypeFilter, categoryEraFilter, categoryEngineFilter, categorySizeFilter].forEach(filter => {
+        if (filter) {
+            filter.addEventListener('change', applyFilters);
+        }
+    });
+    
+    // Add search functionality
+    const searchInput = document.getElementById('aircraft-search');
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilters);
+    }
+    
+    console.log('Filters initialized successfully');
+}
+
+// Function to apply filters
+function applyFilters() {
+    const searchTerm = document.getElementById('aircraft-search')?.value.toLowerCase() || '';
+    const selectedType = document.getElementById('category-type-filter')?.value || 'all';
+    const selectedEra = document.getElementById('category-era-filter')?.value || 'all';
+    const selectedEngine = document.getElementById('category-engine-filter')?.value || 'all';
+    const selectedSize = document.getElementById('category-size-filter')?.value || 'all';
+    
+    const rows = document.querySelectorAll('#aircraft-table-body tr');
+    
+    rows.forEach(row => {
+        const name = row.querySelector('.aircraft-name')?.textContent.toLowerCase() || '';
+        const type = row.getAttribute('data-category-type') || '';
+        const era = row.getAttribute('data-category-era') || '';
+        const engine = row.getAttribute('data-category-engine') || '';
+        const size = row.getAttribute('data-category-size') || '';
+        
+        const matchesSearch = name.includes(searchTerm);
+        const matchesType = selectedType === 'all' || type === selectedType;
+        const matchesEra = selectedEra === 'all' || era === selectedEra;
+        const matchesEngine = selectedEngine === 'all' || engine === selectedEngine;
+        const matchesSize = selectedSize === 'all' || size === selectedSize;
+        
+        row.style.display = 
+            matchesSearch && matchesType && matchesEra && 
+            matchesEngine && matchesSize ? '' : 'none';
+    });
+}
+
+// Function to initialize table
+function initializeTable() {
+    console.log('Initializing table...');
+    
+    // Get table header cells
+    const tableHeaders = document.querySelectorAll('#aircraft-table th[data-sort]');
+    
+    // Initialize sorting state
+    let currentSortColumn = null;
+    let currentSortDirection = 'asc';
+    
+    // Add click event listeners to sortable headers
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const sortKey = header.getAttribute('data-sort');
             
-            // Sincronizar todos os switches
-            speedToggles.forEach(t => t.checked = showEquivalentSpeed);
+            // Toggle sort direction if clicking the same column
+            if (currentSortColumn === sortKey) {
+                currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSortDirection = 'asc';
+            }
+            currentSortColumn = sortKey;
             
-            // Atualizar gráficos
-            updateCharts();
+            // Remove sort indicators from all headers
+            tableHeaders.forEach(h => {
+                h.classList.remove('sort-asc', 'sort-desc');
+            });
+            
+            // Add sort indicator to current header
+            header.classList.add(`sort-${currentSortDirection}`);
+            
+            // Sort the table
+            sortTable(sortKey, currentSortDirection);
         });
     });
     
-    // Configurar navegação e event listeners
-    setupNavigation();
-    setupEventListeners();
+    console.log('Table initialized successfully');
+}
+
+// Function to sort table
+function sortTable(column, direction) {
+    const tbody = document.querySelector('#aircraft-table-body');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
     
-    try {
-        // Carregar dados e inicializar interface
-        await loadAircraftData();
-        populateParameterSelects();
-        updateCharts();
+    // Sort rows
+    rows.sort((a, b) => {
+        let aValue = getCellValue(a, column);
+        let bValue = getCellValue(b, column);
         
-        console.log('Aplicação inicializada com sucesso');
-    } catch (error) {
-        console.error('Erro ao inicializar aplicação:', error);
-        showAlert('Erro ao inicializar aplicação: ' + error.message, 'danger');
+        // Handle numeric values
+        if (!isNaN(aValue) && !isNaN(bValue)) {
+            aValue = parseFloat(aValue);
+            bValue = parseFloat(bValue);
+        }
+        
+        if (aValue === bValue) return 0;
+        if (direction === 'asc') {
+            return aValue > bValue ? 1 : -1;
+        } else {
+            return aValue < bValue ? 1 : -1;
+        }
+    });
+    
+    // Reorder rows in the table
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+// Helper function to get cell value for sorting
+function getCellValue(row, column) {
+    const cell = row.querySelector(`td:nth-child(${getColumnIndex(column) + 1})`);
+    return cell ? cell.textContent.trim() : '';
+}
+
+// Helper function to get column index
+function getColumnIndex(column) {
+    const headers = document.querySelectorAll('#aircraft-table th');
+    for (let i = 0; i < headers.length; i++) {
+        if (headers[i].getAttribute('data-sort') === column) {
+            return i;
+        }
     }
-});
+    return 0;
+}
 
 // Função para carregar dados de aeronaves
 async function loadAircraftData() {
-    console.log('Carregando dados de aeronaves e aves...');
+    console.log('Loading aircraft and bird data...');
     
     try {
         // Carregar aeronaves e aves
-        console.log('Tentando carregar aircraft.json...');
+        console.log('Trying to load aircraft.json...');
         const aircraftResponse = await fetch('data/aircraft.json');
-        console.log('Status da resposta aircraft.json:', aircraftResponse.status);
+        console.log('Aircraft.json response status:', aircraftResponse.status);
         
         if (!aircraftResponse.ok) {
-            throw new Error(`Falha ao carregar dados de aeronaves: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
+            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
         }
         
         const aircraftData = await aircraftResponse.json();
-        console.log('Dados de aeronaves carregados com sucesso:', aircraftData.aircraft.length, 'aeronaves');
+        console.log('Aircraft data loaded successfully:', aircraftData.aircraft.length, 'aircraft');
 
-        console.log('Tentando carregar birds.json...');
+        console.log('Trying to load birds.json...');
         const birdsResponse = await fetch('data/birds.json');
-        console.log('Status da resposta birds.json:', birdsResponse.status);
+        console.log('Birds.json response status:', birdsResponse.status);
 
         let birds = [];
         if (birdsResponse.ok) {
             const birdsData = await birdsResponse.json();
             birds = birdsData.birds || [];
-            console.log('Dados de aves carregados com sucesso:', birds.length, 'aves');
+            console.log('Bird data loaded successfully:', birds.length, 'birds');
         } else {
-            console.warn('Falha ao carregar dados de aves:', birdsResponse.status, birdsResponse.statusText);
+            console.warn('Failed to load bird data:', birdsResponse.status, birdsResponse.statusText);
         }
 
         // Processar e combinar dados
@@ -135,15 +266,15 @@ async function loadAircraftData() {
         
         // Combinar e armazenar dados
         window.aircraftData = [...processedAircraft, ...processedBirds];
-        console.log('Total de dados processados:', window.aircraftData.length, 'itens');
+        console.log('Total processed data:', window.aircraftData.length, 'items');
         
         // Atualizar interface
         renderTableSafely(window.aircraftData);
         return window.aircraftData;
     } catch (error) {
-        console.error('Erro detalhado ao carregar dados:', error);
+        console.error('Detailed error loading data:', error);
         console.error('Stack trace:', error.stack);
-        showAlert('Erro ao carregar dados: ' + error.message, 'danger');
+        showAlert('Error loading data: ' + error.message, 'danger');
         return [];
     }
 }
@@ -163,7 +294,7 @@ function renderTableSafely(data) {
     try {
         const tbody = document.getElementById('aircraft-table-body');
         if (!tbody) {
-            console.error('Elemento tbody não encontrado');
+            console.error('tbody element not found');
             return;
         }
 
@@ -175,7 +306,7 @@ function renderTableSafely(data) {
             tbody.innerHTML = `
                 <tr>
                     <td colspan="8" class="text-center">
-                        ${getTranslation('table.no_data')}
+                        No data available
                     </td>
                 </tr>
             `;
@@ -208,7 +339,7 @@ function renderTableSafely(data) {
                    data-bs-placement="right" 
                    title="${aircraft.name}"
                 >
-                    ${aircraft.name || getTranslation('table.no_name')}
+                    ${aircraft.name || 'No name'}
                 </a>
             `;
 
@@ -217,9 +348,9 @@ function renderTableSafely(data) {
                 <td>${aircraft.manufacturer || '-'}</td>
                 <td>${aircraft.model || '-'}</td>
                 <td>${aircraft.first_flight_year || '-'}</td>
-                <td>${getTranslation(`aircraft.categories.type.${aircraft.category_type}`) || '-'}</td>
-                <td>${getTranslation(`aircraft.categories.era.${aircraft.category_era}`) || '-'}</td>
-                <td>${aircraft.mtow_N ? (aircraft.mtow_N / 9.81).toLocaleString() : '-'}</td>
+                <td>${getCategoryName(aircraft.category_type) || '-'}</td>
+                <td>${getCategoryEra(aircraft.category_era) || '-'}</td>
+                <td>${aircraft.mtow ? aircraft.mtow.toLocaleString() : '-'}</td>
             `;
 
             fragment.appendChild(row);
@@ -241,8 +372,8 @@ function renderTableSafely(data) {
             window.applyFilters();
         }
     } catch (error) {
-        console.error('Erro ao renderizar tabela:', error);
-        showAlert(getTranslation('table.error_rendering'), 'danger');
+        console.error('Error rendering table:', error);
+        showAlert('Error rendering table: ' + error.message, 'danger');
     }
 }
 
@@ -309,86 +440,168 @@ async function getApiUrl(endpoint) {
     return devUrl;
 }
 
-// Funções para gráficos
-async function updateScatterChart() {
+// Function to initialize charts
+function initializeCharts() {
+    console.log('Initializing charts...');
+    
+    // Initialize chart controls
+    const controls = {
+        scatter: {
+            xParam: document.getElementById('x-param'),
+            yParam: document.getElementById('y-param'),
+            xLogScale: document.getElementById('x-log-scale'),
+            yLogScale: document.getElementById('y-log-scale')
+        },
+        timeline: {
+            param: document.getElementById('timeline-param'),
+            logScale: document.getElementById('timeline-log-scale')
+        },
+        flightDiagram: {
+            xAxisParam: document.getElementById('x-axis-param'),
+            showTrendlines: document.getElementById('showTrendlines'),
+            xLogScale: document.getElementById('xLogScale'),
+            yLogScale: document.getElementById('yLogScale')
+        }
+    };
+
+    // Set default values for scatter plot
+    if (controls.scatter.xParam) controls.scatter.xParam.value = 'mtow_N';
+    if (controls.scatter.yParam) controls.scatter.yParam.value = 'cruise_speed_ms';
+
+    // Set default values for timeline
+    if (controls.timeline.param) controls.timeline.param.value = 'cruise_speed_ms';
+
+    // Set default values for flight diagram
+    if (controls.flightDiagram.xAxisParam) controls.flightDiagram.xAxisParam.value = 'wing_loading_mtow';
+
+    // Add event listeners
+    Object.values(controls).forEach(controlGroup => {
+        Object.entries(controlGroup).forEach(([key, element]) => {
+            if (element) {
+                element.addEventListener('change', () => {
+                    updateCharts();
+                });
+            }
+        });
+    });
+
+    // Initialize Chart.js defaults
+    if (typeof Chart !== 'undefined') {
+        Chart.defaults.font.family = "'Arial', sans-serif";
+        Chart.defaults.font.size = 12;
+        Chart.defaults.plugins.tooltip.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+        Chart.defaults.plugins.legend.position = 'top';
+    }
+
+    console.log('Charts initialized successfully');
+}
+
+// Function to initialize timeline
+function initializeTimeline() {
+    console.log('Initializing timeline...');
+    
+    // Get timeline controls
+    const timelineControls = {
+        param: document.getElementById('timeline-param'),
+        logScale: document.getElementById('timeline-log-scale')
+    };
+    
+    // Set default values
+    if (timelineControls.param) {
+        timelineControls.param.value = 'cruise_speed_ms';
+    }
+    
+    // Add event listeners
+    Object.entries(timelineControls).forEach(([key, element]) => {
+        if (element) {
+            element.addEventListener('change', () => {
+                updateTimelineChart();
+            });
+        }
+    });
+    
+    console.log('Timeline initialized successfully');
+}
+
+// Function to initialize aircraft modal
+function initializeAircraftModal() {
+    console.log('Initializing aircraft modal...');
+    
+    // Initialize Bootstrap modal
+    const modalElement = document.getElementById('aircraft-details-modal');
+    if (modalElement) {
+        aircraftModal = new bootstrap.Modal(modalElement);
+    }
+    
+    console.log('Aircraft modal initialized successfully');
+}
+
+// Update the updateScatterChart function to properly process data
+function updateScatterChart() {
     console.log('Atualizando gráfico de dispersão...');
     
-    // Obter os parâmetros selecionados
-    const xParam = document.getElementById('x-param').value;
-    const yParam = document.getElementById('y-param').value;
-    const xLogScale = document.getElementById('x-log-scale').checked;
-    const yLogScale = document.getElementById('y-log-scale').checked;
+    // Get selected parameters
+    const xParam = document.getElementById('x-param')?.value;
+    const yParam = document.getElementById('y-param')?.value;
     
+    if (!xParam || !yParam) {
+        console.error('Missing parameters for scatter chart');
+        return;
+    }
+
     try {
-        // Usar os dados já carregados em vez de fazer requisição à API
+        // Use the loaded data
         if (!window.aircraftData || window.aircraftData.length === 0) {
-            console.log('Carregando dados para o gráfico de dispersão...');
-            await loadAircraftData();
+            console.log('Loading data for scatter chart...');
+            loadAircraftData();
+            return;
         }
-        
-        // Verificar se temos aves nos dados
-        const birds = window.aircraftData.filter(item => item.category_type === 'ave');
-        console.log(`Dados disponíveis para gráfico: ${window.aircraftData.length} itens, incluindo ${birds.length} aves`);
-        
-        // Processar os dados localmente
-        const data = window.aircraftData
-            .filter(aircraft => {
-                // Verificar se os parâmetros existem no objeto
-                const hasXParam = aircraft[xParam] !== undefined && aircraft[xParam] !== null;
-                const hasYParam = aircraft[yParam] !== undefined && aircraft[yParam] !== null;
-                
-                if (!hasXParam || !hasYParam) {
-                    // Log para debug
-                    if (aircraft.category_type === 'ave') {
-                        console.log(`Ave ${aircraft.name} não tem parâmetros completos: ${xParam}=${aircraft[xParam]}, ${yParam}=${aircraft[yParam]}`);
-                    }
+
+        // Process data for the chart
+        const data = window.aircraftData.filter(aircraft => {
+            const hasXParam = aircraft[xParam] !== undefined && aircraft[xParam] !== null && !isNaN(aircraft[xParam]);
+            const hasYParam = aircraft[yParam] !== undefined && aircraft[yParam] !== null && !isNaN(aircraft[yParam]);
+            
+            if (!hasXParam || !hasYParam) {
+                if (aircraft.category_type === 'ave') {
+                    console.log(`Bird ${aircraft.name} missing data: ${xParam}=${aircraft[xParam]}, ${yParam}=${aircraft[yParam]}`);
                 }
-                
-                return hasXParam && hasYParam;
-            })
-            .map(aircraft => ({
-                x: aircraft[xParam],
-                y: aircraft[yParam],
-                id: aircraft.id,
-                name: aircraft.name,
-                category: aircraft.category_type
-            }));
-        
-        console.log(`Dados processados para o gráfico de dispersão: ${data.length} pontos`);
-        
-        // Log de debug para ver quais aves estão incluídas
-        const birdsInData = data.filter(item => item.category === 'ave');
-        console.log(`Aves incluídas no gráfico: ${birdsInData.length}`);
-        
-        renderScatterChart(data, xParam, yParam, xLogScale, yLogScale);
+                return false;
+            }
+            return true;
+        }).map(aircraft => ({
+            x: parseFloat(aircraft[xParam]),
+            y: parseFloat(aircraft[yParam]),
+            id: aircraft.id,
+            name: aircraft.name,
+            category: aircraft.category_type
+        }));
+
+        console.log(`Processed ${data.length} valid data points for scatter plot`);
+        renderScatterChart(data, xParam, yParam);
     } catch (error) {
-        console.error('Erro ao processar dados para o gráfico:', error);
-        showAlert('Erro ao processar dados para o gráfico: ' + error.message, 'danger');
+        console.error('Error updating scatter chart:', error);
+        showAlert('Error updating scatter chart: ' + error.message, 'danger');
     }
 }
 
-function renderScatterChart(data, xParam, yParam, xLogScale, yLogScale) {
-    console.log(`Renderizando gráfico de dispersão com ${data.length} itens, X: ${xParam}, Y: ${yParam}`);
+// Function to render scatter chart
+function renderScatterChart(data, xParam, yParam) {
+    console.log(`Rendering scatter chart with ${data.length} items`);
     
     const canvas = document.getElementById('scatter-chart');
     if (!canvas) {
-        console.error('Canvas para gráfico de dispersão não encontrado');
+        console.error('Scatter chart canvas not found');
         return;
     }
-    
-    // Verificar se já existe um gráfico e destruí-lo
+
+    // Destroy existing chart
     const existingChart = Chart.getChart(canvas);
     if (existingChart) {
         existingChart.destroy();
     }
-    
-    // Se não houver dados válidos, mostrar mensagem
-    if (!data || data.length === 0) {
-        console.error('Nenhum dado válido para o gráfico de dispersão');
-        return;
-    }
-    
-    // Cores para diferentes categorias
+
+    // Group data by category
     const categoryColors = {
         'ave': 'rgba(255, 99, 132, 0.7)',
         'comercial': 'rgba(54, 162, 235, 0.7)',
@@ -399,51 +612,48 @@ function renderScatterChart(data, xParam, yParam, xLogScale, yLogScale) {
         'carga': 'rgba(201, 203, 207, 0.7)',
         'experimental': 'rgba(255, 99, 71, 0.7)'
     };
-    
-    // Agrupar dados por categoria
-    const datasetsByCategory = {};
-    data.forEach(point => {
-        const category = point.category || 'desconhecida';
-        if (!datasetsByCategory[category]) {
-            datasetsByCategory[category] = [];
-        }
-        datasetsByCategory[category].push(point);
-    });
-    
-    // Criar datasets para cada categoria
-    const datasets = Object.keys(datasetsByCategory).map(category => {
-        return {
-            label: getCategoryName(category),
-            data: datasetsByCategory[category],
-            backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
-            borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
-            pointRadius: 5,
-            pointHoverRadius: 8
-        };
-    });
-    
-    // Mapear parâmetros para rótulos legíveis
+
+    const datasets = Object.entries(
+        data.reduce((acc, item) => {
+            if (!acc[item.category]) {
+                acc[item.category] = [];
+            }
+            acc[item.category].push(item);
+            return acc;
+        }, {})
+    ).map(([category, items]) => ({
+        label: getCategoryName(category),
+        data: items,
+        backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
+        borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
+        pointRadius: 5,
+        pointHoverRadius: 8
+    }));
+
+    // Parameter labels
     const paramLabels = {
         'mtow_N': 'MTOW (N)',
-        'wing_area_m2': 'Área da Asa (m²)',
-        'wingspan_m': 'Envergadura (m)',
-        'cruise_speed_ms': 'Velocidade de Cruzeiro (m/s)',
-        'takeoff_speed_ms': 'Velocidade de Decolagem (m/s)',
-        'landing_speed_ms': 'Velocidade de Pouso (m/s)',
-        'service_ceiling_m': 'Teto de Serviço (m)',
-        'max_thrust': 'Empuxo Máximo (kN)',
-        'engine_count': 'Número de Motores',
-        'first_flight_year': 'Ano do Primeiro Voo',
-        'range_km': 'Alcance (km)',
-        'max_speed_ms': 'Velocidade Máxima (m/s)'
+        'wing_area_m2': 'Wing Area (m²)',
+        'wingspan_m': 'Wingspan (m)',
+        'cruise_speed_ms': 'Cruise Speed (m/s)',
+        'takeoff_speed_ms': 'Takeoff Speed (m/s)',
+        'landing_speed_ms': 'Landing Speed (m/s)',
+        'service_ceiling_m': 'Service Ceiling (m)',
+        'max_thrust': 'Max Thrust (kN)',
+        'engine_count': 'Engine Count',
+        'first_flight_year': 'First Flight Year',
+        'range_km': 'Range (km)',
+        'max_speed_ms': 'Max Speed (m/s)'
     };
-    
-    // Criar o gráfico
+
+    // Get log scale settings
+    const xLogScale = document.getElementById('x-log-scale')?.checked || false;
+    const yLogScale = document.getElementById('y-log-scale')?.checked || false;
+
+    // Create chart
     new Chart(canvas, {
         type: 'scatter',
-        data: {
-            datasets: datasets
-        },
+        data: { datasets },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -471,252 +681,13 @@ function renderScatterChart(data, xParam, yParam, xLogScale, yLogScale) {
                             return `${point.name}: ${point.x.toLocaleString()}, ${point.y.toLocaleString()}`;
                         }
                     }
-                },
-                legend: {
-                    position: 'top'
                 }
             },
-            onClick: function(e, elements) {
+            onClick: (e, elements) => {
                 if (elements.length > 0) {
                     const index = elements[0].index;
                     const datasetIndex = elements[0].datasetIndex;
-                    const point = this.data.datasets[datasetIndex].data[index];
-                    
-                    // Mostrar detalhes da aeronave selecionada
-                    viewAircraftDetails(point.id);
-                }
-            }
-        }
-    });
-}
-
-async function updateTimelineChart() {
-    console.log('Atualizando gráfico de timeline...');
-    
-    // Obter os parâmetros selecionados
-    const param = document.getElementById('timeline-param').value;
-    const logScale = document.getElementById('timeline-log-scale').checked;
-    
-    try {
-        // Usar os dados já carregados em vez de fazer requisição à API
-        if (!window.aircraftData || window.aircraftData.length === 0) {
-            console.log('Carregando dados para o gráfico de timeline...');
-            await loadAircraftData();
-        }
-        
-        // Verificar se temos aves nos dados
-        const birds = window.aircraftData.filter(item => item.category_type === 'ave');
-        console.log(`Dados disponíveis para timeline: ${window.aircraftData.length} itens, incluindo ${birds.length} aves`);
-        
-        // Processar os dados localmente
-        const data = window.aircraftData
-            .filter(aircraft => {
-                // Verificar se os parâmetros necessários existem
-                const hasParam = aircraft[param] !== undefined && aircraft[param] !== null && !isNaN(aircraft[param]);
-                const hasYear = aircraft.first_flight_year !== undefined && aircraft.first_flight_year !== null && !isNaN(aircraft.first_flight_year);
-                
-                // Log para ajudar a depurar aves
-                if (aircraft.category_type === 'ave' && (!hasParam || !hasYear)) {
-                    console.log(`Ave ${aircraft.name} não tem dados completos para timeline: ${param}=${aircraft[param]}, ano=${aircraft.first_flight_year}`);
-                }
-                
-                return hasParam && hasYear;
-            })
-            .map(aircraft => {
-                // Processar o valor dependendo do parâmetro
-                let value = aircraft[param];
-                
-                // Garantir que o valor é numérico
-                value = parseFloat(value);
-                
-                return {
-                    year: parseInt(aircraft.first_flight_year),
-                    value: value,
-                    id: aircraft.id,
-                    name: aircraft.name,
-                    category: aircraft.category_type
-                };
-            })
-            .filter(item => !isNaN(item.year) && !isNaN(item.value)); // Filtro final para garantir dados válidos
-        
-        console.log(`Dados processados para o gráfico de timeline: ${data.length} pontos`);
-        
-        // Log de debug para ver quais aves estão incluídas
-        const birdsInData = data.filter(item => item.category === 'ave');
-        console.log(`Aves incluídas na timeline: ${birdsInData.length}`);
-        
-        if (data.length === 0) {
-            console.warn('Nenhum dado válido para o gráfico de timeline');
-            return;
-        }
-        
-        // Verificar os valores mínimos e máximos para debug
-        const years = data.map(d => d.year);
-        const values = data.map(d => d.value);
-        console.log(`Anos: min=${Math.min(...years)}, max=${Math.max(...years)}`);
-        console.log(`Valores: min=${Math.min(...values)}, max=${Math.max(...values)}`);
-        
-        renderTimelineChart(data, param, logScale);
-    } catch (error) {
-        console.error('Erro ao processar dados para o gráfico de timeline:', error);
-        showAlert('Erro ao processar dados para o gráfico de timeline: ' + error.message, 'danger');
-    }
-}
-
-function renderTimelineChart(data, param, logScale) {
-    console.log(`Renderizando gráfico de linha do tempo com ${data.length} itens, parâmetro: ${param}`);
-    
-    const canvas = document.getElementById('timeline-chart');
-    if (!canvas) {
-        console.error('Canvas para gráfico de linha do tempo não encontrado');
-        return;
-    }
-    
-    // Verificar se já existe um gráfico e destruí-lo
-    const existingChart = Chart.getChart(canvas);
-    if (existingChart) {
-        existingChart.destroy();
-    }
-    
-    // Se não houver dados válidos, mostrar mensagem
-    if (!data || data.length === 0) {
-        console.error('Nenhum dado válido para o gráfico de linha do tempo');
-        return;
-    }
-    
-    // Ordenar dados por ano
-    data.sort((a, b) => a.year - b.year);
-    
-    // Cores para diferentes categorias
-    const categoryColors = {
-        'ave': 'rgba(255, 99, 132, 0.7)',
-        'comercial': 'rgba(54, 162, 235, 0.7)',
-        'militar': 'rgba(255, 206, 86, 0.7)',
-        'geral': 'rgba(75, 192, 192, 0.7)',
-        'historica': 'rgba(153, 102, 255, 0.7)',
-        'executiva': 'rgba(255, 159, 64, 0.7)',
-        'carga': 'rgba(201, 203, 207, 0.7)',
-        'experimental': 'rgba(153, 153, 0, 0.7)',
-        'desconhecida': 'rgba(128, 128, 128, 0.7)'
-    };
-    
-    // Agrupar dados por categoria
-    const datasetsByCategory = {};
-    data.forEach(point => {
-        const category = point.category || 'desconhecida';
-        if (!datasetsByCategory[category]) {
-            datasetsByCategory[category] = [];
-        }
-        datasetsByCategory[category].push({
-            x: point.year,
-            y: point.value,
-            id: point.id,
-            name: point.name,
-            category: point.category,
-            originalValue: point.value
-        });
-    });
-    
-    // Criar datasets para cada categoria
-    const datasets = Object.keys(datasetsByCategory).map(category => {
-        return {
-            label: getCategoryName(category),
-            data: datasetsByCategory[category],
-            backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
-            borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
-            pointRadius: 5,
-            pointHoverRadius: 8
-        };
-    });
-    
-    // Mapear parâmetros para rótulos legíveis
-    const paramLabels = {
-        'mtow_N': 'MTOW (N)',
-        'wing_area_m2': 'Área da Asa (m²)',
-        'wingspan_m': 'Envergadura (m)',
-        'cruise_speed_ms': 'Velocidade de Cruzeiro (m/s)',
-        'takeoff_speed_ms': 'Velocidade de Decolagem (m/s)',
-        'landing_speed_ms': 'Velocidade de Pouso (m/s)',
-        'service_ceiling_m': 'Teto de Serviço (m)',
-        'max_thrust': 'Empuxo Máximo (kN)',
-        'engine_count': 'Número de Motores',
-        'first_flight_year': 'Ano do Primeiro Voo',
-        'range_km': 'Alcance (km)',
-        'max_speed_ms': 'Velocidade Máxima (m/s)'
-    };
-
-    // Encontrar os limites dos anos
-    const years = data.map(point => point.year);
-    const minYear = Math.min(...years);
-    const maxYear = Math.max(...years);
-    const yearPadding = Math.round((maxYear - minYear) * 0.05); // 5% de padding
-
-    // Criar o gráfico
-    new Chart(canvas, {
-        type: 'scatter',
-        data: {
-            datasets: datasets
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'linear',
-                    position: 'bottom',
-                    title: {
-                        display: true,
-                        text: 'Ano do Primeiro Voo'
-                    },
-                    min: minYear - yearPadding,
-                    max: maxYear + yearPadding,
-                    ticks: {
-                        stepSize: 10
-                    }
-                },
-                y: {
-                    type: logScale ? 'logarithmic' : 'linear',
-                    title: {
-                        display: true,
-                        text: paramLabels[param] || param
-                    }
-                }
-            },
-            plugins: {
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const point = context.raw;
-                            let label = `${point.name} (${point.x})`;
-                            
-                            // Adicionar valor com unidade apropriada
-                            if (param.includes('speed')) {
-                                label += `: ${(point.y * 3.6).toFixed(1)} km/h`; // Converter m/s para km/h
-                            } else if (param === 'mtow_N') {
-                                label += `: ${(point.y / 9.81).toFixed(1)} kg`; // Converter N para kg
-                            } else {
-                                label += `: ${point.y.toLocaleString()}`;
-                            }
-                            
-                            return label;
-                        }
-                    }
-                },
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        pointStyle: 'circle'
-                    }
-                }
-            },
-            onClick: function(e, elements) {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const datasetIndex = elements[0].datasetIndex;
-                    const point = this.data.datasets[datasetIndex].data[index];
-                    
-                    // Mostrar detalhes da aeronave selecionada
+                    const point = datasets[datasetIndex].data[index];
                     viewAircraftDetails(point.id);
                 }
             }
@@ -762,7 +733,7 @@ async function viewAircraftDetails(id) {
             console.warn(`Aeronave com ID ${id} não encontrada em nenhuma fonte de dados`);
             document.getElementById('aircraft-details-body').innerHTML = `
                 <div class="alert alert-warning">
-                    ${getTranslation('aircraft.details.not_found')} ID: ${id}
+                    Aircraft not found ID: ${id}
                 </div>
             `;
             return;
@@ -808,26 +779,26 @@ async function viewAircraftDetails(id) {
                 <div class="col-md-7">
                     <h4>${aircraft.manufacturer || ''} ${aircraft.model || ''}</h4>
                     <p class="text-muted">
-                        ${getTranslation(`aircraft.categories.type.${aircraft.category_type}`)} | 
-                        ${getTranslation(`aircraft.categories.era.${aircraft.category_era}`)}
+                        ${getCategoryName(aircraft.category_type)} | 
+                        ${getCategoryEra(aircraft.category_era)}
                     </p>
                     
                     <div class="row mt-3">
                         <div class="col-md-6">
-                            <p><strong>${getTranslation('aircraft.details.general.first_flight_year')}:</strong> ${aircraft.first_flight_year || 'N/A'}</p>
-                            <p><strong>${getTranslation('aircraft.details.physical.mtow')}:</strong> ${formatValue(aircraft.mtow_N / 9.81, 'kg')}</p>
-                            <p><strong>${getTranslation('aircraft.details.physical.wing_area')}:</strong> ${formatValue(aircraft.wing_area_m2, 'm²')}</p>
-                            <p><strong>${getTranslation('aircraft.details.physical.wingspan')}:</strong> ${formatValue(aircraft.wingspan_m, 'm')}</p>
-                            <p><strong>${getTranslation('aircraft.details.physical.wing_loading')}:</strong> ${formatValue(wingLoading, 'N/m²')}</p>
+                            <p><strong>First Flight Year:</strong> ${aircraft.first_flight_year || 'N/A'}</p>
+                            <p><strong>MTOW:</strong> ${formatValue(aircraft.mtow_N / 9.81, 'kg')}</p>
+                            <p><strong>Wing Area:</strong> ${formatValue(aircraft.wing_area_m2, 'm²')}</p>
+                            <p><strong>Wingspan:</strong> ${formatValue(aircraft.wingspan_m, 'm')}</p>
+                            <p><strong>Wing Loading:</strong> ${formatValue(wingLoading, 'N/m²')}</p>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>${getTranslation('aircraft.details.speeds.cruise')}:</strong> ${formatValue(msToKmh(aircraft.cruise_speed_ms), 'km/h')}</p>
-                            <p><strong>${getTranslation('aircraft.details.speeds.takeoff')}:</strong> ${formatValue(msToKmh(aircraft.takeoff_speed_ms), 'km/h')}</p>
-                            <p><strong>${getTranslation('aircraft.details.speeds.landing')}:</strong> ${formatValue(msToKmh(aircraft.landing_speed_ms), 'km/h')}</p>
-                            <p><strong>${getTranslation('aircraft.details.performance.service_ceiling')}:</strong> ${formatValue(aircraft.service_ceiling_m, 'm')}</p>
-                            <p><strong>${getTranslation('aircraft.details.performance.cruise_altitude')}:</strong> ${formatValue(aircraft.cruise_altitude_m, 'm')}</p>
-                            <p><strong>${getTranslation('aircraft.details.general.engine_type')}:</strong> ${aircraft.engine_count || 'N/A'} × ${aircraft.engine_type || 'N/A'}</p>
-                            ${aircraft.max_thrust ? `<p><strong>${getTranslation('aircraft.details.performance.max_thrust')}:</strong> ${formatValue(aircraft.max_thrust, 'kN')}</p>` : ''}
+                            <p><strong>Cruise Speed:</strong> ${formatValue(msToKmh(aircraft.cruise_speed_ms), 'km/h')}</p>
+                            <p><strong>Takeoff Speed:</strong> ${formatValue(msToKmh(aircraft.takeoff_speed_ms), 'km/h')}</p>
+                            <p><strong>Landing Speed:</strong> ${formatValue(msToKmh(aircraft.landing_speed_ms), 'km/h')}</p>
+                            <p><strong>Service Ceiling:</strong> ${formatValue(aircraft.service_ceiling_m, 'm')}</p>
+                            <p><strong>Cruise Altitude:</strong> ${formatValue(aircraft.cruise_altitude_m, 'm')}</p>
+                            <p><strong>Engine Type:</strong> ${aircraft.engine_count || 'N/A'} × ${aircraft.engine_type || 'N/A'}</p>
+                            ${aircraft.max_thrust ? `<p><strong>Max Thrust:</strong> ${formatValue(aircraft.max_thrust, 'kN')}</p>` : ''}
                         </div>
                     </div>
                 </div>
@@ -866,7 +837,7 @@ function getSpeedValue(aircraft) {
 
 // Função para obter o rótulo da velocidade
 function getSpeedLabel() {
-    return showEquivalentSpeed ? 'Velocidade Equivalente (VE) [m/s]' : 'Velocidade Real (TAS) [m/s]';
+    return showEquivalentSpeed ? 'Equivalent Speed (VE) [m/s]' : 'True Airspeed (TAS) [m/s]';
 }
 
 function createSpeedWeightChart(data) {
@@ -1007,7 +978,7 @@ function createSpeedYearChart(data) {
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: 'Ano do Primeiro Voo'
+                        text: 'First Flight Year'
                     }
                 },
                 y: {
@@ -1033,7 +1004,7 @@ function createSpeedYearChart(data) {
     });
 }
 
-// Função para atualizar todos os gráficos
+// Function to update all charts based on current page
 function updateCharts() {
     const activePage = document.querySelector('.page:not(.d-none)');
     if (!activePage) return;
@@ -1044,19 +1015,183 @@ function updateCharts() {
     try {
         switch (pageId) {
             case 'scatter-plot':
-                updateScatterChart();
+                if (typeof updateScatterChart === 'function') {
+                    updateScatterChart();
+                }
                 break;
             case 'timeline':
-                updateTimelineChart();
+                if (typeof updateTimelineChart === 'function') {
+                    updateTimelineChart();
+                }
                 break;
             case 'flight-diagram':
-                updateFlightDiagram();
+                if (typeof updateFlightDiagram === 'function') {
+                    updateFlightDiagram();
+                }
                 break;
         }
     } catch (error) {
         console.error('Erro ao atualizar gráficos:', error);
         showAlert('Erro ao atualizar gráficos: ' + error.message, 'danger');
     }
+}
+
+// Function to update timeline chart
+function updateTimelineChart() {
+    console.log('Atualizando gráfico de timeline...');
+    
+    // Get selected parameter and scale
+    const param = document.getElementById('timeline-param')?.value;
+    const logScale = document.getElementById('timeline-log-scale')?.checked || false;
+    
+    if (!param) {
+        console.error('Missing parameter for timeline chart');
+        return;
+    }
+
+    try {
+        // Use the loaded data
+        if (!window.aircraftData || window.aircraftData.length === 0) {
+            console.log('Loading data for timeline chart...');
+            loadAircraftData();
+            return;
+        }
+
+        // Process data for the chart
+        const data = window.aircraftData.filter(aircraft => {
+            const hasParam = aircraft[param] !== undefined && aircraft[param] !== null && !isNaN(aircraft[param]);
+            const hasYear = aircraft.first_flight_year !== undefined && 
+                          aircraft.first_flight_year !== null && 
+                          !isNaN(aircraft.first_flight_year);
+            
+            if (!hasParam || !hasYear) {
+                if (aircraft.category_type === 'ave') {
+                    console.log(`Bird ${aircraft.name} missing timeline data: ${param}=${aircraft[param]}, year=${aircraft.first_flight_year}`);
+                }
+                return false;
+            }
+            return true;
+        }).map(aircraft => ({
+            x: parseInt(aircraft.first_flight_year),
+            y: parseFloat(aircraft[param]),
+            id: aircraft.id,
+            name: aircraft.name,
+            category: aircraft.category_type
+        }));
+
+        console.log(`Processed ${data.length} valid data points for timeline`);
+        renderTimelineChart(data, param, logScale);
+    } catch (error) {
+        console.error('Error updating timeline chart:', error);
+        showAlert('Error updating timeline chart: ' + error.message, 'danger');
+    }
+}
+
+// Function to render timeline chart
+function renderTimelineChart(data, param, logScale) {
+    console.log(`Rendering timeline chart with ${data.length} items`);
+    
+    const canvas = document.getElementById('timeline-chart');
+    if (!canvas) {
+        console.error('Timeline chart canvas not found');
+        return;
+    }
+
+    // Destroy existing chart
+    const existingChart = Chart.getChart(canvas);
+    if (existingChart) {
+        existingChart.destroy();
+    }
+
+    // Group data by category
+    const categoryColors = {
+        'ave': 'rgba(255, 99, 132, 0.7)',
+        'comercial': 'rgba(54, 162, 235, 0.7)',
+        'militar': 'rgba(255, 206, 86, 0.7)',
+        'geral': 'rgba(75, 192, 192, 0.7)',
+        'historica': 'rgba(153, 102, 255, 0.7)',
+        'executiva': 'rgba(255, 159, 64, 0.7)',
+        'carga': 'rgba(201, 203, 207, 0.7)',
+        'experimental': 'rgba(255, 99, 71, 0.7)'
+    };
+
+    const datasets = Object.entries(
+        data.reduce((acc, item) => {
+            if (!acc[item.category]) {
+                acc[item.category] = [];
+            }
+            acc[item.category].push(item);
+            return acc;
+        }, {})
+    ).map(([category, items]) => ({
+        label: getCategoryName(category),
+        data: items,
+        backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
+        borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
+        pointRadius: 5,
+        pointHoverRadius: 8
+    }));
+
+    // Parameter labels
+    const paramLabels = {
+        'mtow_N': 'MTOW (N)',
+        'wing_area_m2': 'Wing Area (m²)',
+        'wingspan_m': 'Wingspan (m)',
+        'cruise_speed_ms': 'Cruise Speed (m/s)',
+        'takeoff_speed_ms': 'Takeoff Speed (m/s)',
+        'landing_speed_ms': 'Landing Speed (m/s)',
+        'service_ceiling_m': 'Service Ceiling (m)',
+        'max_thrust': 'Max Thrust (kN)',
+        'engine_count': 'Engine Count',
+        'first_flight_year': 'First Flight Year',
+        'range_km': 'Range (km)',
+        'max_speed_ms': 'Max Speed (m/s)'
+    };
+
+    // Create chart
+    new Chart(canvas, {
+        type: 'scatter',
+        data: { datasets },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'First Flight Year'
+                    }
+                },
+                y: {
+                    type: logScale ? 'logarithmic' : 'linear',
+                    title: {
+                        display: true,
+                        text: paramLabels[param] || param
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            const point = context.raw;
+                            return `${point.name}: ${point.x.toLocaleString()}, ${point.y.toLocaleString()}`;
+                        }
+                    }
+                }
+            },
+            onClick: (e, elements) => {
+                if (elements.length > 0) {
+                    const index = elements[0].index;
+                    const datasetIndex = elements[0].datasetIndex;
+                    const point = datasets[datasetIndex].data[index];
+                    viewAircraftDetails(point.id);
+                }
+            }
+        }
+    });
 }
 
 // Function to check if an image exists and provide a fallback if it doesn't
@@ -1117,19 +1252,31 @@ function getValidImageUrl(aircraft) {
 
 // Função para obter nome da categoria
 function getCategoryName(categoryType) {
-    const categories = {
-        'comercial': 'Aviação Comercial',
-        'militar': 'Aviação Militar',
-        'geral': 'Aviação Geral',
-        'executiva': 'Aviação Executiva',
-        'carga': 'Aviação de Carga',
-        'historica': 'Aeronave Histórica',
-        'experimental': 'Aeronave Experimental',
-        'ave': 'Ave (Comparação)',
-        'desconhecida': 'Desconhecida'
+    const categoryMap = {
+        'comercial': 'Commercial Aviation',
+        'executiva': 'Business Aircraft',
+        'carga': 'Cargo Aviation',
+        'militar': 'Military Aviation',
+        'geral': 'General Aviation',
+        'historica': 'Historical Aircraft',
+        'experimental': 'Experimental Aircraft',
+        'ave': 'Bird'
     };
-    
-    return categories[categoryType] || categoryType;
+    return categoryMap[categoryType] || categoryType;
+}
+
+// Function to get era category name
+function getCategoryEra(era) {
+    const eraMap = {
+        'pioneiro': 'Pioneer',
+        'entreguerras': 'Interwar',
+        'ww2': 'World War II',
+        'pos-guerra': 'Post-War',
+        'jato': 'Jet Age',
+        'moderno': 'Modern',
+        'contemporaneo': 'Contemporary'
+    };
+    return eraMap[era] || era;
 }
 
 function setupNavigation() {
@@ -1444,9 +1591,9 @@ function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogSca
     
     if (chartType === 'speed_mtow') {
         xAxisLabel = 'MTOW (N)';
-        yAxisLabel = showEquivalentSpeed ? 'Velocidade Equivalente (m/s)' : 'Velocidade Real (m/s)';
+        yAxisLabel = showEquivalentSpeed ? 'Equivalent Speed (m/s)' : 'True Airspeed (m/s)';
     } else if (chartType === 'wing_loading_speed') {
-        xAxisLabel = showEquivalentSpeed ? 'Velocidade Equivalente (m/s)' : 'Velocidade Real (m/s)';
+        xAxisLabel = showEquivalentSpeed ? 'Equivalent Speed (m/s)' : 'True Airspeed (m/s)';
         yAxisLabel = 'Carga Alar (N/m²)';
     }
     
@@ -1509,7 +1656,7 @@ function renderFlightDiagram(data, chartType, showTrendlines, xLogScale, yLogSca
                 if (elements.length > 0) {
                     const index = elements[0].index;
                     const datasetIndex = elements[0].datasetIndex;
-                    const point = this.data.datasets[datasetIndex].data[index];
+                    const point = datasets[datasetIndex].data[index];
                     
                     // Ignorar cliques em pontos de linha de tendência
                     if (point.isTrendline) return;
@@ -1641,58 +1788,12 @@ function setupFlightDiagramEvents() {
 
 // Função para categorizar aeronaves
 function categorizeAircraft(aircraft) {
-    const result = { ...aircraft };
+    if (!aircraft) return null;
     
-    // Se for uma ave, aplicar categorias padrão
-    if (result.category_type === 'ave') {
-        return {
-            ...result,
-            category_era: 'biologica',
-            category_engine: 'muscular',
-            category_size: 'muito_leve'
-        };
+    // Adicionar ID se não existir
+    if (!aircraft.id) {
+        aircraft.id = Math.random().toString(36).substr(2, 9);
     }
     
-    // Categorização por tamanho (MTOW)
-    const mtowRanges = [
-        { max: 5700, size: 'muito_leve' },
-        { max: 50000, size: 'regional' },
-        { max: 150000, size: 'medio' },
-        { max: 300000, size: 'grande' },
-        { max: Infinity, size: 'muito_grande' }
-    ];
-    
-    if (!result.category_size && result.mtow) {
-        result.category_size = mtowRanges.find(range => result.mtow <= range.max)?.size || 'desconhecido';
-    }
-    
-    // Categorização por era
-    const eraRanges = [
-        { max: 1930, era: 'pioneiros' },
-        { max: 1950, era: 'classica' },
-        { max: 1970, era: 'jato_inicial' },
-        { max: 2000, era: 'moderna' },
-        { max: Infinity, era: 'contemporanea' }
-    ];
-    
-    if (!result.category_era && result.first_flight_year) {
-        result.category_era = eraRanges.find(range => result.first_flight_year <= range.max)?.era || 'desconhecido';
-    }
-    
-    // Categorização por tipo de motor
-    if (!result.category_engine && result.engine_type) {
-        const engineType = result.engine_type.toLowerCase();
-        const engineMap = {
-            'pist': 'pistao',
-            'turbo': 'turboelice',
-            'turbojato': 'turbojato',
-            'turbofan': 'turbofan',
-            'especial': 'especial'
-        };
-        
-        result.category_engine = Object.entries(engineMap)
-            .find(([key]) => engineType.includes(key))?.[1] || 'desconhecido';
-    }
-    
-    return result;
+    return aircraft;
 } 

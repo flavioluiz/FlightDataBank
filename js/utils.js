@@ -35,23 +35,72 @@ function getCategoryName(categoryType) {
     return categoryMap[categoryType] || categoryType;
 }
 
+// Function to get size category name
+function getCategorySize(size) {
+    const sizeMap = {
+        'muito_leve': 'Very Light (up to 5,700 kg)',
+        'regional': 'Regional (5,700-50,000 kg)',
+        'medio': 'Medium Size (50,000-150,000 kg)',
+        'grande': 'Large Size (150,000-300,000 kg)',
+        'muito_grande': 'Very Large (above 300,000 kg)'
+    };
+    return sizeMap[size] || size;
+}
+
 // Function to get era category name
 function getCategoryEra(era) {
     const eraMap = {
-        'pioneiro': 'Pioneer',
-        'entreguerras': 'Interwar',
-        'ww2': 'World War II',
-        'pos-guerra': 'Post-War',
-        'jato': 'Jet Age',
-        'moderno': 'Modern',
-        'contemporaneo': 'Contemporary'
+        'pioneiro': 'Pioneers (until 1930)',
+        'classico': 'Classic Era (1930-1950)',
+        'jato': 'Early Jet Era (1950-1970)',
+        'moderno': 'Modern Era (1970-2000)',
+        'contemporaneo': 'Contemporary Era (2000+)',
+        'ave': 'Biological (Birds)'
     };
     return eraMap[era] || era;
 }
 
 // Function to categorize aircraft
 function categorizeAircraft(aircraft) {
-    // Add any additional categorization logic here
+    if (!aircraft) return aircraft;
+
+    // Categorize by era based on first flight year
+    if (aircraft.first_flight_year) {
+        const year = parseInt(aircraft.first_flight_year);
+        if (year <= 1930) {
+            aircraft.category_era = 'pioneiro';
+        } else if (year <= 1950) {
+            aircraft.category_era = 'classico';
+        } else if (year <= 1970) {
+            aircraft.category_era = 'jato';
+        } else if (year <= 2000) {
+            aircraft.category_era = 'moderno';
+        } else {
+            aircraft.category_era = 'contemporaneo';
+        }
+    }
+
+    // Categorize by size based on MTOW
+    if (aircraft.mtow_N) {
+        const mtow_kg = aircraft.mtow_N / 9.81; // Convert N to kg
+        if (mtow_kg <= 5700) {
+            aircraft.category_size = 'muito_leve';
+        } else if (mtow_kg <= 50000) {
+            aircraft.category_size = 'regional';
+        } else if (mtow_kg <= 150000) {
+            aircraft.category_size = 'medio';
+        } else if (mtow_kg <= 300000) {
+            aircraft.category_size = 'grande';
+        } else {
+            aircraft.category_size = 'muito_grande';
+        }
+    }
+
+    // Birds are always biological era
+    if (aircraft.category_type === 'ave') {
+        aircraft.category_era = 'ave';
+    }
+
     return aircraft;
 }
 
@@ -113,6 +162,7 @@ async function viewAircraftDetails(aircraftId) {
                             <p class="card-text">
                                 <span class="badge bg-primary">${getCategoryName(aircraft.category_type)}</span>
                                 <span class="badge bg-secondary">${getCategoryEra(aircraft.category_era)}</span>
+                                <span class="badge bg-info">${getCategorySize(aircraft.category_size)}</span>
                             </p>
                             <p class="card-text"><small class="text-muted">First Flight: ${aircraft.first_flight_year || '-'}</small></p>
                         </div>

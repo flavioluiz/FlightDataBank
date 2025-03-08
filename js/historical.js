@@ -42,9 +42,9 @@ async function loadAircraftData() {
     
     try {
         // Load aircraft data
-        console.log('Trying to load aircraft.json...');
-        const aircraftResponse = await fetch('data/aircraft.json');
-        console.log('Aircraft.json response status:', aircraftResponse.status);
+        console.log('Trying to load aircraft_processed.json...');
+        const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
+        console.log('Aircraft_processed.json response status:', aircraftResponse.status);
         
         if (!aircraftResponse.ok) {
             throw new Error(`Failed to load aircraft data: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
@@ -54,9 +54,9 @@ async function loadAircraftData() {
         console.log('Aircraft data loaded successfully:', aircraftJson.aircraft.length, 'aircraft');
 
         // Load bird data
-        console.log('Trying to load birds.json...');
-        const birdsResponse = await fetch('data/birds.json');
-        console.log('Birds.json response status:', birdsResponse.status);
+        console.log('Trying to load birds_processed.json...');
+        const birdsResponse = await fetch('data/processed/birds_processed.json');
+        console.log('Birds_processed.json response status:', birdsResponse.status);
 
         let birds = [];
         if (birdsResponse.ok) {
@@ -231,6 +231,7 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
         'wing_area_m2': 'Wing Area (m²)',
         'wingspan_m': 'Wingspan (m)',
         'cruise_speed_ms': 'Cruise Speed (m/s)',
+        'VE_cruise_ms': 'Equivalent Cruise Speed (m/s)',
         'takeoff_speed_ms': 'Takeoff Speed (m/s)',
         'landing_speed_ms': 'Landing Speed (m/s)',
         'service_ceiling_m': 'Service Ceiling (m)',
@@ -238,7 +239,12 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
         'engine_count': 'Engine Count',
         'first_flight_year': 'First Flight Year',
         'range_km': 'Range (km)',
-        'max_speed_ms': 'Max Speed (m/s)'
+        'max_speed_ms': 'Max Speed (m/s)',
+        'wing_loading_Nm2': 'Wing Loading (N/m²)',
+        'CL_cruise': 'Lift Coefficient - Cruise',
+        'CL_takeoff': 'Lift Coefficient - Takeoff',
+        'CL_landing': 'Lift Coefficient - Landing',
+        'aspect_ratio': 'Aspect Ratio'
     };
 
     // Create chart

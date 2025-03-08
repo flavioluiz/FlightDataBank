@@ -50,9 +50,9 @@ async function loadAircraftData() {
     
     try {
         // Load aircraft data
-        console.log('Trying to load aircraft.json...');
-        const aircraftResponse = await fetch('data/aircraft.json');
-        console.log('Aircraft.json response status:', aircraftResponse.status);
+        console.log('Trying to load aircraft_processed.json...');
+        const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
+        console.log('Aircraft_processed.json response status:', aircraftResponse.status);
         
         if (!aircraftResponse.ok) {
             throw new Error(`Failed to load aircraft data: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
@@ -63,9 +63,9 @@ async function loadAircraftData() {
         console.log('Sample aircraft:', aircraftJson.aircraft[0]);
 
         // Load bird data
-        console.log('Trying to load birds.json...');
-        const birdsResponse = await fetch('data/birds.json');
-        console.log('Birds.json response status:', birdsResponse.status);
+        console.log('Trying to load birds_processed.json...');
+        const birdsResponse = await fetch('data/processed/birds_processed.json');
+        console.log('Birds_processed.json response status:', birdsResponse.status);
 
         let birds = [];
         if (birdsResponse.ok) {

@@ -48,8 +48,10 @@
                     <label for="x-axis-param" class="form-label">Chart Type:</label>
                     <select class="form-select" id="x-axis-param">
                         <option value="wing_loading_mtow">Wing Loading vs MTOW</option>
-                        <option value="speed_mtow">Speed vs MTOW</option>
-                        <option value="wing_loading_speed">Wing Loading vs Speed</option>
+                        <option value="speed_tas_mtow">Speed (TAS) vs MTOW</option>
+                        <option value="speed_ve_mtow">Speed (VE) vs MTOW</option>
+                        <option value="wing_loading_speed_tas">Wing Loading vs Speed (TAS)</option>
+                        <option value="wing_loading_speed_ve">Wing Loading vs Speed (VE)</option>
                     </select>
                 </div>
                 <div class="mb-3">
@@ -68,17 +70,17 @@
                             Show Trendlines
                         </label>
                     </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="xLogScale">
-                        <label class="form-check-label" for="xLogScale">
-                            X Log Scale
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="yLogScale">
-                        <label class="form-check-label" for="yLogScale">
-                            Y Log Scale
-                        </label>
+                </div>
+                <div id="trendline-controls" class="mb-3" style="display: none;">
+                    <div class="card">
+                        <div class="card-body">
+                            <h6 class="card-title">Trendline Equation</h6>
+                            <p id="trendline-equation" class="text-center mb-3"></p>
+                            <div class="mb-3">
+                                <label for="k-value" class="form-label">k value:</label>
+                                <input type="number" class="form-control" id="k-value" step="0.01">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

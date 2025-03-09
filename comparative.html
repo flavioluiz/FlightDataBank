@@ -42,30 +42,52 @@
 
     <div class="container mt-4">
         <h2>Comparative Charts</h2>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="mb-3">
-                    <label for="x-param" class="form-label">X Parameter:</label>
-                    <select class="form-select" id="x-param">
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="x-param">X Parameter:</label>
+                    <select class="form-select" id="x-param"></select>
                 </div>
-                <div class="mb-3">
-                    <label for="y-param" class="form-label">Y Parameter:</label>
-                    <select class="form-select" id="y-param">
-                        <!-- Options will be populated by JavaScript -->
-                    </select>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="y-param">Y Parameter:</label>
+                    <select class="form-select" id="y-param"></select>
                 </div>
-                <div class="mb-3">
-                    <label for="color-group" class="form-label">Color Grouping:</label>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label for="color-group">Color Group:</label>
                     <select class="form-select" id="color-group">
-                        <option value="category_type">Aircraft Category</option>
-                        <option value="category_era">Historical Era</option>
-                        <option value="category_size">Aircraft Size</option>
+                        <option value="category_type">Aircraft Type</option>
+                        <option value="category_era">Era</option>
+                        <option value="category_size">Size</option>
                         <option value="engine_type">Engine Type</option>
                     </select>
                 </div>
             </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="x-log-scale" checked>
+                    <label class="form-check-label" for="x-log-scale">
+                        Use Logarithmic Scale for X Axis
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="y-log-scale" checked>
+                    <label class="form-check-label" for="y-log-scale">
+                        Use Logarithmic Scale for Y Axis
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
             <div class="col-md-9">
                 <div class="chart-container" style="position: relative; height:70vh; width:100%">
                     <canvas id="scatter-chart"></canvas>

@@ -42,52 +42,34 @@
 
     <div class="container mt-4">
         <h2>Historical Evolution</h2>
-        <div class="row">
-            <div class="col-md-3">
-                <div class="mb-3">
-                    <label for="timeline-param" class="form-label">Parameter:</label>
-                    <select class="form-select" id="timeline-param">
-                        <option value="mtow_N">MTOW (N)</option>
-                        <option value="wing_area_m2">Wing Area (m²)</option>
-                        <option value="wingspan_m">Wingspan (m)</option>
-                        <option value="cruise_speed_ms">Cruise Speed (m/s)</option>
-                        <option value="VE_cruise_ms">Equivalent Cruise Speed (m/s)</option>
-                        <option value="takeoff_speed_ms">Takeoff Speed (m/s)</option>
-                        <option value="landing_speed_ms">Landing Speed (m/s)</option>
-                        <option value="service_ceiling_m">Service Ceiling (m)</option>
-                        <option value="max_thrust">Max Thrust (kN)</option>
-                        <option value="engine_count">Engine Count</option>
-                        <option value="range_km">Range (km)</option>
-                        <option value="max_speed_ms">Max Speed (m/s)</option>
-                        <option value="wing_loading_Nm2">Wing Loading (N/m²)</option>
-                        <option value="CL_cruise">CL Cruise</option>
-                        <option value="CL_takeoff">CL Takeoff</option>
-                        <option value="CL_landing">CL Landing</option>
-                        <option value="aspect_ratio">Aspect Ratio</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="color-group" class="form-label">Color Grouping:</label>
-                    <select class="form-select" id="color-group">
-                        <option value="category_type">Aircraft Category</option>
-                        <option value="category_era">Historical Era</option>
-                        <option value="category_size">Aircraft Size</option>
-                        <option value="engine_type">Engine Type</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="timeline-log-scale">
-                        <label class="form-check-label" for="timeline-log-scale">
-                            Log Scale
-                        </label>
-                    </div>
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <label for="timeline-param" class="form-label">Parameter:</label>
+                <select id="timeline-param" class="form-select">
+                    <!-- Will be populated from chart_parameters.json -->
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="color-group" class="form-label">Color Group:</label>
+                <select id="color-group" class="form-select">
+                    <option value="category_type">Aircraft Type</option>
+                    <option value="category_era">Aircraft Era</option>
+                    <option value="category_size">Aircraft Size</option>
+                    <option value="engine_type">Engine Type</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check mt-4">
+                    <input class="form-check-input" type="checkbox" id="timeline-log-scale">
+                    <label class="form-check-label" for="timeline-log-scale">
+                        Use Logarithmic Scale
+                    </label>
                 </div>
             </div>
-            <div class="col-md-9">
-                <div class="chart-container" style="position: relative; height:70vh; width:100%">
-                    <canvas id="timeline-chart"></canvas>
-                </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <canvas id="timeline-chart" style="width: 100%; height: 600px;"></canvas>
             </div>
         </div>
     </div>

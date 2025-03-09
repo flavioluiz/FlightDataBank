@@ -214,20 +214,29 @@ def validate_aircraft(aircraft):
     
     return True
 
-def process_database(input_file: str, output_file: str) -> None:
-    """Process the aircraft database and save the results."""
+def process_database(input_file: str, output_file: str, start_id: int = 1) -> int:
+    """
+    Process the aircraft database and save the results.
+    Returns the next available ID after processing.
+    """
     # Load data
     data = load_json_data(input_file)
+    current_id = start_id
     
     # Process each aircraft
     if 'aircraft' in data:
         processed_aircraft = []
         for aircraft in data['aircraft']:
+            # Assign new ID
+            aircraft['id'] = current_id
+            current_id += 1
+            
             # Rename fields with units
             aircraft = rename_fields_with_units(aircraft)
             # Compute derived values
             aircraft = compute_derived_values(aircraft)
-            processed_aircraft.append(aircraft)
+            if aircraft:  # Only add if processing was successful
+                processed_aircraft.append(aircraft)
         
         # Update the data with processed aircraft
         data['aircraft'] = processed_aircraft
@@ -235,17 +244,24 @@ def process_database(input_file: str, output_file: str) -> None:
     if 'birds' in data:
         processed_birds = []
         for bird in data['birds']:
+            # Assign new ID
+            bird['id'] = current_id
+            current_id += 1
+            
             # Rename fields with units
             bird = rename_fields_with_units(bird)
             # Compute derived values
             bird = compute_derived_values(bird)
-            processed_birds.append(bird)
+            if bird:  # Only add if processing was successful
+                processed_birds.append(bird)
         
         # Update the data with processed birds
         data['birds'] = processed_birds
     
     # Save processed data
     save_json_data(data, output_file)
+    
+    return current_id
 
 def main():
     # Define input and output paths
@@ -255,16 +271,18 @@ def main():
     # Create processed directory if it doesn't exist
     os.makedirs(processed_dir, exist_ok=True)
     
-    # Process aircraft data
-    process_database(
+    # Process aircraft data first, starting with ID 1
+    next_id = process_database(
         str(data_dir / 'aircraft.json'),
-        str(processed_dir / 'aircraft_processed.json')
+        str(processed_dir / 'aircraft_processed.json'),
+        start_id=1
     )
     
-    # Process birds data
+    # Process birds data, starting with ID after the last aircraft
     process_database(
         str(data_dir / 'birds.json'),
-        str(processed_dir / 'birds_processed.json')
+        str(processed_dir / 'birds_processed.json'),
+        start_id=next_id
     )
 
 if __name__ == "__main__":

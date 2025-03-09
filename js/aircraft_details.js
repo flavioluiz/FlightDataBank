@@ -1,16 +1,40 @@
 // Function to load aircraft data
 async function loadAircraftData() {
     try {
-        const response = await fetch('data/processed/aircraft_processed.json');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        // Load aircraft data from processed file
+        const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
+        if (!aircraftResponse.ok) {
+            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
-        const data = await response.json();
-        return data.aircraft;
+        const aircraftData = await aircraftResponse.json();
+        console.log('Aircraft data loaded:', aircraftData.aircraft.length, 'aircraft');
+
+        // Load bird data from processed file
+        const birdsResponse = await fetch('data/processed/birds_processed.json');
+        let birdData = { birds: [] };
+        if (birdsResponse.ok) {
+            birdData = await birdsResponse.json();
+            console.log('Bird data loaded:', birdData.birds.length, 'birds');
+        } else {
+            console.warn('Failed to load bird data:', birdsResponse.status);
+        }
+
+        // Combine data
+        const allData = {
+            aircraft: [
+                ...aircraftData.aircraft,
+                ...(birdData.birds || []).map(b => ({
+                    ...b,
+                    category_type: 'ave'  // Ensure birds are properly categorized
+                }))
+            ]
+        };
+
+        console.log('Combined data:', allData.aircraft.length, 'total items');
+        return allData;
     } catch (error) {
         console.error('Error loading aircraft data:', error);
-        showError('Failed to load aircraft data. Please try again later.');
-        return [];
+        throw error;
     }
 }
 
@@ -124,6 +148,7 @@ function displayAircraftDetails(aircraft) {
 // Function to handle URL hash changes
 async function handleHashChange() {
     const aircraftId = window.location.hash.slice(1); // Remove the # from the hash
+    console.log('Looking for ID:', aircraftId);
     
     if (!aircraftId) {
         window.location.href = 'aircraft-list.html';
@@ -131,14 +156,28 @@ async function handleHashChange() {
     }
 
     try {
-        const aircraft = await loadAircraftData();
-        const selectedAircraft = aircraft.find(a => a.id.toString() === aircraftId);
+        const allData = await loadAircraftData();
+        const id = parseInt(aircraftId);
+        console.log('Parsed ID:', id);
+        
+        if (isNaN(id)) {
+            console.error('Invalid ID format');
+            showError('Invalid aircraft ID');
+            return;
+        }
+
+        console.log('Searching for item with ID:', id);
+        console.log('Available IDs:', allData.aircraft.map(a => a.id));
+        
+        const selectedAircraft = allData.aircraft.find(a => a.id === id);
         
         if (selectedAircraft) {
+            console.log('Found item:', selectedAircraft.name, 'with ID:', selectedAircraft.id);
             displayAircraftDetails(selectedAircraft);
             document.title = `${selectedAircraft.name} - Aircraft Databank`;
         } else {
-            showError(`Aircraft with ID ${aircraftId} not found.`);
+            console.error('Item not found with ID:', id);
+            showError(`Aircraft with ID ${id} not found.`);
         }
     } catch (error) {
         console.error('Error loading aircraft details:', error);

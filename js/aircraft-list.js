@@ -46,59 +46,37 @@ function initializeControls() {
 
 // Load aircraft data
 async function loadAircraftData() {
-    console.log('Loading aircraft and bird data...');
-    
     try {
-        // Load aircraft data
-        console.log('Trying to load aircraft_processed.json...');
+        // Load aircraft data from processed file
         const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
-        console.log('Aircraft_processed.json response status:', aircraftResponse.status);
-        
         if (!aircraftResponse.ok) {
-            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
+            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
-        
-        const aircraftJson = await aircraftResponse.json();
-        console.log('Aircraft data loaded successfully:', aircraftJson.aircraft.length, 'aircraft');
-        console.log('Sample aircraft:', aircraftJson.aircraft[0]);
+        const aircraftData = await aircraftResponse.json();
 
-        // Load bird data
-        console.log('Trying to load birds_processed.json...');
+        // Load bird data from processed file
         const birdsResponse = await fetch('data/processed/birds_processed.json');
-        console.log('Birds_processed.json response status:', birdsResponse.status);
-
-        let birds = [];
+        let birdData = { birds: [] };
         if (birdsResponse.ok) {
-            const birdsJson = await birdsResponse.json();
-            birds = birdsJson.birds || [];
-            console.log('Bird data loaded successfully:', birds.length, 'birds');
-            console.log('Sample bird:', birds[0]);
+            birdData = await birdsResponse.json();
+            console.log('Bird data loaded:', birdData.birds.length, 'birds');
         } else {
-            console.warn('Failed to load bird data:', birdsResponse.status, birdsResponse.statusText);
+            console.warn('Failed to load bird data:', birdsResponse.status);
         }
 
-        // Process and combine data
-        const processedAircraft = aircraftJson.aircraft.map(aircraft => {
-            const processed = categorizeAircraft({...aircraft});
-            console.log('Processed aircraft ID:', processed.id);
-            return processed;
-        });
-        const processedBirds = birds.map(bird => {
-            const processed = categorizeAircraft({...bird, category_type: 'ave'});
-            console.log('Processed bird ID:', processed.id);
-            return processed;
-        });
-        
-        // Store data globally
-        window.aircraftData = [...processedAircraft, ...processedBirds];
-        console.log('Total processed data:', window.aircraftData.length, 'items');
-        console.log('First few IDs:', window.aircraftData.slice(0, 5).map(a => a.id));
-        
+        // Combine and sort data
+        const allData = [
+            ...aircraftData.aircraft.map(a => ({...a, type: 'aircraft'})),
+            ...(birdData.birds || []).map(b => ({...b, type: 'bird'}))
+        ];
+
+        // Sort by name
+        allData.sort((a, b) => a.name.localeCompare(b.name));
+
         // Render table
-        renderTable(window.aircraftData);
+        renderTable(allData);
     } catch (error) {
-        console.error('Detailed error loading data:', error);
-        console.error('Stack trace:', error.stack);
+        console.error('Error loading aircraft data:', error);
         showAlert('Error loading data: ' + error.message, 'danger');
     }
 }
@@ -236,23 +214,4 @@ function getColumnIndex(column) {
         }
     }
     return 0;
-}
-
-function createAircraftCard(aircraft) {
-    return `
-        <div class="col">
-            <div class="card h-100">
-                <img src="${aircraft.image_url}" class="card-img-top" alt="${aircraft.name}">
-                <div class="card-body">
-                    <h5 class="card-title">${aircraft.name}</h5>
-                    <p class="card-text">
-                        <strong>Manufacturer:</strong> ${aircraft.manufacturer}<br>
-                        <strong>First Flight:</strong> ${aircraft.first_flight_year}<br>
-                        <strong>Category:</strong> ${aircraft.category_type}
-                    </p>
-                    <a href="aircraft_details.html#${aircraft.id}" class="btn btn-primary" target="_blank">View Details</a>
-                </div>
-            </div>
-        </div>
-    `;
 } 

@@ -1,11 +1,29 @@
 // Global variables
 window.aircraftData = [];
+let chartParameters = null;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', function() {
-    initializeControls();
-    loadAircraftData();
+    loadChartParameters().then(() => {
+        initializeControls();
+        loadAircraftData();
+    });
 });
+
+// Load chart parameters configuration
+async function loadChartParameters() {
+    try {
+        const response = await fetch('data/chart_parameters.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load chart parameters: ${response.status}`);
+        }
+        chartParameters = await response.json();
+        return chartParameters;
+    } catch (error) {
+        console.error('Error loading chart parameters:', error);
+        showAlert('Error loading chart parameters: ' + error.message, 'danger');
+    }
+}
 
 // Initialize controls
 function initializeControls() {
@@ -17,13 +35,44 @@ function initializeControls() {
         colorGroup: document.getElementById('color-group'),
         logScale: document.getElementById('timeline-log-scale')
     };
-    
-    // Set default values
-    if (controls.param) {
-        controls.param.value = 'cruise_speed_ms';
+
+    if (!chartParameters) {
+        console.error('Chart parameters not loaded');
+        return;
     }
-    if (controls.colorGroup) {
-        controls.colorGroup.value = 'category_type';
+
+    // Populate parameter select
+    if (controls.param) {
+        // Clear existing options
+        controls.param.innerHTML = '';
+
+        // Group parameters by category
+        const parametersByCategory = {};
+        Object.entries(chartParameters.parameters).forEach(([key, param]) => {
+            if (!parametersByCategory[param.category]) {
+                parametersByCategory[param.category] = [];
+            }
+            parametersByCategory[param.category].push({key, ...param});
+        });
+
+        // Add options grouped by category
+        Object.entries(parametersByCategory).forEach(([category, params]) => {
+            const categoryInfo = chartParameters.categories[category];
+            const group = document.createElement('optgroup');
+            group.label = categoryInfo.label;
+
+            params.forEach(param => {
+                const option = document.createElement('option');
+                option.value = param.key;
+                option.textContent = param.label;
+                group.appendChild(option);
+            });
+
+            controls.param.appendChild(group);
+        });
+
+        // Set default value
+        controls.param.value = 'cruise_speed_ms';
     }
     
     // Add event listeners
@@ -38,48 +87,38 @@ function initializeControls() {
 
 // Load aircraft data
 async function loadAircraftData() {
-    console.log('Loading aircraft and bird data...');
-    
     try {
-        // Load aircraft data
-        console.log('Trying to load aircraft_processed.json...');
+        // Load aircraft data from processed file
         const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
-        console.log('Aircraft_processed.json response status:', aircraftResponse.status);
-        
         if (!aircraftResponse.ok) {
-            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
+            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
-        
-        const aircraftJson = await aircraftResponse.json();
-        console.log('Aircraft data loaded successfully:', aircraftJson.aircraft.length, 'aircraft');
+        const aircraftData = await aircraftResponse.json();
+        console.log('Aircraft data loaded:', aircraftData.aircraft.length, 'aircraft');
 
-        // Load bird data
-        console.log('Trying to load birds_processed.json...');
+        // Load bird data from processed file
         const birdsResponse = await fetch('data/processed/birds_processed.json');
-        console.log('Birds_processed.json response status:', birdsResponse.status);
-
-        let birds = [];
+        let birdData = { birds: [] };
         if (birdsResponse.ok) {
-            const birdsJson = await birdsResponse.json();
-            birds = birdsJson.birds || [];
-            console.log('Bird data loaded successfully:', birds.length, 'birds');
+            birdData = await birdsResponse.json();
+            console.log('Bird data loaded:', birdData.birds.length, 'birds');
         } else {
-            console.warn('Failed to load bird data:', birdsResponse.status, birdsResponse.statusText);
+            console.warn('Failed to load bird data:', birdsResponse.status);
         }
 
-        // Process and combine data
-        const processedAircraft = aircraftJson.aircraft.map(aircraft => categorizeAircraft({...aircraft}));
-        const processedBirds = birds.map(bird => categorizeAircraft({...bird, category_type: 'ave'}));
-        
-        // Store data globally
-        window.aircraftData = [...processedAircraft, ...processedBirds];
-        console.log('Total processed data:', window.aircraftData.length, 'items');
-        
-        // Update chart
+        // Combine and sort data by first flight year
+        window.aircraftData = [
+            ...aircraftData.aircraft.map(a => ({...a, type: 'aircraft'})),
+            ...(birdData.birds || []).map(b => ({...b, type: 'bird', category_type: 'ave'}))
+        ].filter(item => item.first_flight_year != null)
+         .sort((a, b) => a.first_flight_year - b.first_flight_year);
+
+        console.log('Combined data:', window.aircraftData.length, 'total items');
+
+        // Update chart with initial data
         updateTimelineChart();
     } catch (error) {
-        console.error('Detailed error loading data:', error);
-        console.error('Stack trace:', error.stack);
+        console.error('Error loading aircraft data:', error);
         showAlert('Error loading data: ' + error.message, 'danger');
     }
 }
@@ -93,7 +132,7 @@ function updateTimelineChart() {
     const colorGroup = document.getElementById('color-group')?.value;
     const logScale = document.getElementById('timeline-log-scale')?.checked || false;
     
-    if (!param || !colorGroup) {
+    if (!param || !colorGroup || !chartParameters) {
         console.error('Missing parameters for timeline chart');
         return;
     }
@@ -225,27 +264,9 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
         pointHoverRadius: 8
     }));
 
-    // Parameter labels
-    const paramLabels = {
-        'mtow_N': 'MTOW (N)',
-        'wing_area_m2': 'Wing Area (m²)',
-        'wingspan_m': 'Wingspan (m)',
-        'cruise_speed_ms': 'Cruise Speed (m/s)',
-        'VE_cruise_ms': 'Equivalent Cruise Speed (m/s)',
-        'takeoff_speed_ms': 'Takeoff Speed (m/s)',
-        'landing_speed_ms': 'Landing Speed (m/s)',
-        'service_ceiling_m': 'Service Ceiling (m)',
-        'max_thrust': 'Max Thrust (kN)',
-        'engine_count': 'Engine Count',
-        'first_flight_year': 'First Flight Year',
-        'range_km': 'Range (km)',
-        'max_speed_ms': 'Max Speed (m/s)',
-        'wing_loading_Nm2': 'Wing Loading (N/m²)',
-        'CL_cruise': 'Lift Coefficient - Cruise',
-        'CL_takeoff': 'Lift Coefficient - Takeoff',
-        'CL_landing': 'Lift Coefficient - Landing',
-        'aspect_ratio': 'Aspect Ratio'
-    };
+    // Get parameter configuration from chart_parameters.json
+    const paramConfig = chartParameters.parameters[param];
+    const yAxisLabel = paramConfig ? paramConfig.label : param;
 
     // Create chart
     new Chart(canvas, {
@@ -267,7 +288,7 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                     type: logScale ? 'logarithmic' : 'linear',
                     title: {
                         display: true,
-                        text: paramLabels[param] || param
+                        text: yAxisLabel
                     }
                 }
             },

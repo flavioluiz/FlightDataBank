@@ -80,11 +80,13 @@ function initializeControls() {
     xSelect.value = 'mtow_N';
     ySelect.value = 'wing_loading_Nm2';
 
-    // Add event listeners
+    // Add event listeners for all controls
     const controls = {
         xParam: xSelect,
         yParam: ySelect,
-        colorGroup: document.getElementById('color-group')
+        colorGroup: document.getElementById('color-group'),
+        xLogScale: document.getElementById('x-log-scale'),
+        yLogScale: document.getElementById('y-log-scale')
     };
 
     Object.values(controls).forEach(control => {
@@ -92,6 +94,16 @@ function initializeControls() {
             control.addEventListener('change', updateChart);
         }
     });
+
+    // Set initial state from chart parameters if available
+    if (chartParameters.defaultScales) {
+        if (controls.xLogScale) {
+            controls.xLogScale.checked = chartParameters.defaultScales.xLog || false;
+        }
+        if (controls.yLogScale) {
+            controls.yLogScale.checked = chartParameters.defaultScales.yLog || false;
+        }
+    }
 }
 
 // Load aircraft data
@@ -99,35 +111,37 @@ async function loadAircraftData() {
     console.log('Loading aircraft and bird data...');
     
     try {
-        // Load aircraft data
-        console.log('Trying to load aircraft_processed.json...');
+        // Load aircraft data from processed file
+        console.log('Loading aircraft_processed.json...');
         const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
-        console.log('Aircraft_processed.json response status:', aircraftResponse.status);
-        
         if (!aircraftResponse.ok) {
-            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status} - ${aircraftResponse.statusText}`);
+            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
-        
         const aircraftJson = await aircraftResponse.json();
-        console.log('Aircraft data loaded successfully:', aircraftJson.aircraft.length, 'aircraft');
+        console.log('Aircraft data loaded:', aircraftJson.aircraft.length, 'aircraft');
 
-        // Load bird data
-        console.log('Trying to load birds_processed.json...');
+        // Load bird data from processed file
+        console.log('Loading birds_processed.json...');
         const birdsResponse = await fetch('data/processed/birds_processed.json');
-        console.log('Birds_processed.json response status:', birdsResponse.status);
-
         let birds = [];
         if (birdsResponse.ok) {
             const birdsJson = await birdsResponse.json();
             birds = birdsJson.birds || [];
-            console.log('Bird data loaded successfully:', birds.length, 'birds');
+            console.log('Bird data loaded:', birds.length, 'birds');
         } else {
             console.warn('Failed to load bird data:', birdsResponse.status, birdsResponse.statusText);
         }
 
         // Process and combine data
-        const processedAircraft = aircraftJson.aircraft.map(aircraft => categorizeAircraft({...aircraft}));
-        const processedBirds = birds.map(bird => categorizeAircraft({...bird, category_type: 'ave'}));
+        const processedAircraft = aircraftJson.aircraft.map(a => ({
+            ...categorizeAircraft(a),
+            id: a.id  // Ensure we keep the processed ID
+        }));
+        const processedBirds = birds.map(b => ({
+            ...categorizeAircraft(b),
+            id: b.id,  // Ensure we keep the processed ID
+            category_type: 'ave'
+        }));
         
         // Store data globally
         aircraftData = [...processedAircraft, ...processedBirds];
@@ -136,8 +150,7 @@ async function loadAircraftData() {
         // Update chart
         updateChart();
     } catch (error) {
-        console.error('Detailed error loading data:', error);
-        console.error('Stack trace:', error.stack);
+        console.error('Error loading data:', error);
         showAlert('Error loading data: ' + error.message, 'danger');
     }
 }
@@ -147,6 +160,8 @@ function updateChart() {
     const xParam = document.getElementById('x-param')?.value;
     const yParam = document.getElementById('y-param')?.value;
     const colorGroup = document.getElementById('color-group')?.value;
+    const xLogScale = document.getElementById('x-log-scale')?.checked || false;
+    const yLogScale = document.getElementById('y-log-scale')?.checked || false;
 
     if (!xParam || !yParam || !colorGroup || !chartParameters) {
         console.error('Missing parameters for chart update');
@@ -171,11 +186,11 @@ function updateChart() {
         category: aircraft[colorGroup] || 'unknown'
     }));
 
-    renderScatterChart(data, xParam, yParam, colorGroup);
+    renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogScale);
 }
 
 // Render scatter chart
-function renderScatterChart(data, xParam, yParam, colorGroup) {
+function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogScale) {
     console.log(`Rendering scatter chart with ${data.length} items`);
     
     const canvas = document.getElementById('scatter-chart');
@@ -277,14 +292,15 @@ function renderScatterChart(data, xParam, yParam, colorGroup) {
             maintainAspectRatio: false,
             scales: {
                 x: {
-                    type: xConfig.scale === 'log' ? 'logarithmic' : 'linear',
+                    type: xLogScale ? 'logarithmic' : 'linear',
+                    position: 'bottom',
                     title: {
                         display: true,
                         text: xConfig.label
                     }
                 },
                 y: {
-                    type: yConfig.scale === 'log' ? 'logarithmic' : 'linear',
+                    type: yLogScale ? 'logarithmic' : 'linear',
                     title: {
                         display: true,
                         text: yConfig.label

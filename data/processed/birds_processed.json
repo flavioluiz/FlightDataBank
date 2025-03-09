@@ -6,7 +6,7 @@
   },
   "birds": [
     {
-      "id": 38,
+      "id": 41,
       "name": "Ave - Andorinha-do-mar-comum",
       "manufacturer": "Natureza",
       "model": "Common tern",
@@ -45,7 +45,7 @@
       "CL_landing": 2.346915275721687
     },
     {
-      "id": 39,
+      "id": 42,
       "name": "Ave - Petrel-pomba",
       "manufacturer": "Natureza",
       "model": "Dove prion",
@@ -84,7 +84,7 @@
       "CL_landing": 1.994597494090828
     },
     {
-      "id": 40,
+      "id": 43,
       "name": "Ave - Gaivota-de-cabe\u00e7a-preta",
       "manufacturer": "Natureza",
       "model": "Black-headed gull",
@@ -123,7 +123,7 @@
       "CL_landing": 2.0027010352825068
     },
     {
-      "id": 41,
+      "id": 44,
       "name": "Ave - Talha-mar",
       "manufacturer": "Natureza",
       "model": "Black skimmer",
@@ -162,7 +162,7 @@
       "CL_landing": 1.819262750723954
     },
     {
-      "id": 42,
+      "id": 45,
       "name": "Ave - Gaivota-comum",
       "manufacturer": "Natureza",
       "model": "Common gull",
@@ -201,7 +201,7 @@
       "CL_landing": 1.8548382493265634
     },
     {
-      "id": 43,
+      "id": 46,
       "name": "Ave - Gaivota-trid\u00e1ctila",
       "manufacturer": "Natureza",
       "model": "Kittiwake",
@@ -240,7 +240,7 @@
       "CL_landing": 1.6942329414342292
     },
     {
-      "id": 44,
+      "id": 47,
       "name": "Ave - Trinta-r\u00e9is-real",
       "manufacturer": "Natureza",
       "model": "Royal tern",
@@ -279,7 +279,7 @@
       "CL_landing": 1.7346174573350586
     },
     {
-      "id": 45,
+      "id": 48,
       "name": "Ave - Fulmar",
       "manufacturer": "Natureza",
       "model": "Fulmar",
@@ -318,7 +318,7 @@
       "CL_landing": 1.7745674867809373
     },
     {
-      "id": 46,
+      "id": 49,
       "name": "Ave - Gaivota-prateada",
       "manufacturer": "Natureza",
       "model": "Herring gull",
@@ -357,7 +357,7 @@
       "CL_landing": 1.780904599795983
     },
     {
-      "id": 47,
+      "id": 50,
       "name": "Ave - Mandri\u00e3o-grande",
       "manufacturer": "Natureza",
       "model": "Great skua",
@@ -396,7 +396,7 @@
       "CL_landing": 1.830994445097781
     },
     {
-      "id": 48,
+      "id": 51,
       "name": "Ave - Gaivota-grande-de-bico-preto",
       "manufacturer": "Natureza",
       "model": "Great black-billed gull",
@@ -435,7 +435,7 @@
       "CL_landing": 1.7565149289066642
     },
     {
-      "id": 49,
+      "id": 52,
       "name": "Ave - Albatroz-fuliginoso",
       "manufacturer": "Natureza",
       "model": "Sooty albatross",
@@ -474,7 +474,7 @@
       "CL_landing": 1.8179074531254815
     },
     {
-      "id": 50,
+      "id": 53,
       "name": "Ave - Albatroz-de-sobrancelha",
       "manufacturer": "Natureza",
       "model": "Black-browed albatross",
@@ -513,7 +513,7 @@
       "CL_landing": 1.8315854534880855
     },
     {
-      "id": 51,
+      "id": 54,
       "name": "Ave - Albatroz-errante",
       "manufacturer": "Natureza",
       "model": "Wandering albatross",

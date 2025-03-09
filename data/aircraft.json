@@ -36,6 +36,64 @@
       "notes": "The Boeing 737-800 is an extended version of the 737-700, replacing the 737-400 and competing with the Airbus A320. It accommodates 162 passengers in a two-class configuration or 189 in an all-economy layout. The aircraft was launched in 1994 and entered service in 1998. After Boeing's merger with McDonnell Douglas, the 737-800 filled the gap left by the discontinuation of the MD-80 and MD-90 models. Many U.S. airlines replaced their older Boeing 727-200 fleets with the 737-800. Ryanair is one of the largest operators of the 737-800, with a fleet of over 400 aircraft serving routes across Europe, the Middle East, and North Africa. Data source: https://pt.wikipedia.org/wiki/Boeing_737_Next_Generation. Image source: https://upload.wikimedia.org/wikipedia/commons/5/50/Ryanair_Boeing_737-800_EI-CSW.jpg."
     },
     {
+      "name": "Demoiselle",
+      "manufacturer": "Alberto Santos-Dumont",
+      "model": "No. 20",
+      "first_flight_year": 1907,
+      "mtow_N": 1078.5,
+      "empty_weight_N": 539.25,
+      "max_payload_N": null,
+      "wing_area_m2": 10.68,
+      "wingspan_m": 5.49,
+      "length_m": 6.07,
+      "height_m": 2.40,
+      "cruise_speed_ms": 25,
+      "takeoff_speed_ms": null,
+      "landing_speed_ms": null,
+      "service_ceiling_m": null,
+      "max_thrust_kN": null,
+      "max_power_kW": 26.1,
+      "engine_type": "Piston",
+      "engine_count": 1,
+      "fuel_capacity_kg": null,
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/9b/Alberto_Santos_Dumont_flying_the_Demoiselle_%281909%29.jpg",
+      "cruise_altitude_m": 35,
+      "max_speed_ms": 25,
+      "range_km": null,
+      "max_roc_ms": null,
+      "category_type": "historica",
+      "notes": "The Demoiselle, designed by Brazilian aviation pioneer Alberto Santos-Dumont, was one of the first ultralight aircraft in aviation history. The No. 20 model, first flown in 1907, featured a high-wing monoplane design with a wire-braced wing mounted above an open-framework fuselage made from bamboo. The pilot's seat was positioned below the wing and between the main wheels of the undercarriage. The aircraft was powered by a 35 hp Darracq engine, allowing it to reach a maximum speed of approximately 90 km/h. Its lightweight and relatively simple construction made it popular among early aviation enthusiasts. Santos-Dumont generously made the plans available for free, leading to the construction of around 50 units in various countries. The Demoiselle played a significant role in popularizing aviation in the early 20th century. Data source: https://en.wikipedia.org/wiki/Santos-Dumont_Demoiselle. Image source: https://upload.wikimedia.org/wikipedia/commons/3/3d/Santos-Dumont_Demoiselle.jpg."
+    },
+    {
+      "name": "Blériot XI",
+      "manufacturer": "Blériot Aéronautique",
+      "model": "XI",
+      "first_flight_year": 1909,
+      "mtow_N": 3136,
+      "empty_weight_N": 2268,
+      "max_payload_N": null,
+      "wing_area_m2": 14,
+      "wingspan_m": 7.8,
+      "length_m": 7.62,
+      "height_m": 2.69,
+      "cruise_speed_ms": 20.9,
+      "takeoff_speed_ms": null,
+      "landing_speed_ms": null,
+      "service_ceiling_m": 1000,
+      "max_thrust_kN": null,
+      "max_power_kW": 19,
+      "engine_type": "Piston",
+      "engine_count": 1,
+      "fuel_capacity_kg": null,
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/03/Bleriot.jpg",
+      "cruise_altitude_m": 30,
+      "max_speed_ms": 20.9,
+      "range_km": null,
+      "max_roc_ms": null,
+      "category_type": "historica",
+      "notes": "The Blériot XI is a historic French aircraft designed by Louis Blériot and first flown in 1909. It gained fame for being the first airplane to cross the English Channel on July 25, 1909, piloted by Blériot himself. The aircraft features a monoplane design with a wooden framework and fabric covering. It was powered by a 25 hp Anzani 3-cylinder engine, allowing it to reach a maximum speed of approximately 75 km/h. The Blériot XI played a significant role in early aviation history and is considered one of the first successful monoplanes. Data source: https://pt.wikipedia.org/wiki/Bl%C3%A9riot_XI. Image source: https://upload.wikimedia.org/wikipedia/commons/0/03/Bleriot.jpg."
+    },
+    {
       "name": "Airbus A320neo",
       "manufacturer": "Airbus",
       "model": "A320neo",
@@ -52,7 +110,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/A320neo_LUFTHANSA_D-AINC_310715.jpg",
       "cruise_altitude_m": 11277,
-      "id": 2,
       "category_type": "comercial"
     },
     {
@@ -72,8 +129,36 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/9f/E190-E2_landing_at_Zurich_Airport.jpg",
       "cruise_altitude_m": 12192,
-      "id": 3,
       "category_type": "comercial"
+    },
+    {
+      "name": "AEA June Bug",
+      "manufacturer": "Aerial Experiment Association",
+      "model": "June Bug",
+      "first_flight_year": 1908,
+      "mtow_N": 3560,
+      "empty_weight_N": 2670,
+      "max_payload_N": null,
+      "wing_area_m2": 47.4,
+      "wingspan_m": 12.8,
+      "length_m": 12.5,
+      "height_m": null,
+      "cruise_speed_ms": 17.9,
+      "takeoff_speed_ms": null,
+      "landing_speed_ms": null,
+      "service_ceiling_m": null,
+      "max_thrust_kN": null,
+      "max_power_kW": 18.6,
+      "engine_type": "Piston",
+      "engine_count": 1,
+      "fuel_capacity_kg": null,
+      "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/04/Curtiss_june_bug.jpg",
+      "cruise_altitude_m": 0,
+      "max_speed_ms": 17.9,
+      "range_km": null,
+      "max_roc_ms": null,
+      "category_type": "historica",
+      "notes": "The AEA June Bug was a pioneering American biplane designed and built by the Aerial Experiment Association (AEA) in 1908. Piloted by Glenn Hammond Curtiss, it became the first American airplane to fly at least 1 kilometer in front of a crowd. The aircraft featured a braced biplane design with wingtip ailerons, a canard (forward elevator), and a rear rudder. Notably, it was the first U.S. airplane to be equipped with a steerable tricycle landing gear. The June Bug was powered by a Curtiss-designed air-cooled V8 engine, producing approximately 25 horsepower, enabling it to reach speeds up to 39 mph (63 km/h). On July 4, 1908, Curtiss flew the June Bug 5,085 feet (1,550 meters) in 1 minute and 42.5 seconds, winning the Scientific American Trophy. Data source: https://en.wikipedia.org/wiki/AEA_June_Bug. Image source: https://upload.wikimedia.org/wikipedia/commons/0/04/Curtiss_june_bug.jpg."
     },
     {
       "name": "Cessna 172",
@@ -92,7 +177,6 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg",
       "cruise_altitude_m": 3500,
-      "id": 4,
       "category_type": "geral"
     },
     {
@@ -112,7 +196,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/All_Nippon_Airways_Boeing_787-9_Dreamliner_JA873A_OKJ.jpg",
       "cruise_altitude_m": 12801,
-      "id": 5,
       "category_type": "comercial"
     },
     {
@@ -132,7 +215,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Qatar_Airways_A350-941_%28A7-ALA%29_landing_at_Frankfurt_Airport.jpg",
       "cruise_altitude_m": 13106,
-      "id": 6,
       "category_type": "comercial"
     },
     {
@@ -152,7 +234,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/52/Lufthansa_CityLine_Bombardier_CRJ900_D-ACNM.jpg",
       "cruise_altitude_m": 11582,
-      "id": 7,
       "category_type": "comercial"
     },
     {
@@ -172,7 +253,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/58/ATR_72-600_of_Air_New_Zealand_Link.jpg",
       "cruise_altitude_m": 7620,
-      "id": 8,
       "category_type": "comercial"
     },
     {
@@ -192,7 +272,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c9/Embraer_Phenom_300_photographed_at_Farnborough.jpg",
       "cruise_altitude_m": 13716,
-      "id": 9,
       "category_type": "executiva"
     },
     {
@@ -212,7 +291,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/A6-EDY_A380_Emirates_31_jan_2013_jfk_%288442269364%29_%28cropped%29.jpg",
       "cruise_altitude_m": 13100,
-      "id": 24,
       "category_type": "comercial"
     },
     {
@@ -232,7 +310,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/a4/LUFTHANSA_B747-8_%2840272913674%29.jpg",
       "cruise_altitude_m": 13106,
-      "id": 11,
       "category_type": "comercial"
     },
     {
@@ -252,7 +329,6 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Cirrus_SR22_N545CD.jpg",
       "cruise_altitude_m": 5486,
-      "id": 12,
       "category_type": "geral"
     },
     {
@@ -272,7 +348,6 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/82/Pilatus_PC-12_HB-FVD.jpg",
       "cruise_altitude_m": 9144,
-      "id": 13,
       "category_type": "militar"
     },
     {
@@ -292,7 +367,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3b/Beechcraft_B300_King_Air_350.jpg",
       "cruise_altitude_m": 10668,
-      "id": 14,
       "category_type": "geral"
     },
     {
@@ -312,7 +386,6 @@
       "engine_count": 3,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5a/Dassault_Falcon_7X_at_EBACE_2019.jpg",
       "cruise_altitude_m": 15544,
-      "id": 15,
       "category_type": "executiva"
     },
     {
@@ -332,7 +405,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5e/Gulfstream_G650ER_N650GD.jpg",
       "cruise_altitude_m": 15544,
-      "id": 16,
       "category_type": "executiva"
     },
     {
@@ -352,7 +424,6 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Wright_Flyer_in_flight_1903.jpg",
       "cruise_altitude_m": 30,
-      "id": 17,
       "category_type": "historica"
     },
     {
@@ -372,7 +443,6 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/60/14bis_-_Primeiro_voo_-_1906.jpg",
       "cruise_altitude_m": 60,
-      "id": 18,
       "category_type": "historica"
     },
     {
@@ -392,7 +462,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/b1/Douglas_DC-3%2C_N18121%2C_in_flight.jpg",
       "cruise_altitude_m": 3000,
-      "id": 19,
       "category_type": "historica"
     },
     {
@@ -412,7 +481,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/0c/Pan_Am_Boeing_707-321B_N880PA.jpg",
       "cruise_altitude_m": 11000,
-      "id": 20,
       "category_type": "historica"
     },
     {
@@ -432,7 +500,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/British_Airways_Concorde_G-BOAC_03.jpg",
       "cruise_altitude_m": 18290,
-      "id": 21,
       "category_type": "historica"
     },
     {
@@ -452,7 +519,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Airbus_A320-232%2C_Lufthansa_JP7436571.jpg",
       "cruise_altitude_m": 11280,
-      "id": 22,
       "category_type": "comercial"
     },
     {
@@ -472,7 +538,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f0/Lufthansa_Boeing_747-400_D-ABVX.jpg",
       "cruise_altitude_m": 13100,
-      "id": 23,
       "category_type": "comercial"
     },
     {
@@ -495,7 +560,6 @@
       "max_speed_ms": 241.67,
       "range_km": 4537,
       "max_roc_ms": 1000,
-      "id": 25,
       "category_type": "comercial"
     },
     {
@@ -515,7 +579,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Cessna_Citation_X_N750GF.jpg",
       "cruise_altitude_m": 15545,
-      "id": 26,
       "category_type": "executiva"
     },
     {
@@ -535,7 +598,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/44/American_Airlines_Boeing_757-200.jpg",
       "cruise_altitude_m": 11890,
-      "id": 27,
       "category_type": "comercial"
     },
     {
@@ -555,7 +617,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/88/United_Airlines_Boeing_767-222_N606UA.jpg",
       "cruise_altitude_m": 12500,
-      "id": 28,
       "category_type": "comercial"
     },
     {
@@ -575,7 +636,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/3c/United_Airlines_Boeing_777-200_N786UA.jpg",
       "cruise_altitude_m": 13100,
-      "id": 29,
       "category_type": "comercial"
     },
     {
@@ -595,7 +655,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d3/Lufthansa_Airbus_A300B4-603_D-AIAS.jpg",
       "cruise_altitude_m": 10670,
-      "id": 30,
       "category_type": "comercial"
     },
     {
@@ -615,7 +674,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/Air_Transat_Airbus_A310-308_C-GTSF.jpg",
       "cruise_altitude_m": 11890,
-      "id": 31,
       "category_type": "comercial"
     },
     {
@@ -635,7 +693,6 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/4/4d/Turkish_Airlines_Airbus_A330-300_TC-JNL.jpg",
       "cruise_altitude_m": 12500,
-      "id": 32,
       "category_type": "comercial"
     },
     {
@@ -655,7 +712,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/8/81/Lufthansa_Airbus_A340-300_D-AIGO.jpg",
       "cruise_altitude_m": 12500,
-      "id": 33,
       "category_type": "comercial"
     },
     {
@@ -675,7 +731,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c3/Boeing_314_Clipper_on_the_water.jpg",
       "cruise_altitude_m": 3960,
-      "id": 34,
       "category_type": "historica"
     },
     {
@@ -695,7 +750,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/5/5c/Boeing_377_Stratocruiser_Pan_Am_Clipper_Rainbow.jpg",
       "cruise_altitude_m": 8245,
-      "id": 35,
       "category_type": "historica"
     },
     {
@@ -715,7 +769,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/f/f3/Boeing_307_Stratoliner_NC19903_TWA.jpg",
       "cruise_altitude_m": 6100,
-      "id": 36,
       "category_type": "historica"
     },
     {
@@ -735,7 +788,6 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/c/c5/Lockheed_L-1049G_Super_Constellation_HB-RSC.jpg",
       "cruise_altitude_m": 7010,
-      "id": 37,
       "category_type": "historica"
     },
     {
@@ -755,7 +807,6 @@
       "engine_count": 3,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Hawker_Siddeley_Trident_1C_G-ARPO.jpg",
       "cruise_altitude_m": 10670,
-      "id": 38,
       "category_type": "historica"
     }
   ]

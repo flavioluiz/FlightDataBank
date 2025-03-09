@@ -1,0 +1,53 @@
+/* Aircraft Details Page */
+.details-section {
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.details-section:last-child {
+    border-bottom: none;
+}
+
+.details-section h4 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+#aircraft-details .card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+#aircraft-details .card-header {
+    background: linear-gradient(135deg, #2c3e50, #3498db);
+    padding: 1rem;
+}
+
+#aircraft-details .card-header h2 {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+#aircraft-details img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 1rem;
+}
+
+#aircraft-details .row.mb-2 {
+    align-items: center;
+    padding: 0.5rem 0;
+}
+
+#aircraft-details .col-md-4.fw-bold {
+    color: #34495e;
+}
+
+#aircraft-details .alert {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+} 

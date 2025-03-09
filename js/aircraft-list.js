@@ -126,10 +126,10 @@ function renderTable(data) {
         row.setAttribute('data-category-engine', aircraft.category_engine || '');
         row.setAttribute('data-category-size', aircraft.category_size || '');
 
-        // Create row content
+        // Create row content with direct link opening in new tab
         row.innerHTML = `
             <td class="aircraft-name">
-                <a href="#" onclick="viewAircraftDetails('${aircraft.id}'); return false;">
+                <a href="aircraft_details.html#${aircraft.id}" target="_blank">
                     ${aircraft.name}
                 </a>
             </td>
@@ -236,4 +236,23 @@ function getColumnIndex(column) {
         }
     }
     return 0;
+}
+
+function createAircraftCard(aircraft) {
+    return `
+        <div class="col">
+            <div class="card h-100">
+                <img src="${aircraft.image_url}" class="card-img-top" alt="${aircraft.name}">
+                <div class="card-body">
+                    <h5 class="card-title">${aircraft.name}</h5>
+                    <p class="card-text">
+                        <strong>Manufacturer:</strong> ${aircraft.manufacturer}<br>
+                        <strong>First Flight:</strong> ${aircraft.first_flight_year}<br>
+                        <strong>Category:</strong> ${aircraft.category_type}
+                    </p>
+                    <a href="aircraft_details.html#${aircraft.id}" class="btn btn-primary" target="_blank">View Details</a>
+                </div>
+            </div>
+        </div>
+    `;
 } 

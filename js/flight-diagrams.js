@@ -381,7 +381,7 @@ function renderFlightDiagram(data, chartType, colorGroup, showTrendlines) {
                     const index = elements[0].index;
                     const datasetIndex = elements[0].datasetIndex;
                     const point = datasets[datasetIndex].data[index];
-                    viewAircraftDetails(point.id);
+                    window.open(`aircraft_details.html#${point.id}`, '_blank');
                 }
             }
         }

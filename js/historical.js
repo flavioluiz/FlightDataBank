@@ -292,9 +292,21 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                     const index = elements[0].index;
                     const datasetIndex = elements[0].datasetIndex;
                     const point = datasets[datasetIndex].data[index];
-                    viewAircraftDetails(point.id);
+                    window.open(`aircraft_details.html#${point.id}`, '_blank');
                 }
             }
         }
     });
+}
+
+function createTimelineItem(aircraft) {
+    return `
+        <div class="timeline-item">
+            <div class="timeline-content">
+                <h3>${aircraft.first_flight_year}</h3>
+                <h4><a href="aircraft_details.html#${aircraft.id}" target="_blank">${aircraft.name}</a></h4>
+                <p>${aircraft.manufacturer} ${aircraft.model}</p>
+            </div>
+        </div>
+    `;
 } 

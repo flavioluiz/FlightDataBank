@@ -312,9 +312,13 @@ function renderScatterChart(data, xParam, yParam, colorGroup) {
                     const index = elements[0].index;
                     const datasetIndex = elements[0].datasetIndex;
                     const point = datasets[datasetIndex].data[index];
-                    viewAircraftDetails(point.id);
+                    window.open(`aircraft_details.html#${point.id}`, '_blank');
                 }
             }
         }
     });
+}
+
+function createAircraftLink(aircraft) {
+    return `<a href="aircraft_details.html#${aircraft.id}" target="_blank">${aircraft.name}</a>`;
 } 

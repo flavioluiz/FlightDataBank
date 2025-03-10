@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         await loadAircraftData();
         
         // Finally initialize controls and update chart
-        initializeControls();
+    initializeControls();
     } catch (error) {
         console.error('Error during initialization:', error);
         showAlert('Error during initialization: ' + error.message, 'danger');
@@ -113,7 +113,7 @@ function initializeControls() {
     if (trendlineControls) {
         trendlineControls.style.display = 'none';
     }
-    
+
     // Add event listeners
     diagramSelect.addEventListener('change', () => {
         updateTrendlineControls();
@@ -316,7 +316,7 @@ async function loadAircraftData() {
         
         const aircraftJson = await aircraftResponse.json();
         const aircraft = aircraftJson.aircraft || [];
-        
+
         // Load bird data
         const birdResponse = await fetch('data/processed/birds_processed.json');
         if (!birdResponse.ok) {
@@ -379,7 +379,7 @@ function updateChart() {
         showAlert('Error: Data not properly loaded', 'danger');
         return;
     }
-
+    
     // Get selected parameters
     const diagramType = document.getElementById('x-axis-param')?.value;
     const colorGroup = document.getElementById('color-group')?.value;
@@ -479,8 +479,8 @@ function updateChart() {
                 ...aircraft,
                 x: parseFloat(aircraft[diagram.x.param]),
                 y: parseFloat(aircraft[diagram.y.param]),
-                id: aircraft.id,
-                name: aircraft.name,
+        id: aircraft.id,
+        name: aircraft.name,
                 category: categoryValue
             };
         });
@@ -574,11 +574,11 @@ function renderChart(data, diagram, colorGroup, showTrendlines, trendlineK) {
         
         return {
             label: label,
-            data: items,
+        data: items,
             backgroundColor: color,
             borderColor: color,
-            pointRadius: 5,
-            pointHoverRadius: 8
+        pointRadius: 5,
+        pointHoverRadius: 8
         };
     });
 
@@ -742,8 +742,8 @@ function calculateTrendline(data, diagram, k) {
         fill: false,
         borderColor: 'rgba(255, 0, 0, 0.8)',
         backgroundColor: 'rgba(0, 0, 0, 0)',
-        borderWidth: 2,
-        pointRadius: 0,
+            borderWidth: 2,
+            pointRadius: 0,
         borderDash: [5, 5]
     };
 } 

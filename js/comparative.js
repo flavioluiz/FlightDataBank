@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', async function() {
         await loadChartParameters();
         
         // Initialize controls
-        initializeControls();
+    initializeControls();
         
         // Load aircraft data
         await loadAircraftData();
@@ -108,7 +108,7 @@ function initializeControls() {
             element.addEventListener('change', updateScatterChart);
         }
     });
-    
+
     // Initialize filter controls
     initializeFilterControls();
     
@@ -256,7 +256,7 @@ async function loadAircraftData() {
         
         const aircraftJson = await aircraftResponse.json();
         const aircraft = aircraftJson.aircraft || [];
-        
+
         // Load bird data
         const birdResponse = await fetch('data/processed/birds_processed.json');
         if (!birdResponse.ok) {
@@ -303,7 +303,7 @@ function updateScatterChart() {
     const colorGroup = document.getElementById('color-group')?.value;
     const xLogScale = document.getElementById('x-log-scale')?.checked || false;
     const yLogScale = document.getElementById('y-log-scale')?.checked || false;
-
+    
     if (!xParam || !yParam || !colorGroup) {
         console.error('Missing chart parameters');
         return;
@@ -437,11 +437,11 @@ function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogSca
             
         return {
             label: label,
-            data: items,
+        data: items,
             backgroundColor: rgba,
             borderColor: rgba,
-            pointRadius: 5,
-            pointHoverRadius: 8
+        pointRadius: 5,
+        pointHoverRadius: 8
         };
     });
 

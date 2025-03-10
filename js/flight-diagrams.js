@@ -134,11 +134,33 @@ function initializeControls() {
         trendlineKInput.addEventListener('change', updateChart);
     }
     
+    // Add reset zoom button
+    const chartContainer = document.querySelector('.chart-container');
+    if (chartContainer) {
+        const resetZoomBtn = document.createElement('button');
+        resetZoomBtn.id = 'reset-zoom';
+        resetZoomBtn.className = 'btn btn-sm btn-outline-secondary position-absolute';
+        resetZoomBtn.style.top = '10px';
+        resetZoomBtn.style.right = '10px';
+        resetZoomBtn.style.display = 'none';
+        resetZoomBtn.innerHTML = '<i class="fas fa-search-minus"></i> Reset Zoom';
+        resetZoomBtn.addEventListener('click', resetZoom);
+        chartContainer.appendChild(resetZoomBtn);
+    }
+    
     // Initialize trendline controls based on selected diagram
     updateTrendlineControls();
     
     // Trigger initial chart update
     console.log('Controls initialized successfully');
+}
+
+// Reset zoom function
+function resetZoom() {
+    if (currentChart) {
+        currentChart.resetZoom();
+        document.getElementById('reset-zoom').style.display = 'none';
+    }
 }
 
 // Update trendline controls based on selected diagram
@@ -478,6 +500,24 @@ function renderChart(data, diagram, colorGroup, showTrendlines, trendlineK) {
                 }
             },
             plugins: {
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'xy'
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy',
+                        onZoomComplete: function() {
+                            document.getElementById('reset-zoom').style.display = 'block';
+                        }
+                    }
+                },
                 tooltip: {
                     enabled: false,
                     external: function(context) {

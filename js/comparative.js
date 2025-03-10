@@ -1,6 +1,7 @@
 // Global variables
 let chartParameters = null;
 let aircraftData = [];
+let currentChart = null;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
@@ -106,15 +107,27 @@ function initializeControls() {
             element.addEventListener('change', updateScatterChart);
         }
     });
+    
+    // Add reset zoom button
+    const chartContainer = document.querySelector('.chart-container');
+    if (chartContainer) {
+        const resetZoomBtn = document.createElement('button');
+        resetZoomBtn.id = 'reset-zoom';
+        resetZoomBtn.className = 'btn btn-sm btn-outline-secondary position-absolute';
+        resetZoomBtn.style.top = '10px';
+        resetZoomBtn.style.right = '10px';
+        resetZoomBtn.style.display = 'none';
+        resetZoomBtn.innerHTML = '<i class="fas fa-search-minus"></i> Reset Zoom';
+        resetZoomBtn.addEventListener('click', resetZoom);
+        chartContainer.appendChild(resetZoomBtn);
+    }
+}
 
-    // Set initial state from chart parameters if available
-    if (chartParameters.defaultScales) {
-        if (controls.xLogScale) {
-            controls.xLogScale.checked = chartParameters.defaultScales.x === 'logarithmic';
-        }
-        if (controls.yLogScale) {
-            controls.yLogScale.checked = chartParameters.defaultScales.y === 'logarithmic';
-        }
+// Reset zoom function
+function resetZoom() {
+    if (currentChart) {
+        currentChart.resetZoom();
+        document.getElementById('reset-zoom').style.display = 'none';
     }
 }
 
@@ -254,9 +267,8 @@ function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogSca
     }
 
     // Destroy existing chart
-    const existingChart = Chart.getChart(canvas);
-    if (existingChart) {
-        existingChart.destroy();
+    if (currentChart) {
+        currentChart.destroy();
     }
 
     // Get parameter configurations
@@ -345,6 +357,24 @@ function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogSca
                 }
             },
             plugins: {
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'xy'
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy',
+                        onZoomComplete: function() {
+                            document.getElementById('reset-zoom').style.display = 'block';
+                        }
+                    }
+                },
                 tooltip: {
                     enabled: false,
                     external: function(context) {
@@ -416,7 +446,7 @@ function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogSca
     };
 
     // Create chart
-    new Chart(canvas, config);
+    currentChart = new Chart(canvas, config);
 }
 
 // Convert hex color to rgba

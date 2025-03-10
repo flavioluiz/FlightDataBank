@@ -1,6 +1,7 @@
 // Global variables
 let aircraftData = [];
 let chartParameters = null;
+let currentChart = null;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
@@ -94,7 +95,29 @@ function initializeControls() {
         }
     });
     
+    // Add reset zoom button
+    const chartContainer = document.querySelector('.chart-container');
+    if (chartContainer) {
+        const resetZoomBtn = document.createElement('button');
+        resetZoomBtn.id = 'reset-zoom';
+        resetZoomBtn.className = 'btn btn-sm btn-outline-secondary position-absolute';
+        resetZoomBtn.style.top = '10px';
+        resetZoomBtn.style.right = '10px';
+        resetZoomBtn.style.display = 'none';
+        resetZoomBtn.innerHTML = '<i class="fas fa-search-minus"></i> Reset Zoom';
+        resetZoomBtn.addEventListener('click', resetZoom);
+        chartContainer.appendChild(resetZoomBtn);
+    }
+    
     console.log('Timeline controls initialized successfully');
+}
+
+// Reset zoom function
+function resetZoom() {
+    if (currentChart) {
+        currentChart.resetZoom();
+        document.getElementById('reset-zoom').style.display = 'none';
+    }
 }
 
 // Load aircraft data
@@ -208,9 +231,8 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
     }
 
     // Destroy existing chart
-    const existingChart = Chart.getChart(canvas);
-    if (existingChart) {
-        existingChart.destroy();
+    if (currentChart) {
+        currentChart.destroy();
     }
 
     // Group data by category
@@ -290,6 +312,24 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                 }
             },
             plugins: {
+                zoom: {
+                    pan: {
+                        enabled: true,
+                        mode: 'xy'
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true
+                        },
+                        pinch: {
+                            enabled: true
+                        },
+                        mode: 'xy',
+                        onZoomComplete: function() {
+                            document.getElementById('reset-zoom').style.display = 'block';
+                        }
+                    }
+                },
                 tooltip: {
                     enabled: false,
                     external: function(context) {
@@ -361,7 +401,7 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
     };
 
     // Create chart
-    new Chart(canvas, config);
+    currentChart = new Chart(canvas, config);
 }
 
 // Convert hex color to rgba

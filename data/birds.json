@@ -8,7 +8,7 @@
     {
       "id": 101,
       "name": "Bird - Common Tern",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Common tern",
       "first_flight_year": null,
       "mtow_N": 1.15,
@@ -34,7 +34,7 @@
     {
       "id": 102,
       "name": "Bird - Dove prion",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Dove prion",
       "first_flight_year": null,
       "mtow_N": 1.70,
@@ -60,7 +60,7 @@
     {
       "id": 103,
       "name": "Bird - Black-headed gull",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Black-headed gull",
       "first_flight_year": null,
       "mtow_N": 2.30,
@@ -86,7 +86,7 @@
     {
       "id": 104,
       "name": "Bird - Black skimmer",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Black skimmer",
       "first_flight_year": null,
       "mtow_N": 3.00,
@@ -111,7 +111,7 @@
     },
     {
       "name": "Bird - Common gull",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Common gull",
       "first_flight_year": null,
       "mtow_N": 3.67,
@@ -136,7 +136,7 @@
     },
     {
       "name": "Bird - Kittiwake",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Kittiwake",
       "first_flight_year": null,
       "mtow_N": 3.90,
@@ -161,7 +161,7 @@
     },
     {
       "name": "Bird - Royal tern",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Royal tern",
       "first_flight_year": null,
       "mtow_N": 4.70,
@@ -186,7 +186,7 @@
     },
     {
       "name": "Bird - Fulmar",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Fulmar",
       "first_flight_year": null,
       "mtow_N": 8.20,
@@ -211,7 +211,7 @@
     },
     {
       "name": "Bird - Herring gull",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Herring gull",
       "first_flight_year": null,
       "mtow_N": 9.40,
@@ -236,7 +236,7 @@
     },
     {
       "name": "Bird - Great skua",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Great skua",
       "first_flight_year": null,
       "mtow_N": 13.5,
@@ -261,7 +261,7 @@
     },
     {
       "name": "Bird - Great black-billed gull",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Great black-billed gull",
       "first_flight_year": null,
       "mtow_N": 19.2,
@@ -286,7 +286,7 @@
     },
     {
       "name": "Bird - Sooty albatross",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Sooty albatross",
       "first_flight_year": null,
       "mtow_N": 28.0,
@@ -311,7 +311,7 @@
     },
     {
       "name": "Bird - Black-browed albatross",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Black-browed albatross",
       "first_flight_year": null,
       "mtow_N": 38.0,
@@ -336,7 +336,7 @@
     },
     {
       "name": "Bird - Wandering albatross",
-      "manufacturer": "Natureza",
+      "manufacturer": "Nature",
       "model": "Wandering albatross",
       "first_flight_year": null,
       "mtow_N": 87.0,

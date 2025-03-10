@@ -3,14 +3,15 @@ let aircraftData = [];
 let filteredData = [];
 let activeFilters = {
     search: '',
-    categories: [],
-    eras: [],
-    engineTypes: []
+    filters: {}
 };
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
     try {
+        // Load classifications first
+        await loadClassifications();
+        
         // Load aircraft data
         await loadAircraftData();
         
@@ -91,76 +92,17 @@ async function loadAircraftData() {
 
 // Initialize filters
 function initializeFilters() {
-    // Extract unique values for filters
-    const categories = [...new Set(aircraftData.map(a => a.category_type).filter(Boolean))];
-    const eras = [...new Set(aircraftData.map(a => a.era).filter(Boolean))];
-    const engineTypes = [...new Set(aircraftData.map(a => a.engine_type).filter(Boolean))];
-    
-    // Create category filter buttons
+    // Get filter containers
     const categoryFiltersContainer = document.getElementById('category-filters');
-    categories.forEach(category => {
-        const btn = createFilterButton(category, 'category');
-        categoryFiltersContainer.appendChild(btn);
-    });
-    
-    // Create era filter buttons
     const eraFiltersContainer = document.getElementById('era-filters');
-    eras.forEach(era => {
-        const btn = createFilterButton(era, 'era');
-        eraFiltersContainer.appendChild(btn);
-    });
-    
-    // Create engine type filter buttons
     const engineFiltersContainer = document.getElementById('engine-filters');
-    engineTypes.forEach(engineType => {
-        const btn = createFilterButton(engineType, 'engine');
-        engineFiltersContainer.appendChild(btn);
-    });
-}
-
-// Create a filter button
-function createFilterButton(value, type) {
-    const btn = document.createElement('button');
-    btn.className = 'btn btn-sm btn-outline-primary filter-btn';
-    btn.textContent = value;
-    btn.dataset.value = value;
-    btn.dataset.type = type;
+    const sizeFiltersContainer = document.getElementById('size-filters');
     
-    btn.addEventListener('click', function() {
-        toggleFilter(this);
-    });
-    
-    return btn;
-}
-
-// Toggle filter state
-function toggleFilter(button) {
-    const value = button.dataset.value;
-    const type = button.dataset.type;
-    
-    button.classList.toggle('active');
-    
-    if (button.classList.contains('active')) {
-        // Add filter
-        if (type === 'category') {
-            activeFilters.categories.push(value);
-        } else if (type === 'era') {
-            activeFilters.eras.push(value);
-        } else if (type === 'engine') {
-            activeFilters.engineTypes.push(value);
-        }
-    } else {
-        // Remove filter
-        if (type === 'category') {
-            activeFilters.categories = activeFilters.categories.filter(v => v !== value);
-        } else if (type === 'era') {
-            activeFilters.eras = activeFilters.eras.filter(v => v !== value);
-        } else if (type === 'engine') {
-            activeFilters.engineTypes = activeFilters.engineTypes.filter(v => v !== value);
-        }
-    }
-    
-    applyFilters();
+    // Create filter buttons for each classification
+    createFilterButtonsForClassification('category-filters', 'category_type', applyFilters);
+    createFilterButtonsForClassification('era-filters', 'era', applyFilters);
+    createFilterButtonsForClassification('engine-filters', 'engine_type', applyFilters);
+    createFilterButtonsForClassification('size-filters', 'size', applyFilters);
 }
 
 // Initialize event listeners
@@ -184,9 +126,7 @@ function clearFilters() {
     // Reset active filters
     activeFilters = {
         search: '',
-        categories: [],
-        eras: [],
-        engineTypes: []
+        filters: {}
     };
     
     // Reset search input
@@ -201,38 +141,31 @@ function clearFilters() {
     renderGallery(aircraftData);
 }
 
-// Apply filters to aircraft data
+// Apply filters
 function applyFilters() {
-    filteredData = aircraftData.filter(aircraft => {
-        // Apply search filter
-        if (activeFilters.search && 
-            !aircraft.name.toLowerCase().includes(activeFilters.search) &&
-            !aircraft.manufacturer?.toLowerCase().includes(activeFilters.search)) {
-            return false;
-        }
-        
-        // Apply category filter
-        if (activeFilters.categories.length > 0 && 
-            !activeFilters.categories.includes(aircraft.category_type)) {
-            return false;
-        }
-        
-        // Apply era filter
-        if (activeFilters.eras.length > 0 && 
-            !activeFilters.eras.includes(aircraft.era)) {
-            return false;
-        }
-        
-        // Apply engine type filter
-        if (activeFilters.engineTypes.length > 0 && 
-            !activeFilters.engineTypes.includes(aircraft.engine_type)) {
-            return false;
-        }
-        
-        return true;
-    });
+    // Get active filters from buttons
+    const filtersContainer = document.querySelector('.filters');
+    activeFilters.filters = getActiveFilters(filtersContainer);
     
-    renderGallery(filteredData);
+    // Apply filters to data
+    let filtered = [...aircraftData];
+    
+    // Apply search filter
+    if (activeFilters.search) {
+        filtered = applySearchToData(filtered, activeFilters.search);
+    }
+    
+    // Apply button filters
+    for (const [field, values] of Object.entries(activeFilters.filters)) {
+        if (values.length > 0) {
+            filtered = filtered.filter(item => {
+                return item[field] && values.includes(item[field]);
+            });
+        }
+    }
+    
+    // Render filtered gallery
+    renderGallery(filtered);
 }
 
 // Render gallery with filtered data
@@ -314,9 +247,10 @@ function openAircraftDetails(aircraft) {
                 ${isBird ? 
                     `<p><strong>Type:</strong> Bird Species</p>` : 
                     `<p><strong>Manufacturer:</strong> ${aircraft.manufacturer || 'N/A'}</p>
-                     <p><strong>Category:</strong> ${aircraft.category_type || 'N/A'}</p>
-                     <p><strong>Era:</strong> ${aircraft.era || 'N/A'}</p>
-                     <p><strong>Engine Type:</strong> ${aircraft.engine_type || 'N/A'}</p>
+                     <p><strong>Category:</strong> ${getLabelForValue('category_type', aircraft.category_type) || 'N/A'}</p>
+                     <p><strong>Era:</strong> ${getLabelForValue('era', aircraft.era) || 'N/A'}</p>
+                     <p><strong>Engine Type:</strong> ${getLabelForValue('engine_type', aircraft.engine_type) || 'N/A'}</p>
+                     <p><strong>Size (WTC):</strong> ${getLabelForValue('size', aircraft.WTC) || 'N/A'}</p>
                      <p><strong>First Flight:</strong> ${aircraft.first_flight_year || 'N/A'}</p>`
                 }
                 <p><strong>MTOW:</strong> ${aircraft.mtow_kg ? (aircraft.mtow_kg / 1000).toFixed(2) + ' tons' : 'N/A'}</p>

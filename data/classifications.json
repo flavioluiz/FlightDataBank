@@ -1,0 +1,86 @@
+{
+  "classifications": [
+    {
+      "id": "category_type",
+      "label": "Category Type",
+      "field": "category_type",
+      "options": [
+        { "value": "comercial", "label": "Commercial Aviation" },
+        { "value": "executiva", "label": "Business Aircraft" },
+        { "value": "carga", "label": "Cargo Aviation" },
+        { "value": "militar", "label": "Military Aviation" },
+        { "value": "geral", "label": "General Aviation" },
+        { "value": "historica", "label": "Historical Aircraft" },
+        { "value": "experimental", "label": "Experimental Aircraft" },
+        { "value": "ave", "label": "Bird" }
+      ]
+    },
+    {
+      "id": "era",
+      "label": "Era",
+      "field": "era",
+      "options": [
+        { "value": "pioneiro", "label": "Pioneer" },
+        { "value": "entreguerras", "label": "Interwar" },
+        { "value": "ww2", "label": "World War II" },
+        { "value": "pos-guerra", "label": "Post-War" },
+        { "value": "jato", "label": "Jet Age" },
+        { "value": "moderno", "label": "Modern" },
+        { "value": "contemporaneo", "label": "Contemporary" }
+      ]
+    },
+    {
+      "id": "engine_type",
+      "label": "Engine Type",
+      "field": "engine_type",
+      "options": [
+        { "value": "pistao", "label": "Piston" },
+        { "value": "turbohelice", "label": "Turboprop" },
+        { "value": "jato", "label": "Jet" },
+        { "value": "eletrico", "label": "Electric" }
+      ]
+    },
+    {
+      "id": "size",
+      "label": "Size (WTC)",
+      "field": "WTC",
+      "options": [
+        { "value": "L", "label": "Heavy" },
+        { "value": "M", "label": "Medium" },
+        { "value": "S", "label": "Small" }
+      ]
+    }
+  ],
+  "colorSchemes": {
+    "category_type": {
+      "comercial": "#4285F4",
+      "executiva": "#EA4335",
+      "carga": "#FBBC05",
+      "militar": "#34A853",
+      "geral": "#8E24AA",
+      "historica": "#F06292",
+      "experimental": "#FF9800",
+      "ave": "#00BCD4"
+    },
+    "era": {
+      "pioneiro": "#3F51B5",
+      "entreguerras": "#009688",
+      "ww2": "#F44336",
+      "pos-guerra": "#FF9800",
+      "jato": "#2196F3",
+      "moderno": "#4CAF50",
+      "contemporaneo": "#9C27B0"
+    },
+    "engine_type": {
+      "pistao": "#795548",
+      "turbohelice": "#607D8B",
+      "jato": "#E91E63",
+      "eletrico": "#00BCD4"
+    },
+    "WTC": {
+      "L": "#F44336",
+      "M": "#2196F3",
+      "S": "#4CAF50"
+    }
+  }
+} 

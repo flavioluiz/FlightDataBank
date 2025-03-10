@@ -51,53 +51,31 @@
                 <div class="mb-3">
                     <label for="category-type-filter" class="form-label">Category Type</label>
                     <select class="form-select" id="category-type-filter">
-                        <option value="all">All Types</option>
-                        <option value="comercial">Commercial Aviation</option>
-                        <option value="executiva">Business Aircraft</option>
-                        <option value="carga">Cargo Aviation</option>
-                        <option value="militar">Military Aviation</option>
-                        <option value="geral">General Aviation</option>
-                        <option value="historica">Historical Aircraft</option>
-                        <option value="experimental">Experimental Aircraft</option>
-                        <option value="ave">Bird</option>
+                        <!-- Will be populated from classifications.json -->
                     </select>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="mb-3">
-                    <label for="category-era-filter" class="form-label">Era</label>
-                    <select class="form-select" id="category-era-filter">
-                        <option value="all">All Eras</option>
-                        <option value="pioneiro">Pioneer</option>
-                        <option value="entreguerras">Interwar</option>
-                        <option value="ww2">World War II</option>
-                        <option value="pos-guerra">Post-War</option>
-                        <option value="jato">Jet Age</option>
-                        <option value="moderno">Modern</option>
-                        <option value="contemporaneo">Contemporary</option>
+                    <label for="era-filter" class="form-label">Era</label>
+                    <select class="form-select" id="era-filter">
+                        <!-- Will be populated from classifications.json -->
                     </select>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="mb-3">
-                    <label for="category-engine-filter" class="form-label">Engine Type</label>
-                    <select class="form-select" id="category-engine-filter">
-                        <option value="all">All Types</option>
-                        <option value="pistao">Piston</option>
-                        <option value="turbohelice">Turboprop</option>
-                        <option value="jato">Jet</option>
-                        <option value="eletrico">Electric</option>
+                    <label for="engine-type-filter" class="form-label">Engine Type</label>
+                    <select class="form-select" id="engine-type-filter">
+                        <!-- Will be populated from classifications.json -->
                     </select>
                 </div>
             </div>
             <div class="col-md-3">
                 <div class="mb-3">
-                    <label for="category-size-filter" class="form-label">Size</label>
-                    <select class="form-select" id="category-size-filter">
-                        <option value="all">All Sizes</option>
-                        <option value="pequeno">Small</option>
-                        <option value="medio">Medium</option>
-                        <option value="grande">Large</option>
+                    <label for="size-filter" class="form-label">Size (WTC)</label>
+                    <select class="form-select" id="size-filter">
+                        <!-- Will be populated from classifications.json -->
                     </select>
                 </div>
             </div>
@@ -152,6 +130,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/tooltip.js"></script>
+    <script src="js/classifications.js"></script>
     <script src="js/aircraft-list.js"></script>
 </body>
 </html> 

@@ -224,53 +224,8 @@ function createAircraftLink(aircraft) {
     link.target = '_blank';
     link.textContent = aircraft.name;
     
-    // Create tooltip div
-    const tooltip = document.createElement('div');
-    tooltip.className = 'chartjs-tooltip';
-    tooltip.style.display = 'none';
-    tooltip.innerHTML = `
-        <div>${aircraft.name}</div>
-        ${aircraft.image_url ? `<img src="${aircraft.image_url}" alt="${aircraft.name}">` : ''}
-    `;
-    document.body.appendChild(tooltip);
-
-    // Add hover events
-    link.addEventListener('mouseover', (e) => {
-        tooltip.style.display = 'block';
-        updateTooltipPosition(e, tooltip);
-    });
-
-    link.addEventListener('mousemove', (e) => {
-        updateTooltipPosition(e, tooltip);
-    });
-
-    link.addEventListener('mouseout', () => {
-        tooltip.style.display = 'none';
-    });
-
+    // Add tooltip using the tooltip.js utility
+    addAircraftTooltip(link, aircraft);
+    
     return link;
-}
-
-function updateTooltipPosition(event, tooltip) {
-    const padding = 10;
-    const x = event.pageX + padding;
-    const y = event.pageY + padding;
-    
-    // Check if tooltip would go off the right side of the screen
-    const tooltipWidth = tooltip.offsetWidth;
-    const windowWidth = window.innerWidth;
-    if (x + tooltipWidth > windowWidth) {
-        tooltip.style.left = (x - tooltipWidth - padding * 2) + 'px';
-    } else {
-        tooltip.style.left = x + 'px';
-    }
-    
-    // Check if tooltip would go off the bottom of the screen
-    const tooltipHeight = tooltip.offsetHeight;
-    const windowHeight = window.innerHeight;
-    if (y + tooltipHeight > windowHeight) {
-        tooltip.style.top = (y - tooltipHeight - padding * 2) + 'px';
-    } else {
-        tooltip.style.top = y + 'px';
-    }
 } 

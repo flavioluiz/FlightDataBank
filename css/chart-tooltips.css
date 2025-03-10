@@ -1,0 +1,58 @@
+/* Chart tooltip styles */
+.chartjs-tooltip {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 8px;
+    max-width: 300px;
+    z-index: 1000;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.chartjs-tooltip img {
+    max-width: 200px;
+    max-height: 150px;
+    height: auto;
+    margin-top: 8px;
+    border-radius: 4px;
+    display: block;
+}
+
+.chartjs-tooltip div {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Image tooltip styles */
+.tooltip-image {
+    position: absolute;
+    display: none;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.tooltip-image img {
+    max-width: 200px;
+    max-height: 150px;
+    display: block;
+}
+
+.aircraft-link {
+    position: relative;
+    cursor: pointer;
+    color: #0d6efd;
+    text-decoration: none;
+}
+
+.aircraft-link:hover {
+    text-decoration: underline;
+} 

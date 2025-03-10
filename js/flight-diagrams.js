@@ -27,12 +27,8 @@ async function loadDiagramConfig() {
         console.log('Loading diagram configuration...');
         
         // First load classifications
-        const classResponse = await fetch('data/classifications.json');
-        if (!classResponse.ok) {
-            throw new Error(`Failed to load classifications: ${classResponse.status} ${classResponse.statusText}`);
-        }
-        classifications = await classResponse.json();
-        console.log('Classifications loaded:', classifications);
+        await loadClassifications();
+        console.log('Classifications loaded via classifications.js');
         
         // Then load diagram config
         const response = await fetch('data/flight_diagrams.json');
@@ -298,14 +294,59 @@ function updateChart() {
                 return false;
             }
             return true;
-        }).map(aircraft => ({
-            ...aircraft,
-            x: parseFloat(aircraft[diagram.x.param]),
-            y: parseFloat(aircraft[diagram.y.param]),
-            id: aircraft.id,
-            name: aircraft.name,
-            category: aircraft[colorGroup] || 'Unknown'
-        }));
+        }).map(aircraft => {
+            // Get the category value
+            let categoryValue = aircraft[colorGroup] || 'Unknown';
+            
+            // For era and engine_type, use the standardized values from classifications
+            if (colorGroup === 'era' || colorGroup === 'engine_type') {
+                // For birds, use 'Biological'
+                if (aircraft.type === 'bird') {
+                    categoryValue = 'Biological';
+                } 
+                // For aircraft, map to standard values if needed
+                else if (categoryValue !== 'Unknown') {
+                    const classification = getClassification(colorGroup);
+                    if (classification) {
+                        // Check if the value exists in the classification options
+                        const option = classification.options.find(opt => 
+                            opt.value === categoryValue || opt.label === categoryValue);
+                        
+                        // If not found, try to map to a standard value
+                        if (!option) {
+                            // Map era values to standard values
+                            if (colorGroup === 'era') {
+                                if (categoryValue.includes('Pioneer')) categoryValue = 'Pioneer Era';
+                                else if (categoryValue.includes('Golden')) categoryValue = 'Interwar Period';
+                                else if (categoryValue.includes('World War')) categoryValue = 'World War II';
+                                else if (categoryValue.includes('Post-War')) categoryValue = 'Post-War Era';
+                                else if (categoryValue.includes('Jet')) categoryValue = 'Jet Age';
+                                else if (categoryValue.includes('Modern')) categoryValue = 'Modern Era';
+                                else if (categoryValue.includes('Digital') || categoryValue.includes('Contemporary')) 
+                                    categoryValue = 'Contemporary Era';
+                            }
+                            // Map engine types to standard values
+                            else if (colorGroup === 'engine_type') {
+                                if (categoryValue.includes('Piston')) categoryValue = 'Piston';
+                                else if (categoryValue.includes('Turboprop')) categoryValue = 'Turboprop';
+                                else if (categoryValue.includes('Turbofan')) categoryValue = 'Turbofan';
+                                else if (categoryValue.includes('Jet')) categoryValue = 'Jet';
+                                else if (categoryValue.includes('Electric')) categoryValue = 'Electric';
+                            }
+                        }
+                    }
+                }
+            }
+            
+            return {
+                ...aircraft,
+                x: parseFloat(aircraft[diagram.x.param]),
+                y: parseFloat(aircraft[diagram.y.param]),
+                id: aircraft.id,
+                name: aircraft.name,
+                category: categoryValue
+            };
+        });
 
         console.log(`Processed ${processedData.length} data points for rendering`);
 
@@ -339,22 +380,30 @@ function renderChart(data, diagram, colorGroup, showTrendlines, trendlineK) {
         currentChart.destroy();
     }
 
-    // Get color palette from classifications if available, otherwise use the one from diagramConfig
+    // Get color palette from classifications
     let colorPalette = {};
     
-    if (classifications && classifications.colorSchemes && classifications.colorSchemes[colorGroup]) {
-        // Use colors from classifications.json
-        colorPalette = classifications.colorSchemes[colorGroup];
-        console.log('Using color palette from classifications:', colorPalette);
-    } else if (diagramConfig.colorGroups[colorGroup]?.colors) {
+    // Get the classification to use for colors
+    const classification = getClassification(colorGroup);
+    if (classification) {
+        console.log('Using classification for colors:', classification.id);
+        
+        // Get colors from colorSchemes
+        if (classificationsData && classificationsData.colorSchemes && classificationsData.colorSchemes[colorGroup]) {
+            colorPalette = classificationsData.colorSchemes[colorGroup];
+            console.log('Using color palette from classifications:', colorPalette);
+        }
+        
+        // Add special color for birds
+        if (colorGroup === 'era' || colorGroup === 'engine_type') {
+            colorPalette['Biological'] = '#00BCD4'; // Use a nice teal color for birds
+        }
+    } else {
         // Fallback to colors from flight_diagrams.json
-        colorPalette = diagramConfig.colorGroups[colorGroup].colors;
-        console.log('Using color palette from diagramConfig:', colorPalette);
-    }
-
-    // Special handling for birds
-    if (colorGroup === 'era' || colorGroup === 'engine_type') {
-        colorPalette['Biological'] = '#00BCD4'; // Use a nice teal color for birds
+        if (diagramConfig.colorGroups[colorGroup]?.colors) {
+            colorPalette = diagramConfig.colorGroups[colorGroup].colors;
+            console.log('Using color palette from diagramConfig:', colorPalette);
+        }
     }
 
     // Group data by category
@@ -375,8 +424,19 @@ function renderChart(data, diagram, colorGroup, showTrendlines, trendlineK) {
         const color = colorPalette[category] || 
                      `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`;
         
+        // Get proper label from classification if available
+        let label = category;
+        if (classification) {
+            const option = classification.options.find(opt => opt.value === category);
+            if (option) {
+                label = option.label;
+            } else if (category === 'Biological') {
+                label = 'Biological';
+            }
+        }
+        
         return {
-            label: category,
+            label: label,
             data: items,
             backgroundColor: color,
             borderColor: color,

@@ -95,36 +95,33 @@
                 "experimental": "rgba(255, 99, 71, 0.7)"
             }
         },
-        "category_era": {
+        "era": {
             "label": "Aircraft Era",
             "colors": {
-                "pioneiro": "rgba(141, 110, 99, 0.7)",
-                "classico": "rgba(120, 144, 156, 0.7)",
-                "jato": "rgba(38, 166, 154, 0.7)",
-                "moderno": "rgba(121, 134, 203, 0.7)",
-                "contemporaneo": "rgba(3, 169, 244, 0.7)",
-                "ave": "rgba(255, 99, 132, 0.7)"
+                "Pioneer Era": "rgba(141, 110, 99, 0.7)",
+                "Interwar Period": "rgba(120, 144, 156, 0.7)",
+                "World War II": "rgba(244, 67, 54, 0.7)",
+                "Post-War Era": "rgba(255, 152, 0, 0.7)",
+                "Jet Age": "rgba(38, 166, 154, 0.7)",
+                "Modern Era": "rgba(121, 134, 203, 0.7)",
+                "Contemporary Era": "rgba(3, 169, 244, 0.7)"
             }
         },
-        "category_size": {
-            "label": "Aircraft Size",
+        "WTC": {
+            "label": "Size (WTC)",
             "colors": {
-                "muito_leve": "rgba(156, 204, 101, 0.7)",
-                "regional": "rgba(255, 183, 77, 0.7)",
-                "medio": "rgba(229, 115, 115, 0.7)",
-                "grande": "rgba(124, 77, 255, 0.7)",
-                "muito_grande": "rgba(0, 151, 167, 0.7)"
+                "Light": "rgba(156, 204, 101, 0.7)",
+                "Medium": "rgba(229, 115, 115, 0.7)",
+                "Heavy": "rgba(124, 77, 255, 0.7)"
             }
         },
         "engine_type": {
             "label": "Engine Type",
             "colors": {
-                "pistao": "rgba(141, 110, 99, 0.7)",
-                "turboprop": "rgba(96, 125, 139, 0.7)",
-                "jato": "rgba(0, 151, 167, 0.7)",
-                "eletrico": "rgba(76, 175, 80, 0.7)",
-                "foguete": "rgba(244, 67, 54, 0.7)",
-                "nenhum": "rgba(189, 189, 189, 0.7)"
+                "Piston": "rgba(141, 110, 99, 0.7)",
+                "Turboprop": "rgba(96, 125, 139, 0.7)",
+                "Jet": "rgba(0, 151, 167, 0.7)",
+                "Electric": "rgba(76, 175, 80, 0.7)"
             }
         }
     }

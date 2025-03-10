@@ -8,6 +8,23 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="styles.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .chartjs-tooltip {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 8px;
+            max-width: 300px;
+            z-index: 1000;
+        }
+        .chartjs-tooltip img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 8px;
+            border-radius: 4px;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-primary">
@@ -46,26 +63,19 @@
             <div class="col-md-3">
                 <div class="mb-3">
                     <label for="x-axis-param" class="form-label">Chart Type:</label>
-                    <select class="form-select" id="x-axis-param">
-                        <option value="wing_loading_mtow">Wing Loading vs MTOW</option>
-                        <option value="speed_tas_mtow">Speed (TAS) vs MTOW</option>
-                        <option value="speed_ve_mtow">Speed (VE) vs MTOW</option>
-                        <option value="wing_loading_speed_tas">Wing Loading vs Speed (TAS)</option>
-                        <option value="wing_loading_speed_ve">Wing Loading vs Speed (VE)</option>
+                    <select class="form-select" id="x-axis-param" aria-label="Select chart type">
+                        <!-- Options will be populated by JavaScript -->
                     </select>
                 </div>
                 <div class="mb-3">
                     <label for="color-group" class="form-label">Color Grouping:</label>
-                    <select class="form-select" id="color-group">
-                        <option value="category_type">Aircraft Category</option>
-                        <option value="category_era">Historical Era</option>
-                        <option value="category_size">Aircraft Size</option>
-                        <option value="engine_type">Engine Type</option>
+                    <select class="form-select" id="color-group" aria-label="Select color grouping">
+                        <!-- Options will be populated by JavaScript -->
                     </select>
                 </div>
                 <div class="mb-3">
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" id="showTrendlines">
+                        <input class="form-check-input" type="checkbox" id="showTrendlines" aria-label="Toggle trendlines">
                         <label class="form-check-label" for="showTrendlines">
                             Show Trendlines
                         </label>
@@ -78,7 +88,7 @@
                             <p id="trendline-equation" class="text-center mb-3"></p>
                             <div class="mb-3">
                                 <label for="k-value" class="form-label">k value:</label>
-                                <input type="number" class="form-control" id="k-value" step="0.01">
+                                <input type="number" class="form-control" id="k-value" step="0.01" aria-label="Enter k value">
                             </div>
                         </div>
                     </div>
@@ -108,7 +118,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/utils.js"></script>
-    <script src="js/flight-diagrams.js"></script>
+    <script src="js/flight-diagrams-new.js"></script>
 </body>
 </html> 

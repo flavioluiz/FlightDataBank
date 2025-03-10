@@ -501,7 +501,8 @@ function renderChart(data, diagram, colorGroup, showTrendlines, trendlineK) {
 
                         // Set Text
                         if (tooltipModel.body) {
-                            const dataPoint = data[tooltipModel.dataPoints[0].dataIndex];
+                            // Get the data point directly from the raw data
+                            const dataPoint = tooltipModel.dataPoints[0].raw;
                             
                             let innerHtml = `
                                 <div class="tooltip-header">

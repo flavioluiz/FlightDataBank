@@ -134,10 +134,12 @@ async function loadAircraftData() {
 
         // Process and combine data
         const processedAircraft = aircraftJson.aircraft.map(a => ({
+            ...a,  // Keep all original data
             ...categorizeAircraft(a),
             id: a.id  // Ensure we keep the processed ID
         }));
         const processedBirds = birds.map(b => ({
+            ...b,  // Keep all original data
             ...categorizeAircraft(b),
             id: b.id,  // Ensure we keep the processed ID
             category_type: 'ave'
@@ -183,7 +185,8 @@ function updateChart() {
         y: aircraft[yParam],
         id: aircraft.id,
         name: aircraft.name,
-        category: aircraft[colorGroup] || 'unknown'
+        category: aircraft[colorGroup] || 'unknown',
+        image_url: aircraft.image_url
     }));
 
     renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogScale);
@@ -283,10 +286,12 @@ function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogSca
         pointHoverRadius: 8
     }));
 
-    // Create chart
-    new Chart(canvas, {
+    // Update chart configuration
+    const config = {
         type: 'scatter',
-        data: { datasets },
+        data: {
+            datasets: datasets
+        },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -296,24 +301,87 @@ function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogSca
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: xConfig.label
+                        text: xConfig ? xConfig.label : xParam
                     }
                 },
                 y: {
                     type: yLogScale ? 'logarithmic' : 'linear',
                     title: {
                         display: true,
-                        text: yConfig.label
+                        text: yConfig ? yConfig.label : yParam
                     }
                 }
             },
             plugins: {
                 tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const point = context.raw;
-                            return `${point.name}: ${point.x.toLocaleString()}, ${point.y.toLocaleString()}`;
+                    enabled: false,
+                    external: function(context) {
+                        // Tooltip Element
+                        let tooltipEl = document.getElementById('chartjs-tooltip');
+
+                        // Create element on first render
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.id = 'chartjs-tooltip';
+                            tooltipEl.className = 'chartjs-tooltip';
+                            document.body.appendChild(tooltipEl);
                         }
+
+                        // Hide if no tooltip
+                        const tooltipModel = context.tooltip;
+                        if (tooltipModel.opacity === 0) {
+                            tooltipEl.style.display = 'none';
+                            return;
+                        }
+
+                        // Set Text
+                        if (tooltipModel.body) {
+                            const point = tooltipModel.dataPoints[0].raw;
+                            const xLabel = xConfig ? xConfig.label : xParam;
+                            const yLabel = yConfig ? yConfig.label : yParam;
+                            const innerHtml = `
+                                <div>${point.name}</div>
+                                <div>${xLabel}: ${point.x.toLocaleString()}</div>
+                                <div>${yLabel}: ${point.y.toLocaleString()}</div>
+                                ${point.image_url ? `<img src="${point.image_url}" alt="${point.name}">` : ''}
+                            `;
+                            tooltipEl.innerHTML = innerHtml;
+                        }
+
+                        // Position tooltip
+                        const position = context.chart.canvas.getBoundingClientRect();
+                        const bodyFont = context.chart.options.font;
+
+                        // Calculate tooltip dimensions
+                        tooltipEl.style.display = 'block';
+                        tooltipEl.style.position = 'absolute';
+                        
+                        // Get tooltip dimensions
+                        const tooltipRect = tooltipEl.getBoundingClientRect();
+                        const tooltipWidth = tooltipRect.width;
+                        const tooltipHeight = tooltipRect.height;
+                        
+                        // Calculate initial position
+                        let left = position.left + window.pageXOffset + tooltipModel.caretX + 10;
+                        let top = position.top + window.pageYOffset + tooltipModel.caretY;
+                        
+                        // Check right edge
+                        if (left + tooltipWidth > window.innerWidth) {
+                            left = position.left + window.pageXOffset + tooltipModel.caretX - tooltipWidth - 10;
+                        }
+                        
+                        // Check bottom edge
+                        if (top + tooltipHeight > window.innerHeight + window.pageYOffset) {
+                            top = window.innerHeight + window.pageYOffset - tooltipHeight - 10;
+                        }
+                        
+                        // Check top edge
+                        if (top < window.pageYOffset) {
+                            top = window.pageYOffset + 10;
+                        }
+
+                        tooltipEl.style.left = left + 'px';
+                        tooltipEl.style.top = top + 'px';
                     }
                 },
                 legend: {
@@ -332,7 +400,10 @@ function renderScatterChart(data, xParam, yParam, colorGroup, xLogScale, yLogSca
                 }
             }
         }
-    });
+    };
+
+    // Create chart
+    new Chart(canvas, config);
 }
 
 function createAircraftLink(aircraft) {

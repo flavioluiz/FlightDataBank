@@ -106,11 +106,7 @@ function renderTable(data) {
 
         // Create row content with direct link opening in new tab
         row.innerHTML = `
-            <td class="aircraft-name">
-                <a href="aircraft_details.html#${aircraft.id}" target="_blank">
-                    ${aircraft.name}
-                </a>
-            </td>
+            <td class="aircraft-name"></td>
             <td>${getCategoryName(aircraft.category_type)}</td>
             <td>${getCategoryEra(aircraft.category_era)}</td>
             <td>${aircraft.first_flight_year || '-'}</td>
@@ -120,6 +116,11 @@ function renderTable(data) {
             <td>${aircraft.cruise_speed_ms?.toLocaleString() || '-'}</td>
             <td>${aircraft.range_km?.toLocaleString() || '-'}</td>
         `;
+
+        // Add aircraft link with tooltip
+        const nameCell = row.querySelector('.aircraft-name');
+        const link = createAircraftLink(aircraft);
+        nameCell.appendChild(link);
 
         tbody.appendChild(row);
     });
@@ -214,4 +215,62 @@ function getColumnIndex(column) {
         }
     }
     return 0;
+}
+
+// Create link to aircraft details
+function createAircraftLink(aircraft) {
+    const link = document.createElement('a');
+    link.href = `aircraft_details.html#${aircraft.id}`;
+    link.target = '_blank';
+    link.textContent = aircraft.name;
+    
+    // Create tooltip div
+    const tooltip = document.createElement('div');
+    tooltip.className = 'chartjs-tooltip';
+    tooltip.style.display = 'none';
+    tooltip.innerHTML = `
+        <div>${aircraft.name}</div>
+        ${aircraft.image_url ? `<img src="${aircraft.image_url}" alt="${aircraft.name}">` : ''}
+    `;
+    document.body.appendChild(tooltip);
+
+    // Add hover events
+    link.addEventListener('mouseover', (e) => {
+        tooltip.style.display = 'block';
+        updateTooltipPosition(e, tooltip);
+    });
+
+    link.addEventListener('mousemove', (e) => {
+        updateTooltipPosition(e, tooltip);
+    });
+
+    link.addEventListener('mouseout', () => {
+        tooltip.style.display = 'none';
+    });
+
+    return link;
+}
+
+function updateTooltipPosition(event, tooltip) {
+    const padding = 10;
+    const x = event.pageX + padding;
+    const y = event.pageY + padding;
+    
+    // Check if tooltip would go off the right side of the screen
+    const tooltipWidth = tooltip.offsetWidth;
+    const windowWidth = window.innerWidth;
+    if (x + tooltipWidth > windowWidth) {
+        tooltip.style.left = (x - tooltipWidth - padding * 2) + 'px';
+    } else {
+        tooltip.style.left = x + 'px';
+    }
+    
+    // Check if tooltip would go off the bottom of the screen
+    const tooltipHeight = tooltip.offsetHeight;
+    const windowHeight = window.innerHeight;
+    if (y + tooltipHeight > windowHeight) {
+        tooltip.style.top = (y - tooltipHeight - padding * 2) + 'px';
+    } else {
+        tooltip.style.top = y + 'px';
+    }
 } 

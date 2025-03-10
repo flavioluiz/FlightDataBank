@@ -1,210 +1,324 @@
 // Global variables
-window.aircraftData = [];
+let diagramConfig = null;
+let aircraftData = [];
+let currentChart = null;
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    initializeControls();
-    loadAircraftData();
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        // First load configuration
+        await loadDiagramConfig();
+        
+        // Then load data
+        await loadAircraftData();
+        
+        // Finally initialize controls and update chart
+        initializeControls();
+    } catch (error) {
+        console.error('Error during initialization:', error);
+        showAlert('Error during initialization: ' + error.message, 'danger');
+    }
 });
+
+// Load diagram configuration
+async function loadDiagramConfig() {
+    try {
+        console.log('Loading diagram configuration...');
+        const response = await fetch('data/flight_diagrams.json');
+        if (!response.ok) {
+            throw new Error(`Failed to load diagram configuration: ${response.status}`);
+        }
+        diagramConfig = await response.json();
+        console.log('Diagram configuration loaded successfully');
+    } catch (error) {
+        console.error('Error loading diagram configuration:', error);
+        showAlert('Error loading configuration: ' + error.message, 'danger');
+        throw error;
+    }
+}
 
 // Initialize controls
 function initializeControls() {
     console.log('Initializing flight diagram controls...');
     
-    // Get controls
-    const controls = {
-        chartType: document.getElementById('x-axis-param'),
-        colorGroup: document.getElementById('color-group'),
-        showTrendlines: document.getElementById('showTrendlines'),
-        kValue: document.getElementById('k-value')
-    };
-
-    // Set default values
-    if (controls.chartType) controls.chartType.value = 'wing_loading_mtow';
-    if (controls.colorGroup) controls.colorGroup.value = 'category_type';
-
-    // Add event listeners
-    Object.entries(controls).forEach(([key, element]) => {
-        if (element) {
-            element.addEventListener('change', updateFlightDiagram);
-        }
-    });
-
-    // Add event listener for trendlines checkbox
-    if (controls.showTrendlines) {
-        controls.showTrendlines.addEventListener('change', (e) => {
-            const trendlineControls = document.getElementById('trendline-controls');
-            if (trendlineControls) {
-                trendlineControls.style.display = e.target.checked ? 'block' : 'none';
-            }
-            updateFlightDiagram();
-        });
+    if (!diagramConfig || !aircraftData) {
+        console.error('Configuration or data not loaded');
+        return;
     }
 
+    // Get controls
+    const controls = {
+        diagramType: document.getElementById('x-axis-param'),
+        colorGroup: document.getElementById('color-group'),
+        showTrendlines: document.getElementById('showTrendlines'),
+        kValue: document.getElementById('k-value'),
+        trendlineControls: document.getElementById('trendline-controls'),
+        trendlineEquation: document.getElementById('trendline-equation')
+    };
+
+    // Log control elements for debugging
+    console.log('Control elements:', controls);
+
+    // Populate diagram type select
+    if (controls.diagramType) {
+        controls.diagramType.innerHTML = '';
+        Object.entries(diagramConfig.diagrams).forEach(([key, diagram]) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = diagram.label;
+            controls.diagramType.appendChild(option);
+        });
+        controls.diagramType.value = 'wing_loading_mtow';
+        console.log(`Populated diagram types: ${controls.diagramType.options.length} options`);
+    } else {
+        console.error('Diagram type select element not found');
+        return;
+    }
+
+    // Populate color group select
+    if (controls.colorGroup) {
+        controls.colorGroup.innerHTML = '';
+        Object.entries(diagramConfig.colorGroups).forEach(([key, group]) => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = group.label;
+            controls.colorGroup.appendChild(option);
+        });
+        controls.colorGroup.value = 'category_type';
+        console.log(`Populated color groups: ${controls.colorGroup.options.length} options`);
+    } else {
+        console.error('Color group select element not found');
+        return;
+    }
+
+    // Initialize trendline controls
+    if (controls.showTrendlines) {
+        controls.showTrendlines.checked = false;
+    }
+    if (controls.trendlineControls) {
+        controls.trendlineControls.style.display = 'none';
+    }
+
+    // Add event listeners
+    controls.diagramType?.addEventListener('change', () => {
+        console.log('Diagram type changed:', controls.diagramType.value);
+        updateTrendlineControls();
+        updateChart();
+    });
+
+    controls.colorGroup?.addEventListener('change', () => {
+        console.log('Color group changed:', controls.colorGroup.value);
+        updateChart();
+    });
+
+    controls.showTrendlines?.addEventListener('change', (e) => {
+        console.log('Show trendlines changed:', e.target.checked);
+        if (controls.trendlineControls) {
+            controls.trendlineControls.style.display = e.target.checked ? 'block' : 'none';
+        }
+        updateChart();
+    });
+
+    controls.kValue?.addEventListener('change', () => {
+        console.log('K value changed:', controls.kValue.value);
+        updateChart();
+    });
+
+    // Initial update of trendline controls and chart
+    updateTrendlineControls();
+    updateChart();
+
     console.log('Flight diagram controls initialized successfully');
+}
+
+// Update trendline controls visibility and values
+function updateTrendlineControls() {
+    const diagramType = document.getElementById('x-axis-param')?.value;
+    const trendlineControls = document.getElementById('trendline-controls');
+    const trendlineEquation = document.getElementById('trendline-equation');
+    const kValue = document.getElementById('k-value');
+    const showTrendlines = document.getElementById('showTrendlines');
+
+    if (!diagramType || !diagramConfig.diagrams[diagramType]) return;
+
+    const diagram = diagramConfig.diagrams[diagramType];
+    const hasTrendline = !!diagram.trendline;
+
+    // Update controls visibility
+    if (trendlineControls) {
+        trendlineControls.style.display = hasTrendline && showTrendlines.checked ? 'block' : 'none';
+    }
+
+    if (showTrendlines) {
+        showTrendlines.disabled = !hasTrendline;
+    }
+
+    // Update equation and k value
+    if (hasTrendline) {
+        if (trendlineEquation) {
+            trendlineEquation.innerHTML = diagram.trendline.equation;
+        }
+        if (kValue && (!kValue.value || diagramType !== kValue.dataset.lastDiagram)) {
+            kValue.value = diagram.trendline.defaultK;
+            kValue.dataset.lastDiagram = diagramType;
+        }
+    } else {
+        if (trendlineEquation) trendlineEquation.innerHTML = '';
+        if (kValue) kValue.value = '';
+    }
 }
 
 // Load aircraft data
 async function loadAircraftData() {
     try {
+        console.log('Loading aircraft and bird data...');
+        
         // Load aircraft data from processed file
         const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
         if (!aircraftResponse.ok) {
             throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
-        const aircraftData = await aircraftResponse.json();
+        const aircraftJson = await aircraftResponse.json();
+        const aircraft = aircraftJson.aircraft || [];
+        console.log('Aircraft data loaded:', aircraft.length, 'aircraft');
 
         // Load bird data from processed file
         const birdsResponse = await fetch('data/processed/birds_processed.json');
-        let birdData = { birds: [] };
+        let birds = [];
         if (birdsResponse.ok) {
-            birdData = await birdsResponse.json();
-            console.log('Bird data loaded:', birdData.birds.length, 'birds');
+            const birdsJson = await birdsResponse.json();
+            birds = birdsJson.birds || [];
+            console.log('Bird data loaded:', birds.length, 'birds');
         } else {
             console.warn('Failed to load bird data:', birdsResponse.status);
         }
 
-        // Combine data
-        const allData = [
-            ...aircraftData.aircraft.map(a => ({...a, type: 'aircraft'})),
-            ...(birdData.birds || []).map(b => ({...b, type: 'bird'}))
+        // Combine and process data
+        aircraftData = [
+            ...aircraft.map(a => ({
+                ...a,
+                type: 'aircraft',
+                image_url: a.image_url,
+                wing_loading_Nm2: a.mtow_N && a.wing_area_m2 ? a.mtow_N / a.wing_area_m2 : null
+            })),
+            ...birds.map(b => ({
+                ...b,
+                type: 'bird',
+                category_type: 'ave',
+                image_url: b.image_url,
+                wing_loading_Nm2: b.mtow_N && b.wing_area_m2 ? b.mtow_N / b.wing_area_m2 : null
+            }))
         ];
 
-        // Update flight diagram
-        updateFlightDiagram(allData);
+        console.log('Total data points loaded:', aircraftData.length);
     } catch (error) {
         console.error('Error loading aircraft data:', error);
         showAlert('Error loading data: ' + error.message, 'danger');
+        throw error;
     }
 }
 
-// Update flight diagram
-function updateFlightDiagram(data) {
-    console.log('Updating flight diagram...');
+// Update chart
+function updateChart() {
+    console.log('Updating flight diagram...', {
+        hasConfig: !!diagramConfig,
+        dataType: typeof aircraftData,
+        isArray: Array.isArray(aircraftData),
+        dataLength: aircraftData?.length
+    });
     
-    // Get selected parameters
-    const chartType = document.getElementById('x-axis-param')?.value;
-    const colorGroup = document.getElementById('color-group')?.value;
-    const showTrendlines = document.getElementById('showTrendlines')?.checked || false;
-    
-    if (!chartType || !colorGroup) {
-        console.error('Missing parameters for flight diagram');
+    if (!diagramConfig) {
+        console.error('Configuration not loaded');
+        showAlert('Error: Configuration not loaded', 'danger');
         return;
     }
 
-    // Update trendline equation display
-    updateTrendlineEquation(chartType);
+    if (!aircraftData || !Array.isArray(aircraftData)) {
+        console.error('Aircraft data not properly loaded:', {
+            data: aircraftData,
+            type: typeof aircraftData
+        });
+        showAlert('Error: Data not properly loaded', 'danger');
+        return;
+    }
+
+    // Get selected parameters
+    const diagramType = document.getElementById('x-axis-param')?.value;
+    const colorGroup = document.getElementById('color-group')?.value;
+    const showTrendlines = document.getElementById('showTrendlines')?.checked || false;
+    
+    console.log('Selected parameters:', { diagramType, colorGroup, showTrendlines });
+
+    if (!diagramType || !colorGroup) {
+        console.error('Missing parameters for flight diagram:', {
+            diagramType,
+            colorGroup
+        });
+        showAlert('Error: Missing chart parameters', 'danger');
+        return;
+    }
+
+    const diagram = diagramConfig.diagrams[diagramType];
+    if (!diagram) {
+        console.error('Invalid diagram type:', diagramType);
+        showAlert('Error: Invalid diagram type', 'danger');
+        return;
+    }
 
     try {
-        // Check if data is loaded
-        if (!data || data.length === 0) {
-            console.log('No data available for flight diagram...');
+        // Process data with detailed logging
+        console.log('Processing data with params:', {
+            xParam: diagram.x.param,
+            yParam: diagram.y.param,
+            dataPoints: aircraftData.length
+        });
+
+        const processedData = aircraftData.filter(aircraft => {
+            if (!aircraft) return false;
+            
+            const hasX = aircraft[diagram.x.param] !== undefined && 
+                        aircraft[diagram.x.param] !== null && 
+                        !isNaN(aircraft[diagram.x.param]);
+            const hasY = aircraft[diagram.y.param] !== undefined && 
+                        aircraft[diagram.y.param] !== null && 
+                        !isNaN(aircraft[diagram.y.param]);
+            
+            if (!hasX || !hasY) {
+                console.debug(`Data point missing required values:`, {
+                    name: aircraft.name,
+                    category: aircraft.category_type,
+                    xValue: aircraft[diagram.x.param],
+                    yValue: aircraft[diagram.y.param]
+                });
+                return false;
+            }
+            return true;
+        }).map(aircraft => ({
+            ...aircraft,
+            x: parseFloat(aircraft[diagram.x.param]),
+            y: parseFloat(aircraft[diagram.y.param]),
+            id: aircraft.id,
+            name: aircraft.name,
+            category: aircraft[colorGroup] || 'unknown',
+            image_url: aircraft.image_url
+        }));
+
+        console.log(`Processed ${processedData.length} valid data points for flight diagram`);
+        
+        if (processedData.length === 0) {
+            showAlert('No valid data points for selected parameters', 'warning');
             return;
         }
 
-        // Process data based on chart type
-        let processedData = [];
-        switch (chartType) {
-            case 'wing_loading_mtow':
-                processedData = processWingLoadingMTOWData(data, colorGroup);
-                break;
-            case 'speed_tas_mtow':
-                processedData = processSpeedMTOWData(data, colorGroup, 'TAS');
-                break;
-            case 'speed_ve_mtow':
-                processedData = processSpeedMTOWData(data, colorGroup, 'VE');
-                break;
-            case 'wing_loading_speed_tas':
-                processedData = processWingLoadingSpeedData(data, colorGroup, 'TAS');
-                break;
-            case 'wing_loading_speed_ve':
-                processedData = processWingLoadingSpeedData(data, colorGroup, 'VE');
-                break;
-        }
-
-        console.log(`Processed ${processedData.length} valid data points for flight diagram`);
-        renderFlightDiagram(processedData, chartType, colorGroup, showTrendlines);
+        renderChart(processedData, diagram, colorGroup, showTrendlines);
     } catch (error) {
         console.error('Error updating flight diagram:', error);
         showAlert('Error updating flight diagram: ' + error.message, 'danger');
     }
 }
 
-// Process data for Wing Loading vs MTOW chart
-function processWingLoadingMTOWData(data, colorGroup) {
-    return data.filter(aircraft => {
-        const hasMTOW = aircraft.mtow_N !== undefined && aircraft.mtow_N !== null && !isNaN(aircraft.mtow_N);
-        const hasWingArea = aircraft.wing_area_m2 !== undefined && aircraft.wing_area_m2 !== null && !isNaN(aircraft.wing_area_m2);
-        
-        if (!hasMTOW || !hasWingArea) {
-            if (aircraft.category_type === 'ave') {
-                console.log(`Bird ${aircraft.name} missing wing loading data: MTOW=${aircraft.mtow_N}, Wing Area=${aircraft.wing_area_m2}`);
-            }
-            return false;
-        }
-        return true;
-    }).map(aircraft => ({
-        x: parseFloat(aircraft.mtow_N),
-        y: parseFloat(aircraft.mtow_N) / parseFloat(aircraft.wing_area_m2),
-        id: aircraft.id,
-        name: aircraft.name,
-        category: aircraft[colorGroup] || 'unknown'
-    }));
-}
-
-// Process data for Speed vs MTOW chart
-function processSpeedMTOWData(data, colorGroup, speedType) {
-    return data.filter(aircraft => {
-        const hasMTOW = aircraft.mtow_N !== undefined && aircraft.mtow_N !== null && !isNaN(aircraft.mtow_N);
-        const hasSpeed = speedType === 'TAS' ? 
-            (aircraft.cruise_speed_ms !== undefined && aircraft.cruise_speed_ms !== null && !isNaN(aircraft.cruise_speed_ms)) :
-            (aircraft.VE_cruise_ms !== undefined && aircraft.VE_cruise_ms !== null && !isNaN(aircraft.VE_cruise_ms));
-        
-        if (!hasMTOW || !hasSpeed) {
-            if (aircraft.category_type === 'ave') {
-                console.log(`Bird ${aircraft.name} missing speed data: MTOW=${aircraft.mtow_N}, Speed=${speedType === 'TAS' ? aircraft.cruise_speed_ms : aircraft.VE_cruise_ms}`);
-            }
-            return false;
-        }
-        return true;
-    }).map(aircraft => ({
-        x: parseFloat(aircraft.mtow_N),
-        y: speedType === 'TAS' ? parseFloat(aircraft.cruise_speed_ms) : parseFloat(aircraft.VE_cruise_ms),
-        id: aircraft.id,
-        name: aircraft.name,
-        category: aircraft[colorGroup] || 'unknown',
-        cruiseAltitude: aircraft.cruise_altitude_m
-    }));
-}
-
-// Process data for Wing Loading vs Speed chart
-function processWingLoadingSpeedData(data, colorGroup, speedType) {
-    return data.filter(aircraft => {
-        const hasMTOW = aircraft.mtow_N !== undefined && aircraft.mtow_N !== null && !isNaN(aircraft.mtow_N);
-        const hasWingArea = aircraft.wing_area_m2 !== undefined && aircraft.wing_area_m2 !== null && !isNaN(aircraft.wing_area_m2);
-        const hasSpeed = speedType === 'TAS' ? 
-            (aircraft.cruise_speed_ms !== undefined && aircraft.cruise_speed_ms !== null && !isNaN(aircraft.cruise_speed_ms)) :
-            (aircraft.VE_cruise_ms !== undefined && aircraft.VE_cruise_ms !== null && !isNaN(aircraft.VE_cruise_ms));
-        
-        if (!hasMTOW || !hasWingArea || !hasSpeed) {
-            if (aircraft.category_type === 'ave') {
-                console.log(`Bird ${aircraft.name} missing data: MTOW=${aircraft.mtow_N}, Wing Area=${aircraft.wing_area_m2}, Speed=${speedType === 'TAS' ? aircraft.cruise_speed_ms : aircraft.VE_cruise_ms}`);
-            }
-            return false;
-        }
-        return true;
-    }).map(aircraft => ({
-        x: speedType === 'TAS' ? parseFloat(aircraft.cruise_speed_ms) : parseFloat(aircraft.VE_cruise_ms),
-        y: parseFloat(aircraft.mtow_N) / parseFloat(aircraft.wing_area_m2),
-        id: aircraft.id,
-        name: aircraft.name,
-        category: aircraft[colorGroup] || 'unknown',
-        cruiseAltitude: aircraft.cruise_altitude_m
-    }));
-}
-
-// Render flight diagram
-function renderFlightDiagram(data, chartType, colorGroup, showTrendlines) {
+// Render chart
+function renderChart(data, diagram, colorGroup, showTrendlines) {
     console.log(`Rendering flight diagram with ${data.length} items`);
     
     const canvas = document.getElementById('flight-diagram');
@@ -214,66 +328,12 @@ function renderFlightDiagram(data, chartType, colorGroup, showTrendlines) {
     }
 
     // Destroy existing chart
-    const existingChart = Chart.getChart(canvas);
-    if (existingChart) {
-        existingChart.destroy();
+    if (currentChart) {
+        currentChart.destroy();
     }
 
-    // Color palettes for different groupings
-    const colorPalettes = {
-        category_type: {
-            'ave': 'rgba(255, 99, 132, 0.7)',
-            'comercial': 'rgba(54, 162, 235, 0.7)',
-            'militar': 'rgba(255, 206, 86, 0.7)',
-            'geral': 'rgba(75, 192, 192, 0.7)',
-            'historica': 'rgba(153, 102, 255, 0.7)',
-            'executiva': 'rgba(255, 159, 64, 0.7)',
-            'carga': 'rgba(201, 203, 207, 0.7)',
-            'experimental': 'rgba(255, 99, 71, 0.7)'
-        },
-        category_era: {
-            'pioneiro': 'rgba(141, 110, 99, 0.7)',
-            'classico': 'rgba(120, 144, 156, 0.7)',
-            'jato': 'rgba(38, 166, 154, 0.7)',
-            'moderno': 'rgba(121, 134, 203, 0.7)',
-            'contemporaneo': 'rgba(3, 169, 244, 0.7)',
-            'ave': 'rgba(255, 99, 132, 0.7)'
-        },
-        category_size: {
-            'muito_leve': 'rgba(156, 204, 101, 0.7)',
-            'regional': 'rgba(255, 183, 77, 0.7)',
-            'medio': 'rgba(229, 115, 115, 0.7)',
-            'grande': 'rgba(124, 77, 255, 0.7)',
-            'muito_grande': 'rgba(0, 151, 167, 0.7)'
-        },
-        engine_type: {
-            'pistao': 'rgba(141, 110, 99, 0.7)',
-            'turboprop': 'rgba(96, 125, 139, 0.7)',
-            'jato': 'rgba(0, 151, 167, 0.7)',
-            'eletrico': 'rgba(76, 175, 80, 0.7)',
-            'foguete': 'rgba(244, 67, 54, 0.7)',
-            'nenhum': 'rgba(189, 189, 189, 0.7)'
-        }
-    };
-
-    // Get the appropriate color palette
-    const categoryColors = colorPalettes[colorGroup] || {};
-
-    // Get the appropriate category name function
-    const getCategoryLabel = (category) => {
-        switch (colorGroup) {
-            case 'category_type':
-                return getCategoryName(category);
-            case 'category_era':
-                return getCategoryEra(category);
-            case 'category_size':
-                return getCategorySize(category);
-            case 'engine_type':
-                return category.charAt(0).toUpperCase() + category.slice(1);
-            default:
-                return category;
-        }
-    };
+    // Get color palette
+    const colorPalette = diagramConfig.colorGroups[colorGroup]?.colors || {};
 
     // Group data by category
     const datasets = Object.entries(
@@ -285,45 +345,24 @@ function renderFlightDiagram(data, chartType, colorGroup, showTrendlines) {
             return acc;
         }, {})
     ).map(([category, items]) => ({
-        label: getCategoryLabel(category),
+        label: category,
         data: items,
-        backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
-        borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
+        backgroundColor: colorPalette[category] || 'rgba(100, 100, 100, 0.7)',
+        borderColor: colorPalette[category] || 'rgba(100, 100, 100, 0.7)',
         pointRadius: 5,
         pointHoverRadius: 8
     }));
 
-    // Add trendlines if requested
-    if (showTrendlines) {
-        datasets.push(...calculateTrendlines(data, chartType));
+    // Add trendline if requested
+    if (showTrendlines && diagram.trendline) {
+        const trendline = calculateTrendline(data, diagram);
+        if (trendline) {
+            datasets.push(trendline);
+        }
     }
 
-    // Axis labels
-    const axisLabels = {
-        wing_loading_mtow: {
-            x: 'MTOW (N)',
-            y: 'Wing Loading (N/m²)'
-        },
-        speed_tas_mtow: {
-            x: 'MTOW (N)',
-            y: 'True Airspeed (m/s)'
-        },
-        speed_ve_mtow: {
-            x: 'MTOW (N)',
-            y: 'Equivalent Airspeed (m/s)'
-        },
-        wing_loading_speed_tas: {
-            x: 'True Airspeed (m/s)',
-            y: 'Wing Loading (N/m²)'
-        },
-        wing_loading_speed_ve: {
-            x: 'Equivalent Airspeed (m/s)',
-            y: 'Wing Loading (N/m²)'
-        }
-    };
-
     // Create chart
-    new Chart(canvas, {
+    currentChart = new Chart(canvas, {
         type: 'scatter',
         data: { datasets },
         options: {
@@ -331,28 +370,89 @@ function renderFlightDiagram(data, chartType, colorGroup, showTrendlines) {
             maintainAspectRatio: false,
             scales: {
                 x: {
-                    type: 'logarithmic',  // Always use log scale
+                    type: diagram.x.scale || 'linear',
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: axisLabels[chartType]?.x || ''
+                        text: diagram.x.label
                     }
                 },
                 y: {
-                    type: 'logarithmic',  // Always use log scale
+                    type: diagram.y.scale || 'linear',
                     title: {
                         display: true,
-                        text: axisLabels[chartType]?.y || ''
+                        text: diagram.y.label
                     }
                 }
             },
             plugins: {
                 tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const point = context.raw;
-                            return `${point.name}: ${point.x.toLocaleString()}, ${point.y.toLocaleString()}`;
+                    enabled: false,
+                    external: function(context) {
+                        // Tooltip Element
+                        let tooltipEl = document.getElementById('chartjs-tooltip-flight');
+
+                        // Create element on first render
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.id = 'chartjs-tooltip-flight';
+                            tooltipEl.className = 'chartjs-tooltip';
+                            document.body.appendChild(tooltipEl);
                         }
+
+                        // Hide if no tooltip
+                        const tooltipModel = context.tooltip;
+                        if (tooltipModel.opacity === 0) {
+                            tooltipEl.style.display = 'none';
+                            return;
+                        }
+
+                        // Set Text
+                        if (tooltipModel.body) {
+                            const point = tooltipModel.dataPoints[0].raw;
+                            const innerHtml = `
+                                <div>${point.name}</div>
+                                <div>${diagram.x.label}: ${point.x.toLocaleString()}</div>
+                                <div>${diagram.y.label}: ${point.y.toLocaleString()}</div>
+                                ${point.image_url ? `<img src="${point.image_url}" alt="${point.name}">` : ''}
+                            `;
+                            tooltipEl.innerHTML = innerHtml;
+                        }
+
+                        // Position tooltip
+                        const position = context.chart.canvas.getBoundingClientRect();
+                        const bodyFont = context.chart.options.font;
+
+                        // Calculate tooltip dimensions
+                        tooltipEl.style.display = 'block';
+                        tooltipEl.style.position = 'absolute';
+                        
+                        // Get tooltip dimensions
+                        const tooltipRect = tooltipEl.getBoundingClientRect();
+                        const tooltipWidth = tooltipRect.width;
+                        const tooltipHeight = tooltipRect.height;
+                        
+                        // Calculate initial position
+                        let left = position.left + window.pageXOffset + tooltipModel.caretX + 10;
+                        let top = position.top + window.pageYOffset + tooltipModel.caretY;
+                        
+                        // Check right edge
+                        if (left + tooltipWidth > window.innerWidth) {
+                            left = position.left + window.pageXOffset + tooltipModel.caretX - tooltipWidth - 10;
+                        }
+                        
+                        // Check bottom edge
+                        if (top + tooltipHeight > window.innerHeight + window.pageYOffset) {
+                            top = window.innerHeight + window.pageYOffset - tooltipHeight - 10;
+                        }
+                        
+                        // Check top edge
+                        if (top < window.pageYOffset) {
+                            top = window.pageYOffset + 10;
+                        }
+
+                        tooltipEl.style.left = left + 'px';
+                        tooltipEl.style.top = top + 'px';
                     }
                 },
                 legend: {
@@ -374,82 +474,33 @@ function renderFlightDiagram(data, chartType, colorGroup, showTrendlines) {
     });
 }
 
-// Update trendline equation display
-function updateTrendlineEquation(chartType) {
-    const equationElement = document.getElementById('trendline-equation');
-    const kValueInput = document.getElementById('k-value');
-    
-    if (!equationElement || !kValueInput) return;
+// Calculate trendline
+function calculateTrendline(data, diagram) {
+    if (data.length < 2) return null;
 
-    let equation = '';
-    let defaultK = 0;
-
-    switch (chartType) {
-        case 'wing_loading_mtow':
-            equation = 'W/S = k × W^(1/3)';
-            defaultK = 25;
-            break;
-        case 'wing_loading_speed_tas':
-        case 'wing_loading_speed_ve':
-            equation = 'W/S = k × V²';
-            defaultK = 0.38;
-            break;
-        default:
-            equation = '';
-            defaultK = 0;
-    }
-
-    equationElement.innerHTML = equation;
-    if (!kValueInput.value || chartType !== kValueInput.dataset.lastChartType) {
-        kValueInput.value = defaultK;
-        kValueInput.dataset.lastChartType = chartType;
-    }
-}
-
-// Calculate trendlines for the data
-function calculateTrendlines(data, chartType) {
-    const trendlines = [];
-    
-    // Skip if no data
-    if (data.length < 2) return trendlines;
-
-    // Get min and max x values
     const minX = Math.min(...data.map(item => item.x));
     const maxX = Math.max(...data.map(item => item.x));
     const numPoints = 100;
     const trendlinePoints = [];
 
-    // Get k value from input
     const kValueInput = document.getElementById('k-value');
-    const k = kValueInput ? parseFloat(kValueInput.value) : (chartType === 'wing_loading_mtow' ? 25 : 0.38);
+    const k = kValueInput ? parseFloat(kValueInput.value) : diagram.trendline.defaultK;
 
-    // Generate points based on chart type
-    switch (chartType) {
-        case 'wing_loading_mtow': {
-            // W/S = k * W^(1/3)
-            for (let i = 0; i < numPoints; i++) {
-                const x = minX * Math.pow(maxX / minX, i / (numPoints - 1));
-                const y = k * Math.pow(x, 1/3);
-                trendlinePoints.push({ x, y });
-            }
-            break;
+    // Generate points based on diagram type
+    for (let i = 0; i < numPoints; i++) {
+        const x = minX * Math.pow(maxX / minX, i / (numPoints - 1));
+        let y;
+
+        if (diagram.trendline.equation.includes('W^(1/3)')) {
+            y = k * Math.pow(x, 1/3);  // W/S = k * W^(1/3)
+        } else if (diagram.trendline.equation.includes('V²')) {
+            y = k * x * x;  // W/S = k * V²
         }
-        case 'wing_loading_speed_tas':
-        case 'wing_loading_speed_ve': {
-            // W/S = k * V²
-            for (let i = 0; i < numPoints; i++) {
-                const x = minX * Math.pow(maxX / minX, i / (numPoints - 1));
-                const y = k * x * x;
-                trendlinePoints.push({ x, y });
-            }
-            break;
-        }
-        // No trendlines for other chart types
-        default:
-            return [];
+
+        trendlinePoints.push({ x, y });
     }
 
-    trendlines.push({
+    return {
         label: `Theoretical Trend (k=${k.toFixed(2)})`,
         data: trendlinePoints,
         borderColor: 'rgba(0, 0, 0, 0.7)',
@@ -459,7 +510,5 @@ function calculateTrendlines(data, chartType) {
         pointRadius: 0,
         fill: false,
         showLine: true
-    });
-
-    return trendlines;
+    };
 } 

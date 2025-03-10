@@ -50,4 +50,58 @@
 #aircraft-details .alert {
     margin-top: 2rem;
     margin-bottom: 2rem;
+}
+
+.tooltip-image {
+    position: absolute;
+    display: none;
+    background: white;
+    border: 1px solid #ccc;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.tooltip-image img {
+    max-width: 200px;
+    max-height: 150px;
+    display: block;
+}
+
+.aircraft-link {
+    position: relative;
+    cursor: pointer;
+}
+
+/* Chart tooltip customization */
+.chartjs-tooltip {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    padding: 10px;
+    border: 1px solid #ddd;
+    pointer-events: none;
+    z-index: 1000;
+    transition: opacity 0.3s ease;
+    max-height: calc(100vh - 20px);  /* Maximum height is viewport height minus margin */
+    overflow-y: auto;  /* Add scroll if content is too tall */
+    transform-origin: top left;  /* For scaling if needed */
+}
+
+.chartjs-tooltip img {
+    max-width: 200px;
+    max-height: 150px;
+    margin-top: 5px;
+    border-radius: 3px;
+    display: block;
+}
+
+.chartjs-tooltip div {
+    margin: 2px 0;
+    font-size: 14px;
+    color: #333;
+    white-space: nowrap;
 } 

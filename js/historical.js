@@ -108,8 +108,15 @@ async function loadAircraftData() {
 
         // Combine and sort data by first flight year
         window.aircraftData = [
-            ...aircraftData.aircraft.map(a => ({...a, type: 'aircraft'})),
-            ...(birdData.birds || []).map(b => ({...b, type: 'bird', category_type: 'ave'}))
+            ...aircraftData.aircraft.map(a => ({
+                ...a,  // Keep all original data
+                type: 'aircraft'
+            })),
+            ...(birdData.birds || []).map(b => ({
+                ...b,  // Keep all original data
+                type: 'bird',
+                category_type: 'ave'
+            }))
         ].filter(item => item.first_flight_year != null)
          .sort((a, b) => a.first_flight_year - b.first_flight_year);
 
@@ -163,7 +170,8 @@ function updateTimelineChart() {
             y: parseFloat(aircraft[param]),
             id: aircraft.id,
             name: aircraft.name,
-            category: aircraft[colorGroup] || 'unknown'
+            category: aircraft[colorGroup] || 'unknown',
+            image_url: aircraft.image_url
         }));
 
         console.log(`Processed ${data.length} valid data points for timeline`);
@@ -268,8 +276,8 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
     const paramConfig = chartParameters.parameters[param];
     const yAxisLabel = paramConfig ? paramConfig.label : param;
 
-    // Create chart
-    new Chart(canvas, {
+    // Create chart configuration
+    const config = {
         type: 'scatter',
         data: { datasets },
         options: {
@@ -294,11 +302,74 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
             },
             plugins: {
                 tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            const point = context.raw;
-                            return `${point.name}: ${point.x.toLocaleString()}, ${point.y.toLocaleString()}`;
+                    enabled: false,
+                    external: function(context) {
+                        // Tooltip Element
+                        let tooltipEl = document.getElementById('chartjs-tooltip-historical');
+
+                        // Create element on first render
+                        if (!tooltipEl) {
+                            tooltipEl = document.createElement('div');
+                            tooltipEl.id = 'chartjs-tooltip-historical';
+                            tooltipEl.className = 'chartjs-tooltip';
+                            document.body.appendChild(tooltipEl);
                         }
+
+                        // Hide if no tooltip
+                        const tooltipModel = context.tooltip;
+                        if (tooltipModel.opacity === 0) {
+                            tooltipEl.style.display = 'none';
+                            return;
+                        }
+
+                        // Set Text
+                        if (tooltipModel.body) {
+                            const point = tooltipModel.dataPoints[0].raw;
+                            const paramConfig = chartParameters.parameters[param];
+                            const paramLabel = paramConfig ? paramConfig.label : param;
+                            const innerHtml = `
+                                <div>${point.name}</div>
+                                <div>Ano: ${point.x.toLocaleString()}</div>
+                                <div>${paramLabel}: ${point.y.toLocaleString()}</div>
+                                ${point.image_url ? `<img src="${point.image_url}" alt="${point.name}">` : ''}
+                            `;
+                            tooltipEl.innerHTML = innerHtml;
+                        }
+
+                        // Position tooltip
+                        const position = context.chart.canvas.getBoundingClientRect();
+                        const bodyFont = context.chart.options.font;
+
+                        // Calculate tooltip dimensions
+                        tooltipEl.style.display = 'block';
+                        tooltipEl.style.position = 'absolute';
+                        
+                        // Get tooltip dimensions
+                        const tooltipRect = tooltipEl.getBoundingClientRect();
+                        const tooltipWidth = tooltipRect.width;
+                        const tooltipHeight = tooltipRect.height;
+                        
+                        // Calculate initial position
+                        let left = position.left + window.pageXOffset + tooltipModel.caretX + 10;
+                        let top = position.top + window.pageYOffset + tooltipModel.caretY;
+                        
+                        // Check right edge
+                        if (left + tooltipWidth > window.innerWidth) {
+                            left = position.left + window.pageXOffset + tooltipModel.caretX - tooltipWidth - 10;
+                        }
+                        
+                        // Check bottom edge
+                        if (top + tooltipHeight > window.innerHeight + window.pageYOffset) {
+                            top = window.innerHeight + window.pageYOffset - tooltipHeight - 10;
+                        }
+                        
+                        // Check top edge
+                        if (top < window.pageYOffset) {
+                            top = window.pageYOffset + 10;
+                        }
+
+                        tooltipEl.style.left = left + 'px';
+                        tooltipEl.style.top = top + 'px';
                     }
                 },
                 legend: {
@@ -317,7 +388,10 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                 }
             }
         }
-    });
+    };
+
+    // Create chart
+    new Chart(canvas, config);
 }
 
 function createTimelineItem(aircraft) {

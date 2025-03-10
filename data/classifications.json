@@ -36,6 +36,7 @@
       "options": [
         { "value": "Piston", "label": "Piston" },
         { "value": "Turboprop", "label": "Turboprop" },
+        { "value": "Turbofan", "label": "Turbofan" },
         { "value": "Jet", "label": "Jet" },
         { "value": "Electric", "label": "Electric" }
       ]
@@ -74,6 +75,7 @@
     "engine_type": {
       "Piston": "#795548",
       "Turboprop": "#607D8B",
+      "Turbofan": "#FF9800",  
       "Jet": "#E91E63",
       "Electric": "#00BCD4"
     },

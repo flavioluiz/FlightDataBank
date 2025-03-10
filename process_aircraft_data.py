@@ -37,6 +37,56 @@ def compute_isa_density(altitude_m: float) -> float:
     
     return rho
 
+def determine_wtc(mtow_N: float) -> str:
+    """
+    Determine Wake Turbulence Category (WTC) based on MTOW.
+    
+    Parameters:
+    mtow_N (float): Maximum Take-Off Weight in Newtons
+    
+    Returns:
+    str: Wake Turbulence Category ('Light', 'Medium', or 'Heavy')
+    """
+    # Convert Newtons to kg (divide by standard gravity)
+    mtow_kg = mtow_N / 9.80665
+    
+    if mtow_kg <= 7000:
+        return "Light"
+    elif mtow_kg < 136000:
+        return "Medium"
+    else:
+        return "Heavy"
+
+def determine_era(first_flight_year: int) -> str:
+    """
+    Determine the aviation era based on the first flight year.
+    
+    Parameters:
+    first_flight_year (int): Year of first flight
+    
+    Returns:
+    str: Aviation era
+    """
+    if first_flight_year is None:
+        return "Unknown"
+    
+    if first_flight_year < 1914:
+        return "Pioneer Era"
+    elif first_flight_year < 1939:
+        return "Golden Age"
+    elif first_flight_year < 1945:
+        return "World War II"
+    elif first_flight_year < 1958:
+        return "Post-War"
+    elif first_flight_year < 1970:
+        return "Jet Age"
+    elif first_flight_year < 1990:
+        return "Modern Commercial"
+    elif first_flight_year < 2010:
+        return "Digital Era"
+    else:
+        return "Contemporary"
+
 def load_json_data(file_path: str) -> dict:
     """Load JSON data from a file."""
     with open(file_path, 'r') as f:
@@ -119,6 +169,19 @@ def compute_derived_values(aircraft):
                 print(f"Warning: Invalid value for {field} in aircraft {processed.get('name', 'Unknown')}")
                 return None
 
+        # Add WTC (Wake Turbulence Category) field
+        processed['WTC'] = determine_wtc(processed['mtow_N'])
+        
+        # Add era field based on first_flight_year
+        if 'first_flight_year' in processed and processed['first_flight_year'] is not None:
+            try:
+                first_flight_year = int(processed['first_flight_year'])
+                processed['era'] = determine_era(first_flight_year)
+            except (ValueError, TypeError):
+                processed['era'] = "Unknown"
+        else:
+            processed['era'] = "Unknown"
+
         # Compute air density at cruise altitude
         rho_cruise = compute_isa_density(processed['cruise_altitude_m'])
         rho_sl = compute_isa_density(0)  # Sea level density
@@ -194,7 +257,8 @@ def validate_aircraft(aircraft):
         'max_thrust',
         'max_speed_ms',
         'range_km',
-        'max_roc'
+        'max_roc',
+        'first_flight_year'
     ]
     
     # Check required fields
@@ -219,6 +283,14 @@ def process_database(input_file: str, output_file: str, start_id: int = 1) -> in
     Process the aircraft database and save the results.
     Returns the next available ID after processing.
     """
+    print(f"\nProcessing {input_file}")
+    print(f"Starting with ID: {start_id}")
+    
+    # Check if input file exists
+    if not os.path.exists(input_file):
+        print(f"Warning: Input file {input_file} does not exist")
+        return start_id
+    
     # Load data
     data = load_json_data(input_file)
     current_id = start_id
@@ -226,9 +298,11 @@ def process_database(input_file: str, output_file: str, start_id: int = 1) -> in
     # Process each aircraft
     if 'aircraft' in data:
         processed_aircraft = []
+        print(f"Found {len(data['aircraft'])} aircraft to process")
         for aircraft in data['aircraft']:
             # Assign new ID
             aircraft['id'] = current_id
+            print(f"Processing aircraft {aircraft.get('name', 'Unknown')} with ID {current_id}")
             current_id += 1
             
             # Rename fields with units
@@ -240,12 +314,15 @@ def process_database(input_file: str, output_file: str, start_id: int = 1) -> in
         
         # Update the data with processed aircraft
         data['aircraft'] = processed_aircraft
+        print(f"Successfully processed {len(processed_aircraft)} aircraft")
     
     if 'birds' in data:
         processed_birds = []
+        print(f"Found {len(data['birds'])} birds to process")
         for bird in data['birds']:
             # Assign new ID
             bird['id'] = current_id
+            print(f"Processing bird {bird.get('name', 'Unknown')} with ID {current_id}")
             current_id += 1
             
             # Rename fields with units
@@ -257,9 +334,12 @@ def process_database(input_file: str, output_file: str, start_id: int = 1) -> in
         
         # Update the data with processed birds
         data['birds'] = processed_birds
+        print(f"Successfully processed {len(processed_birds)} birds")
     
     # Save processed data
     save_json_data(data, output_file)
+    print(f"Saved processed data to {output_file}")
+    print(f"Next available ID: {current_id}\n")
     
     return current_id
 
@@ -270,20 +350,29 @@ def main():
     
     # Create processed directory if it doesn't exist
     os.makedirs(processed_dir, exist_ok=True)
+    print("\nStarting data processing...")
+    print(f"Input directory: {data_dir}")
+    print(f"Output directory: {processed_dir}")
     
     # Process aircraft data first, starting with ID 1
+    aircraft_input = str(data_dir / 'aircraft.json')
+    aircraft_output = str(processed_dir / 'aircraft_processed.json')
     next_id = process_database(
-        str(data_dir / 'aircraft.json'),
-        str(processed_dir / 'aircraft_processed.json'),
+        aircraft_input,
+        aircraft_output,
         start_id=1
     )
     
     # Process birds data, starting with ID after the last aircraft
+    birds_input = str(data_dir / 'birds.json')
+    birds_output = str(processed_dir / 'birds_processed.json')
     process_database(
-        str(data_dir / 'birds.json'),
-        str(processed_dir / 'birds_processed.json'),
+        birds_input,
+        birds_output,
         start_id=next_id
     )
+    
+    print("Data processing completed!")
 
 if __name__ == "__main__":
     main() 

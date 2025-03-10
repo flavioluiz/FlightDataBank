@@ -2,18 +2,18 @@
 function createImageTooltip(element, imageUrl) {
     if (!imageUrl) return;
 
-    // Create tooltip container if it doesn't exist
-    let tooltip = document.querySelector('.tooltip-image');
-    if (!tooltip) {
-        tooltip = document.createElement('div');
-        tooltip.className = 'tooltip-image';
-        document.body.appendChild(tooltip);
-    }
+    // Create a unique tooltip for this element
+    const tooltipId = 'tooltip-' + Math.random().toString(36).substr(2, 9);
+    element.dataset.tooltipId = tooltipId;
+    
+    const tooltip = document.createElement('div');
+    tooltip.id = tooltipId;
+    tooltip.className = 'tooltip-image';
+    document.body.appendChild(tooltip);
 
     // Create image element
     const img = document.createElement('img');
     img.src = imageUrl;
-    tooltip.innerHTML = '';
     tooltip.appendChild(img);
 
     // Show tooltip on mouseover
@@ -31,6 +31,23 @@ function createImageTooltip(element, imageUrl) {
     element.addEventListener('mouseout', () => {
         tooltip.style.display = 'none';
     });
+    
+    // Clean up tooltip when element is removed
+    const observer = new MutationObserver((mutations) => {
+        mutations.forEach((mutation) => {
+            if (mutation.removedNodes.length) {
+                Array.from(mutation.removedNodes).forEach((node) => {
+                    if (node === element || node.contains(element)) {
+                        tooltip.remove();
+                        observer.disconnect();
+                    }
+                });
+            }
+        });
+    });
+    
+    // Start observing the document
+    observer.observe(document.body, { childList: true, subtree: true });
 }
 
 // Function to update tooltip position

@@ -2,6 +2,7 @@
 let diagramConfig = null;
 let aircraftData = [];
 let currentChart = null;
+let classifications = null;
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', async function() {
@@ -24,176 +25,178 @@ document.addEventListener('DOMContentLoaded', async function() {
 async function loadDiagramConfig() {
     try {
         console.log('Loading diagram configuration...');
+        
+        // First load classifications
+        const classResponse = await fetch('data/classifications.json');
+        if (!classResponse.ok) {
+            throw new Error(`Failed to load classifications: ${classResponse.status} ${classResponse.statusText}`);
+        }
+        classifications = await classResponse.json();
+        console.log('Classifications loaded:', classifications);
+        
+        // Then load diagram config
         const response = await fetch('data/flight_diagrams.json');
         if (!response.ok) {
-            throw new Error(`Failed to load diagram configuration: ${response.status}`);
+            throw new Error(`Failed to load configuration: ${response.status} ${response.statusText}`);
         }
+        
         diagramConfig = await response.json();
-        console.log('Diagram configuration loaded successfully');
+        console.log('Diagram configuration loaded:', diagramConfig);
+        
+        // Initialize controls after loading configuration
+        initializeControls();
+        
+        // Load aircraft data
+        await loadAircraftData();
+        
+        // Update chart with default values
+        updateChart();
     } catch (error) {
-        console.error('Error loading diagram configuration:', error);
+        console.error('Error loading configuration:', error);
         showAlert('Error loading configuration: ' + error.message, 'danger');
-        throw error;
     }
 }
 
 // Initialize controls
 function initializeControls() {
-    console.log('Initializing flight diagram controls...');
+    console.log('Initializing controls...');
     
-    if (!diagramConfig || !aircraftData) {
-        console.error('Configuration or data not loaded');
+    // Get control elements
+    const diagramSelect = document.getElementById('x-axis-param');
+    const colorGroupSelect = document.getElementById('color-group');
+    const trendlineControls = document.getElementById('trendline-controls');
+    const showTrendlinesCheckbox = document.getElementById('showTrendlines');
+    const trendlineKInput = document.getElementById('trendline-k');
+    const trendlineEquation = document.getElementById('trendline-equation');
+    
+    console.log('Control elements:', { 
+        diagramSelect, 
+        colorGroupSelect, 
+        trendlineControls, 
+        showTrendlinesCheckbox 
+    });
+    
+    if (!diagramSelect || !colorGroupSelect) {
+        console.error('Required control elements not found');
+        showAlert('Error: Required control elements not found', 'danger');
         return;
     }
-
-    // Get controls
-    const controls = {
-        diagramType: document.getElementById('x-axis-param'),
-        colorGroup: document.getElementById('color-group'),
-        showTrendlines: document.getElementById('showTrendlines'),
-        kValue: document.getElementById('k-value'),
-        trendlineControls: document.getElementById('trendline-controls'),
-        trendlineEquation: document.getElementById('trendline-equation')
-    };
-
-    // Log control elements for debugging
-    console.log('Control elements:', controls);
-
-    // Populate diagram type select
-    if (controls.diagramType) {
-        controls.diagramType.innerHTML = '';
-        Object.entries(diagramConfig.diagrams).forEach(([key, diagram]) => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = diagram.label;
-            controls.diagramType.appendChild(option);
-        });
-        controls.diagramType.value = 'wing_loading_mtow';
-        console.log(`Populated diagram types: ${controls.diagramType.options.length} options`);
-    } else {
-        console.error('Diagram type select element not found');
-        return;
+    
+    // Clear existing options
+    diagramSelect.innerHTML = '';
+    colorGroupSelect.innerHTML = '';
+    
+    // Add diagram options
+    for (const [id, diagram] of Object.entries(diagramConfig.diagrams)) {
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = diagram.label;
+        diagramSelect.appendChild(option);
     }
-
-    // Populate color group select
-    if (controls.colorGroup) {
-        controls.colorGroup.innerHTML = '';
-        Object.entries(diagramConfig.colorGroups).forEach(([key, group]) => {
-            const option = document.createElement('option');
-            option.value = key;
-            option.textContent = group.label;
-            controls.colorGroup.appendChild(option);
-        });
-        controls.colorGroup.value = 'category_type';
-        console.log(`Populated color groups: ${controls.colorGroup.options.length} options`);
-    } else {
-        console.error('Color group select element not found');
-        return;
+    
+    // Set default diagram
+    if (diagramSelect.options.length > 0) {
+        diagramSelect.value = 'wing_loading_mtow';
     }
-
+    
+    // Add color group options
+    for (const [id, group] of Object.entries(diagramConfig.colorGroups)) {
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = group.label;
+        colorGroupSelect.appendChild(option);
+    }
+    
+    // Set default color group
+    if (colorGroupSelect.options.length > 0) {
+        colorGroupSelect.value = 'category_type';
+    }
+    
     // Initialize trendline controls
-    if (controls.showTrendlines) {
-        controls.showTrendlines.checked = false;
+    if (trendlineControls) {
+        trendlineControls.style.display = 'none';
     }
-    if (controls.trendlineControls) {
-        controls.trendlineControls.style.display = 'none';
-    }
-
+    
     // Add event listeners
-    controls.diagramType?.addEventListener('change', () => {
-        console.log('Diagram type changed:', controls.diagramType.value);
+    diagramSelect.addEventListener('change', () => {
         updateTrendlineControls();
         updateChart();
     });
-
-    controls.colorGroup?.addEventListener('change', () => {
-        console.log('Color group changed:', controls.colorGroup.value);
-        updateChart();
-    });
-
-    controls.showTrendlines?.addEventListener('change', (e) => {
-        console.log('Show trendlines changed:', e.target.checked);
-        if (controls.trendlineControls) {
-            controls.trendlineControls.style.display = e.target.checked ? 'block' : 'none';
-        }
-        updateChart();
-    });
-
-    controls.kValue?.addEventListener('change', () => {
-        console.log('K value changed:', controls.kValue.value);
-        updateChart();
-    });
-
-    // Initial update of trendline controls and chart
+    
+    colorGroupSelect.addEventListener('change', updateChart);
+    
+    if (showTrendlinesCheckbox) {
+        showTrendlinesCheckbox.addEventListener('change', () => {
+            if (trendlineKInput) {
+                trendlineKInput.disabled = !showTrendlinesCheckbox.checked;
+            }
+            updateChart();
+        });
+    }
+    
+    if (trendlineKInput) {
+        trendlineKInput.addEventListener('change', updateChart);
+    }
+    
+    // Initialize trendline controls based on selected diagram
     updateTrendlineControls();
-    updateChart();
-
-    console.log('Flight diagram controls initialized successfully');
+    
+    // Trigger initial chart update
+    console.log('Controls initialized successfully');
 }
 
-// Update trendline controls visibility and values
+// Update trendline controls based on selected diagram
 function updateTrendlineControls() {
     const diagramType = document.getElementById('x-axis-param')?.value;
     const trendlineControls = document.getElementById('trendline-controls');
+    const trendlineKInput = document.getElementById('trendline-k');
     const trendlineEquation = document.getElementById('trendline-equation');
-    const kValue = document.getElementById('k-value');
-    const showTrendlines = document.getElementById('showTrendlines');
-
-    if (!diagramType || !diagramConfig.diagrams[diagramType]) return;
-
+    const showTrendlinesCheckbox = document.getElementById('showTrendlines');
+    
+    if (!diagramType || !diagramConfig || !diagramConfig.diagrams[diagramType]) {
+        if (trendlineControls) trendlineControls.style.display = 'none';
+        return;
+    }
+    
     const diagram = diagramConfig.diagrams[diagramType];
-    const hasTrendline = !!diagram.trendline;
-
-    // Update controls visibility
-    if (trendlineControls) {
-        trendlineControls.style.display = hasTrendline && showTrendlines.checked ? 'block' : 'none';
-    }
-
-    if (showTrendlines) {
-        showTrendlines.disabled = !hasTrendline;
-    }
-
-    // Update equation and k value
-    if (hasTrendline) {
-        if (trendlineEquation) {
-            trendlineEquation.innerHTML = diagram.trendline.equation;
-        }
-        if (kValue && (!kValue.value || diagramType !== kValue.dataset.lastDiagram)) {
-            kValue.value = diagram.trendline.defaultK;
-            kValue.dataset.lastDiagram = diagramType;
+    
+    if (diagram.trendline) {
+        if (trendlineControls) trendlineControls.style.display = 'block';
+        if (trendlineEquation) trendlineEquation.textContent = diagram.trendline.equation;
+        if (trendlineKInput) {
+            trendlineKInput.value = diagram.trendline.defaultK;
+            trendlineKInput.disabled = !showTrendlinesCheckbox?.checked;
         }
     } else {
-        if (trendlineEquation) trendlineEquation.innerHTML = '';
-        if (kValue) kValue.value = '';
+        if (trendlineControls) trendlineControls.style.display = 'none';
+        if (showTrendlinesCheckbox) showTrendlinesCheckbox.checked = false;
     }
 }
 
 // Load aircraft data
 async function loadAircraftData() {
     try {
-        console.log('Loading aircraft and bird data...');
+        console.log('Loading aircraft data...');
         
-        // Load aircraft data from processed file
+        // Load aircraft data
         const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
         if (!aircraftResponse.ok) {
-            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
+            throw new Error(`Failed to load aircraft data: ${aircraftResponse.status} ${aircraftResponse.statusText}`);
         }
+        
         const aircraftJson = await aircraftResponse.json();
         const aircraft = aircraftJson.aircraft || [];
-        console.log('Aircraft data loaded:', aircraft.length, 'aircraft');
-
-        // Load bird data from processed file
-        const birdsResponse = await fetch('data/processed/birds_processed.json');
-        let birds = [];
-        if (birdsResponse.ok) {
-            const birdsJson = await birdsResponse.json();
-            birds = birdsJson.birds || [];
-            console.log('Bird data loaded:', birds.length, 'birds');
-        } else {
-            console.warn('Failed to load bird data:', birdsResponse.status);
+        
+        // Load bird data
+        const birdResponse = await fetch('data/processed/birds_processed.json');
+        if (!birdResponse.ok) {
+            throw new Error(`Failed to load bird data: ${birdResponse.status} ${birdResponse.statusText}`);
         }
-
-        // Combine and process data
+        
+        const birdJson = await birdResponse.json();
+        const birds = birdJson.birds || [];
+        
+        // Combine data
         aircraftData = [
             ...aircraft.map(a => ({
                 ...a,
@@ -205,6 +208,8 @@ async function loadAircraftData() {
                 ...b,
                 type: 'bird',
                 category_type: 'ave',
+                era: 'Biological', // Better label for birds
+                engine_type: 'Biological', // Better label for birds
                 image_url: b.image_url,
                 wing_loading_Nm2: b.mtow_N && b.wing_area_m2 ? b.mtow_N / b.wing_area_m2 : null
             }))
@@ -299,26 +304,28 @@ function updateChart() {
             y: parseFloat(aircraft[diagram.y.param]),
             id: aircraft.id,
             name: aircraft.name,
-            category: aircraft[colorGroup] || 'unknown',
-            image_url: aircraft.image_url
+            category: aircraft[colorGroup] || 'Unknown'
         }));
 
-        console.log(`Processed ${processedData.length} valid data points for flight diagram`);
-        
-        if (processedData.length === 0) {
-            showAlert('No valid data points for selected parameters', 'warning');
-            return;
+        console.log(`Processed ${processedData.length} data points for rendering`);
+
+        // Get trendline parameter if applicable
+        let trendlineK = null;
+        if (showTrendlines && diagram.trendline) {
+            const trendlineKInput = document.getElementById('trendline-k');
+            trendlineK = trendlineKInput ? parseFloat(trendlineKInput.value) : diagram.trendline.defaultK;
         }
 
-        renderChart(processedData, diagram, colorGroup, showTrendlines);
+        // Render chart
+        renderChart(processedData, diagram, colorGroup, showTrendlines, trendlineK);
     } catch (error) {
-        console.error('Error updating flight diagram:', error);
-        showAlert('Error updating flight diagram: ' + error.message, 'danger');
+        console.error('Error updating chart:', error);
+        showAlert('Error updating chart: ' + error.message, 'danger');
     }
 }
 
 // Render chart
-function renderChart(data, diagram, colorGroup, showTrendlines) {
+function renderChart(data, diagram, colorGroup, showTrendlines, trendlineK) {
     console.log(`Rendering flight diagram with ${data.length} items`);
     
     const canvas = document.getElementById('flight-diagram');
@@ -332,30 +339,55 @@ function renderChart(data, diagram, colorGroup, showTrendlines) {
         currentChart.destroy();
     }
 
-    // Get color palette
-    const colorPalette = diagramConfig.colorGroups[colorGroup]?.colors || {};
+    // Get color palette from classifications if available, otherwise use the one from diagramConfig
+    let colorPalette = {};
+    
+    if (classifications && classifications.colorSchemes && classifications.colorSchemes[colorGroup]) {
+        // Use colors from classifications.json
+        colorPalette = classifications.colorSchemes[colorGroup];
+        console.log('Using color palette from classifications:', colorPalette);
+    } else if (diagramConfig.colorGroups[colorGroup]?.colors) {
+        // Fallback to colors from flight_diagrams.json
+        colorPalette = diagramConfig.colorGroups[colorGroup].colors;
+        console.log('Using color palette from diagramConfig:', colorPalette);
+    }
+
+    // Special handling for birds
+    if (colorGroup === 'era' || colorGroup === 'engine_type') {
+        colorPalette['Biological'] = '#00BCD4'; // Use a nice teal color for birds
+    }
 
     // Group data by category
-    const datasets = Object.entries(
-        data.reduce((acc, item) => {
-            if (!acc[item.category]) {
-                acc[item.category] = [];
-            }
-            acc[item.category].push(item);
-            return acc;
-        }, {})
-    ).map(([category, items]) => ({
-        label: category,
-        data: items,
-        backgroundColor: colorPalette[category] || 'rgba(100, 100, 100, 0.7)',
-        borderColor: colorPalette[category] || 'rgba(100, 100, 100, 0.7)',
-        pointRadius: 5,
-        pointHoverRadius: 8
-    }));
+    const groupedData = data.reduce((acc, item) => {
+        const category = item.category || 'Unknown';
+        if (!acc[category]) {
+            acc[category] = [];
+        }
+        acc[category].push(item);
+        return acc;
+    }, {});
+
+    console.log('Data grouped by categories:', Object.keys(groupedData));
+
+    // Create datasets
+    const datasets = Object.entries(groupedData).map(([category, items]) => {
+        // Get color from palette or generate a fallback color
+        const color = colorPalette[category] || 
+                     `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`;
+        
+        return {
+            label: category,
+            data: items,
+            backgroundColor: color,
+            borderColor: color,
+            pointRadius: 5,
+            pointHoverRadius: 8
+        };
+    });
 
     // Add trendline if requested
     if (showTrendlines && diagram.trendline) {
-        const trendline = calculateTrendline(data, diagram);
+        const trendline = calculateTrendline(data, diagram, trendlineK);
         if (trendline) {
             datasets.push(trendline);
         }
@@ -403,71 +435,45 @@ function renderChart(data, diagram, colorGroup, showTrendlines) {
                         // Hide if no tooltip
                         const tooltipModel = context.tooltip;
                         if (tooltipModel.opacity === 0) {
-                            tooltipEl.style.display = 'none';
+                            tooltipEl.style.opacity = 0;
                             return;
                         }
 
                         // Set Text
                         if (tooltipModel.body) {
-                            const point = tooltipModel.dataPoints[0].raw;
-                            const innerHtml = `
-                                <div>${point.name}</div>
-                                <div>${diagram.x.label}: ${point.x.toLocaleString()}</div>
-                                <div>${diagram.y.label}: ${point.y.toLocaleString()}</div>
-                                ${point.image_url ? `<img src="${point.image_url}" alt="${point.name}">` : ''}
+                            const dataPoint = data[tooltipModel.dataPoints[0].dataIndex];
+                            
+                            let innerHtml = `
+                                <div class="tooltip-header">
+                                    <strong>${dataPoint.name || 'Unknown'}</strong>
+                                </div>
+                                <div class="tooltip-body">
                             `;
+                            
+                            if (dataPoint.image_url) {
+                                innerHtml += `<img src="${dataPoint.image_url}" alt="${dataPoint.name}" style="max-width: 150px; max-height: 100px;"><br>`;
+                            }
+                            
+                            innerHtml += `
+                                    <strong>X:</strong> ${dataPoint.x.toLocaleString()}<br>
+                                    <strong>Y:</strong> ${dataPoint.y.toLocaleString()}<br>
+                                </div>
+                            `;
+                            
                             tooltipEl.innerHTML = innerHtml;
                         }
 
                         // Position tooltip
                         const position = context.chart.canvas.getBoundingClientRect();
-                        const bodyFont = context.chart.options.font;
-
-                        // Calculate tooltip dimensions
-                        tooltipEl.style.display = 'block';
+                        tooltipEl.style.opacity = 1;
                         tooltipEl.style.position = 'absolute';
-                        
-                        // Get tooltip dimensions
-                        const tooltipRect = tooltipEl.getBoundingClientRect();
-                        const tooltipWidth = tooltipRect.width;
-                        const tooltipHeight = tooltipRect.height;
-                        
-                        // Calculate initial position
-                        let left = position.left + window.pageXOffset + tooltipModel.caretX + 10;
-                        let top = position.top + window.pageYOffset + tooltipModel.caretY;
-                        
-                        // Check right edge
-                        if (left + tooltipWidth > window.innerWidth) {
-                            left = position.left + window.pageXOffset + tooltipModel.caretX - tooltipWidth - 10;
-                        }
-                        
-                        // Check bottom edge
-                        if (top + tooltipHeight > window.innerHeight + window.pageYOffset) {
-                            top = window.innerHeight + window.pageYOffset - tooltipHeight - 10;
-                        }
-                        
-                        // Check top edge
-                        if (top < window.pageYOffset) {
-                            top = window.pageYOffset + 10;
-                        }
-
-                        tooltipEl.style.left = left + 'px';
-                        tooltipEl.style.top = top + 'px';
+                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                        tooltipEl.style.pointerEvents = 'none';
                     }
                 },
                 legend: {
-                    position: 'right',
-                    labels: {
-                        padding: 20
-                    }
-                }
-            },
-            onClick: (e, elements) => {
-                if (elements.length > 0) {
-                    const index = elements[0].index;
-                    const datasetIndex = elements[0].datasetIndex;
-                    const point = datasets[datasetIndex].data[index];
-                    window.open(`aircraft_details.html#${point.id}`, '_blank');
+                    position: 'right'
                 }
             }
         }
@@ -475,40 +481,53 @@ function renderChart(data, diagram, colorGroup, showTrendlines) {
 }
 
 // Calculate trendline
-function calculateTrendline(data, diagram) {
-    if (data.length < 2) return null;
-
-    const minX = Math.min(...data.map(item => item.x));
-    const maxX = Math.max(...data.map(item => item.x));
-    const numPoints = 100;
-    const trendlinePoints = [];
-
-    const kValueInput = document.getElementById('k-value');
-    const k = kValueInput ? parseFloat(kValueInput.value) : diagram.trendline.defaultK;
-
-    // Generate points based on diagram type
-    for (let i = 0; i < numPoints; i++) {
-        const x = minX * Math.pow(maxX / minX, i / (numPoints - 1));
-        let y;
-
-        if (diagram.trendline.equation.includes('W^(1/3)')) {
-            y = k * Math.pow(x, 1/3);  // W/S = k * W^(1/3)
-        } else if (diagram.trendline.equation.includes('V²')) {
-            y = k * x * x;  // W/S = k * V²
-        }
-
-        trendlinePoints.push({ x, y });
+function calculateTrendline(data, diagram, k) {
+    if (!diagram.trendline || !diagram.trendline.equation) {
+        return null;
     }
-
+    
+    // Use provided k or default
+    const kValue = k || diagram.trendline.defaultK;
+    console.log(`Calculating trendline with k=${kValue}`);
+    
+    // Get min and max x values
+    const xValues = data.map(d => d.x);
+    const minX = Math.min(...xValues);
+    const maxX = Math.max(...xValues);
+    
+    // Generate points for trendline
+    const numPoints = 100;
+    const step = (maxX - minX) / numPoints;
+    
+    const trendlineData = [];
+    for (let i = 0; i <= numPoints; i++) {
+        const x = minX + (step * i);
+        let y;
+        
+        // Calculate y based on equation
+        if (diagram.trendline.equation.includes('W^(1/3)')) {
+            // Wing loading vs MTOW: W/S = k × W^(1/3)
+            y = kValue * Math.pow(x, 1/3);
+        } else if (diagram.trendline.equation.includes('V²')) {
+            // Wing loading vs Speed: W/S = k × V²
+            y = kValue * Math.pow(x, 2);
+        } else {
+            console.warn('Unknown trendline equation:', diagram.trendline.equation);
+            continue;
+        }
+        
+        trendlineData.push({ x, y });
+    }
+    
     return {
-        label: `Theoretical Trend (k=${k.toFixed(2)})`,
-        data: trendlinePoints,
-        borderColor: 'rgba(0, 0, 0, 0.7)',
-        backgroundColor: 'transparent',
-        borderWidth: 2,
-        borderDash: [5, 5],
-        pointRadius: 0,
+        label: `Trendline (k=${kValue})`,
+        data: trendlineData,
+        showLine: true,
         fill: false,
-        showLine: true
+        borderColor: 'rgba(255, 0, 0, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0)',
+        borderWidth: 2,
+        pointRadius: 0,
+        borderDash: [5, 5]
     };
 } 

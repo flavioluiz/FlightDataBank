@@ -1,13 +1,25 @@
 // Global variables
-window.aircraftData = [];
+let aircraftData = [];
 let chartParameters = null;
 
 // Initialize when DOM is loaded
-document.addEventListener('DOMContentLoaded', function() {
-    loadChartParameters().then(() => {
+document.addEventListener('DOMContentLoaded', async function() {
+    try {
+        // Load classifications first
+        await loadClassifications();
+        
+        // Then load chart parameters
+        await loadChartParameters();
+        
+        // Initialize controls
         initializeControls();
-        loadAircraftData();
-    });
+        
+        // Load aircraft data
+        await loadAircraftData();
+    } catch (error) {
+        console.error('Error initializing historical charts:', error);
+        showAlert('Error initializing historical charts: ' + error.message, 'danger');
+    }
 });
 
 // Load chart parameters configuration
@@ -93,34 +105,28 @@ async function loadAircraftData() {
         if (!aircraftResponse.ok) {
             throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
-        const aircraftData = await aircraftResponse.json();
-        console.log('Aircraft data loaded:', aircraftData.aircraft.length, 'aircraft');
+        const aircraftJson = await aircraftResponse.json();
+        const aircraft = aircraftJson.aircraft || [];
+        console.log('Aircraft data loaded:', aircraft.length, 'aircraft');
 
         // Load bird data from processed file
         const birdsResponse = await fetch('data/processed/birds_processed.json');
-        let birdData = { birds: [] };
+        let birds = [];
         if (birdsResponse.ok) {
-            birdData = await birdsResponse.json();
-            console.log('Bird data loaded:', birdData.birds.length, 'birds');
+            const birdsJson = await birdsResponse.json();
+            birds = birdsJson.birds || [];
+            console.log('Bird data loaded:', birds.length, 'birds');
         } else {
             console.warn('Failed to load bird data:', birdsResponse.status);
         }
 
-        // Combine and sort data by first flight year
-        window.aircraftData = [
-            ...aircraftData.aircraft.map(a => ({
-                ...a,  // Keep all original data
-                type: 'aircraft'
-            })),
-            ...(birdData.birds || []).map(b => ({
-                ...b,  // Keep all original data
-                type: 'bird',
-                category_type: 'ave'
-            }))
-        ].filter(item => item.first_flight_year != null)
-         .sort((a, b) => a.first_flight_year - b.first_flight_year);
-
-        console.log('Combined data:', window.aircraftData.length, 'total items');
+        // Combine data
+        aircraftData = [
+            ...aircraft.map(a => ({...a, type: 'aircraft'})),
+            ...birds.map(b => ({...b, type: 'bird', category_type: 'ave'}))
+        ];
+        
+        console.log('Total data points:', aircraftData.length);
 
         // Update chart with initial data
         updateTimelineChart();
@@ -132,54 +138,36 @@ async function loadAircraftData() {
 
 // Update timeline chart
 function updateTimelineChart() {
-    console.log('Updating timeline chart...');
-    
-    // Get selected parameter and scale
-    const param = document.getElementById('timeline-param')?.value;
-    const colorGroup = document.getElementById('color-group')?.value;
-    const logScale = document.getElementById('timeline-log-scale')?.checked || false;
-    
-    if (!param || !colorGroup || !chartParameters) {
-        console.error('Missing parameters for timeline chart');
+    if (!aircraftData || !chartParameters) {
+        console.error('Data or parameters not loaded');
         return;
     }
 
-    try {
-        // Check if data is loaded
-        if (!window.aircraftData || window.aircraftData.length === 0) {
-            console.log('No data available for timeline chart...');
-            return;
-        }
+    // Get current parameter values
+    const param = document.getElementById('timeline-param')?.value;
+    const colorGroup = document.getElementById('color-group')?.value;
+    const logScale = document.getElementById('timeline-log-scale')?.checked;
 
-        // Process data for the chart
-        const data = window.aircraftData.filter(aircraft => {
-            const hasParam = aircraft[param] !== undefined && aircraft[param] !== null && !isNaN(aircraft[param]);
-            const hasYear = aircraft.first_flight_year !== undefined && 
-                          aircraft.first_flight_year !== null && 
-                          !isNaN(aircraft.first_flight_year);
-            
-            if (!hasParam || !hasYear) {
-                if (aircraft.category_type === 'ave') {
-                    console.log(`Bird ${aircraft.name} missing timeline data: ${param}=${aircraft[param]}, year=${aircraft.first_flight_year}`);
-                }
-                return false;
-            }
-            return true;
-        }).map(aircraft => ({
-            x: parseInt(aircraft.first_flight_year),
-            y: parseFloat(aircraft[param]),
-            id: aircraft.id,
-            name: aircraft.name,
-            category: aircraft[colorGroup] || 'unknown',
-            image_url: aircraft.image_url
-        }));
-
-        console.log(`Processed ${data.length} valid data points for timeline`);
-        renderTimelineChart(data, param, colorGroup, logScale);
-    } catch (error) {
-        console.error('Error updating timeline chart:', error);
-        showAlert('Error updating timeline chart: ' + error.message, 'danger');
+    if (!param || !colorGroup) {
+        console.error('Missing chart parameters');
+        return;
     }
+
+    console.log('Updating timeline chart with parameters:', { param, colorGroup, logScale });
+
+    // Filter and map data for chart
+    const data = aircraftData.filter(aircraft => {
+        return aircraft[param] != null && aircraft.first_flight_year != null;
+    }).map(aircraft => ({
+        x: aircraft.first_flight_year,
+        y: aircraft[param],
+        id: aircraft.id,
+        name: aircraft.name,
+        category: aircraft[colorGroup] || 'unknown',
+        image_url: aircraft.image_url
+    }));
+
+    renderTimelineChart(data, param, colorGroup, logScale);
 }
 
 // Render timeline chart
@@ -198,62 +186,6 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
         existingChart.destroy();
     }
 
-    // Color palettes for different groupings
-    const colorPalettes = {
-        category_type: {
-            'ave': 'rgba(255, 99, 132, 0.7)',
-            'comercial': 'rgba(54, 162, 235, 0.7)',
-            'militar': 'rgba(255, 206, 86, 0.7)',
-            'geral': 'rgba(75, 192, 192, 0.7)',
-            'historica': 'rgba(153, 102, 255, 0.7)',
-            'executiva': 'rgba(255, 159, 64, 0.7)',
-            'carga': 'rgba(201, 203, 207, 0.7)',
-            'experimental': 'rgba(255, 99, 71, 0.7)'
-        },
-        category_era: {
-            'pioneiro': 'rgba(141, 110, 99, 0.7)',
-            'classico': 'rgba(120, 144, 156, 0.7)',
-            'jato': 'rgba(38, 166, 154, 0.7)',
-            'moderno': 'rgba(121, 134, 203, 0.7)',
-            'contemporaneo': 'rgba(3, 169, 244, 0.7)',
-            'ave': 'rgba(255, 99, 132, 0.7)'
-        },
-        category_size: {
-            'muito_leve': 'rgba(156, 204, 101, 0.7)',
-            'regional': 'rgba(255, 183, 77, 0.7)',
-            'medio': 'rgba(229, 115, 115, 0.7)',
-            'grande': 'rgba(124, 77, 255, 0.7)',
-            'muito_grande': 'rgba(0, 151, 167, 0.7)'
-        },
-        engine_type: {
-            'pistao': 'rgba(141, 110, 99, 0.7)',
-            'turboprop': 'rgba(96, 125, 139, 0.7)',
-            'jato': 'rgba(0, 151, 167, 0.7)',
-            'eletrico': 'rgba(76, 175, 80, 0.7)',
-            'foguete': 'rgba(244, 67, 54, 0.7)',
-            'nenhum': 'rgba(189, 189, 189, 0.7)'
-        }
-    };
-
-    // Get the appropriate color palette
-    const categoryColors = colorPalettes[colorGroup] || {};
-
-    // Get the appropriate category name function
-    const getCategoryLabel = (category) => {
-        switch (colorGroup) {
-            case 'category_type':
-                return getCategoryName(category);
-            case 'category_era':
-                return getCategoryEra(category);
-            case 'category_size':
-                return getCategorySize(category);
-            case 'engine_type':
-                return category.charAt(0).toUpperCase() + category.slice(1);
-            default:
-                return category;
-        }
-    };
-
     // Group data by category
     const datasets = Object.entries(
         data.reduce((acc, item) => {
@@ -263,23 +195,34 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
             acc[item.category].push(item);
             return acc;
         }, {})
-    ).map(([category, items]) => ({
-        label: getCategoryLabel(category),
-        data: items,
-        backgroundColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
-        borderColor: categoryColors[category] || 'rgba(100, 100, 100, 0.7)',
-        pointRadius: 5,
-        pointHoverRadius: 8
-    }));
+    ).map(([category, items]) => {
+        // Get color from classifications
+        const color = getColorForValue(colorGroup, category) || 'rgba(100, 100, 100, 0.7)';
+        // Convert hex to rgba if needed
+        const rgba = color.startsWith('#') 
+            ? hexToRgba(color, 0.7)
+            : color;
+            
+        return {
+            label: getLabelForValue(colorGroup, category) || category,
+            data: items,
+            backgroundColor: rgba,
+            borderColor: rgba,
+            pointRadius: 5,
+            pointHoverRadius: 8
+        };
+    });
 
     // Get parameter configuration from chart_parameters.json
     const paramConfig = chartParameters.parameters[param];
-    const yAxisLabel = paramConfig ? paramConfig.label : param;
+    const yAxisLabel = paramConfig?.label || param;
 
     // Create chart configuration
     const config = {
         type: 'scatter',
-        data: { datasets },
+        data: {
+            datasets: datasets
+        },
         options: {
             responsive: true,
             maintainAspectRatio: false,
@@ -289,7 +232,7 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                     position: 'bottom',
                     title: {
                         display: true,
-                        text: 'First Flight Year'
+                        text: 'Ano'
                     }
                 },
                 y: {
@@ -305,12 +248,12 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                     enabled: false,
                     external: function(context) {
                         // Tooltip Element
-                        let tooltipEl = document.getElementById('chartjs-tooltip-historical');
+                        let tooltipEl = document.getElementById('chartjs-tooltip-timeline');
 
                         // Create element on first render
                         if (!tooltipEl) {
                             tooltipEl = document.createElement('div');
-                            tooltipEl.id = 'chartjs-tooltip-historical';
+                            tooltipEl.id = 'chartjs-tooltip-timeline';
                             tooltipEl.className = 'chartjs-tooltip';
                             document.body.appendChild(tooltipEl);
                         }
@@ -325,12 +268,11 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                         // Set Text
                         if (tooltipModel.body) {
                             const point = tooltipModel.dataPoints[0].raw;
-                            const paramConfig = chartParameters.parameters[param];
-                            const paramLabel = paramConfig ? paramConfig.label : param;
+                            
                             const innerHtml = `
                                 <div>${point.name}</div>
-                                <div>Ano: ${point.x.toLocaleString()}</div>
-                                <div>${paramLabel}: ${point.y.toLocaleString()}</div>
+                                <div>Ano: ${point.x}</div>
+                                <div>${yAxisLabel}: ${point.y.toLocaleString()}</div>
                                 ${point.image_url ? `<img src="${point.image_url}" alt="${point.name}">` : ''}
                             `;
                             tooltipEl.innerHTML = innerHtml;
@@ -394,14 +336,54 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
     new Chart(canvas, config);
 }
 
-function createTimelineItem(aircraft) {
-    return `
-        <div class="timeline-item">
-            <div class="timeline-content">
-                <h3>${aircraft.first_flight_year}</h3>
-                <h4><a href="aircraft_details.html#${aircraft.id}" target="_blank">${aircraft.name}</a></h4>
-                <p>${aircraft.manufacturer} ${aircraft.model}</p>
-            </div>
-        </div>
+// Helper function to convert hex to rgba
+function hexToRgba(hex, alpha = 1) {
+    // Remove # if present
+    hex = hex.replace('#', '');
+    
+    // Parse hex values
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    
+    // Return rgba string
+    return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+// Helper function to show alerts
+function showAlert(message, type = 'info') {
+    const alertsContainer = document.createElement('div');
+    alertsContainer.className = 'alerts-container';
+    alertsContainer.style.position = 'fixed';
+    alertsContainer.style.top = '10px';
+    alertsContainer.style.right = '10px';
+    alertsContainer.style.zIndex = '1050';
+    
+    // Check if container already exists
+    const existingContainer = document.querySelector('.alerts-container');
+    const container = existingContainer || alertsContainer;
+    
+    if (!existingContainer) {
+        document.body.appendChild(container);
+    }
+    
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} alert-dismissible fade show`;
+    alert.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     `;
+    
+    container.appendChild(alert);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        alert.classList.remove('show');
+        setTimeout(() => {
+            alert.remove();
+            if (container.children.length === 0) {
+                container.remove();
+            }
+        }, 150);
+    }, 5000);
 } 

@@ -31,7 +31,8 @@ function initializeControls() {
         era: document.getElementById('era-filter'),
         engineType: document.getElementById('engine-type-filter'),
         size: document.getElementById('size-filter'),
-        search: document.getElementById('aircraft-search')
+        search: document.getElementById('aircraft-search'),
+        clearFilters: document.getElementById('clear-filters')
     };
 
     // Populate select elements with classifications
@@ -42,7 +43,7 @@ function initializeControls() {
 
     // Add event listeners to filters
     Object.entries(filters).forEach(([key, element]) => {
-        if (element && key !== 'search') {
+        if (element && key !== 'search' && key !== 'clearFilters') {
             element.addEventListener('change', applyFilters);
         }
     });
@@ -50,6 +51,11 @@ function initializeControls() {
     // Add event listener for search input
     if (filters.search) {
         filters.search.addEventListener('input', applyFilters);
+    }
+
+    // Add event listener for clear filters button
+    if (filters.clearFilters) {
+        filters.clearFilters.addEventListener('click', clearFilters);
     }
 
     // Add event listeners for table sorting
@@ -72,29 +78,34 @@ async function loadAircraftData() {
         if (!aircraftResponse.ok) {
             throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
-        const aircraftData = await aircraftResponse.json();
+        const aircraftJson = await aircraftResponse.json();
+        const aircraft = aircraftJson.aircraft || [];
+        console.log('Aircraft data loaded:', aircraft.length, 'aircraft');
 
         // Load bird data from processed file
         const birdsResponse = await fetch('data/processed/birds_processed.json');
-        let birdData = { birds: [] };
+        let birds = [];
         if (birdsResponse.ok) {
-            birdData = await birdsResponse.json();
-            console.log('Bird data loaded:', birdData.birds.length, 'birds');
+            const birdsJson = await birdsResponse.json();
+            birds = birdsJson.birds || [];
+            console.log('Bird data loaded:', birds.length, 'birds');
         } else {
             console.warn('Failed to load bird data:', birdsResponse.status);
         }
 
         // Combine and sort data
         const allData = [
-            ...aircraftData.aircraft.map(a => ({...a, type: 'aircraft'})),
-            ...(birdData.birds || []).map(b => ({...b, type: 'bird', category_type: 'ave'}))
+            ...aircraft.map(a => ({...a, type: 'aircraft'})),
+            ...birds.map(b => ({...b, type: 'bird', category_type: 'ave'}))
         ];
 
         // Sort by name
         allData.sort((a, b) => a.name.localeCompare(b.name));
         
         // Store data globally
-        this.aircraftData = allData;
+        aircraftData = allData;
+        
+        console.log('Total data points:', aircraftData.length);
 
         // Render table
         renderTable(allData);
@@ -184,6 +195,23 @@ function renderTable(data) {
         emptyRow.appendChild(emptyCell);
         tbody.appendChild(emptyRow);
     }
+}
+
+// Clear all filters
+function clearFilters() {
+    console.log('Clearing all filters');
+    
+    // Reset filter selects
+    document.getElementById('category-type-filter').value = 'all';
+    document.getElementById('era-filter').value = 'all';
+    document.getElementById('engine-type-filter').value = 'all';
+    document.getElementById('size-filter').value = 'all';
+    
+    // Clear search input
+    document.getElementById('aircraft-search').value = '';
+    
+    // Render all data
+    renderTable(aircraftData);
 }
 
 // Apply filters

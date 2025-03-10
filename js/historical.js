@@ -100,35 +100,27 @@ function initializeControls() {
 // Load aircraft data
 async function loadAircraftData() {
     try {
-        // Load aircraft data from processed file
+        console.log('Loading aircraft data...');
+        
+        // Load aircraft data
         const aircraftResponse = await fetch('data/processed/aircraft_processed.json');
         if (!aircraftResponse.ok) {
             throw new Error(`Failed to load aircraft data: ${aircraftResponse.status}`);
         }
+        
         const aircraftJson = await aircraftResponse.json();
         const aircraft = aircraftJson.aircraft || [];
-        console.log('Aircraft data loaded:', aircraft.length, 'aircraft');
-
-        // Load bird data from processed file
-        const birdsResponse = await fetch('data/processed/birds_processed.json');
-        let birds = [];
-        if (birdsResponse.ok) {
-            const birdsJson = await birdsResponse.json();
-            birds = birdsJson.birds || [];
-            console.log('Bird data loaded:', birds.length, 'birds');
-        } else {
-            console.warn('Failed to load bird data:', birdsResponse.status);
-        }
-
-        // Combine data
-        aircraftData = [
-            ...aircraft.map(a => ({...a, type: 'aircraft'})),
-            ...birds.map(b => ({...b, type: 'bird', category_type: 'ave'}))
-        ];
         
-        console.log('Total data points:', aircraftData.length);
+        // Filter out aircraft without first_flight_year
+        aircraftData = aircraft.filter(a => a.first_flight_year != null).map(a => ({
+            ...a,
+            type: 'aircraft',
+            image_url: a.image_url
+        }));
 
-        // Update chart with initial data
+        console.log('Total data points loaded:', aircraftData.length);
+        
+        // Update chart with initial values
         updateTimelineChart();
     } catch (error) {
         console.error('Error loading aircraft data:', error);
@@ -138,15 +130,9 @@ async function loadAircraftData() {
 
 // Update timeline chart
 function updateTimelineChart() {
-    if (!aircraftData || !chartParameters) {
-        console.error('Data or parameters not loaded');
-        return;
-    }
-
-    // Get current parameter values
     const param = document.getElementById('timeline-param')?.value;
     const colorGroup = document.getElementById('color-group')?.value;
-    const logScale = document.getElementById('timeline-log-scale')?.checked;
+    const logScale = document.getElementById('timeline-log-scale')?.checked || false;
 
     if (!param || !colorGroup) {
         console.error('Missing chart parameters');
@@ -158,14 +144,55 @@ function updateTimelineChart() {
     // Filter and map data for chart
     const data = aircraftData.filter(aircraft => {
         return aircraft[param] != null && aircraft.first_flight_year != null;
-    }).map(aircraft => ({
-        x: aircraft.first_flight_year,
-        y: aircraft[param],
-        id: aircraft.id,
-        name: aircraft.name,
-        category: aircraft[colorGroup] || 'unknown',
-        image_url: aircraft.image_url
-    }));
+    }).map(aircraft => {
+        // Get the category value
+        let categoryValue = aircraft[colorGroup] || 'Unknown';
+        
+        // For era and engine_type, use the standardized values from classifications
+        if (colorGroup === 'era' || colorGroup === 'engine_type') {
+            // For aircraft, map to standard values if needed
+            if (categoryValue !== 'Unknown') {
+                const classification = getClassification(colorGroup);
+                if (classification) {
+                    // Check if the value exists in the classification options
+                    const option = classification.options.find(opt => 
+                        opt.value === categoryValue || opt.label === categoryValue);
+                    
+                    // If not found, try to map to a standard value
+                    if (!option) {
+                        // Map era values to standard values
+                        if (colorGroup === 'era') {
+                            if (categoryValue.includes('Pioneer')) categoryValue = 'Pioneer Era';
+                            else if (categoryValue.includes('Golden')) categoryValue = 'Interwar Period';
+                            else if (categoryValue.includes('World War')) categoryValue = 'World War II';
+                            else if (categoryValue.includes('Post-War')) categoryValue = 'Post-War Era';
+                            else if (categoryValue.includes('Jet')) categoryValue = 'Jet Age';
+                            else if (categoryValue.includes('Modern')) categoryValue = 'Modern Era';
+                            else if (categoryValue.includes('Digital') || categoryValue.includes('Contemporary')) 
+                                categoryValue = 'Contemporary Era';
+                        }
+                        // Map engine types to standard values
+                        else if (colorGroup === 'engine_type') {
+                            if (categoryValue.includes('Piston')) categoryValue = 'Piston';
+                            else if (categoryValue.includes('Turboprop')) categoryValue = 'Turboprop';
+                            else if (categoryValue.includes('Turbofan')) categoryValue = 'Turbofan';
+                            else if (categoryValue.includes('Jet')) categoryValue = 'Jet';
+                            else if (categoryValue.includes('Electric')) categoryValue = 'Electric';
+                        }
+                    }
+                }
+            }
+        }
+        
+        return {
+            x: aircraft.first_flight_year,
+            y: aircraft[param],
+            id: aircraft.id,
+            name: aircraft.name,
+            category: categoryValue,
+            image_url: aircraft.image_url
+        };
+    });
 
     renderTimelineChart(data, param, colorGroup, logScale);
 }
@@ -187,24 +214,43 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
     }
 
     // Group data by category
-    const datasets = Object.entries(
-        data.reduce((acc, item) => {
-            if (!acc[item.category]) {
-                acc[item.category] = [];
-            }
-            acc[item.category].push(item);
-            return acc;
-        }, {})
-    ).map(([category, items]) => {
+    const groupedData = data.reduce((acc, item) => {
+        const category = item.category || 'Unknown';
+        if (!acc[category]) {
+            acc[category] = [];
+        }
+        acc[category].push(item);
+        return acc;
+    }, {});
+
+    console.log('Data grouped by categories:', Object.keys(groupedData));
+
+    // Get the classification to use for colors
+    const classification = getClassification(colorGroup);
+
+    // Create datasets
+    const datasets = Object.entries(groupedData).map(([category, items]) => {
         // Get color from classifications
-        const color = getColorForValue(colorGroup, category) || 'rgba(100, 100, 100, 0.7)';
+        let color = getColorForValue(colorGroup, category) || 'rgba(100, 100, 100, 0.7)';
+        
         // Convert hex to rgba if needed
         const rgba = color.startsWith('#') 
             ? hexToRgba(color, 0.7)
             : color;
+        
+        // Get proper label from classification if available
+        let label = category;
+        if (classification) {
+            const option = classification.options.find(opt => opt.value === category);
+            if (option) {
+                label = option.label;
+            }
+        } else {
+            label = getLabelForValue(colorGroup, category) || category;
+        }
             
         return {
-            label: getLabelForValue(colorGroup, category) || category,
+            label: label,
             data: items,
             backgroundColor: rgba,
             borderColor: rgba,
@@ -261,64 +307,45 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
                         // Hide if no tooltip
                         const tooltipModel = context.tooltip;
                         if (tooltipModel.opacity === 0) {
-                            tooltipEl.style.display = 'none';
+                            tooltipEl.style.opacity = 0;
                             return;
                         }
 
                         // Set Text
                         if (tooltipModel.body) {
-                            const point = tooltipModel.dataPoints[0].raw;
+                            const dataPoint = data[tooltipModel.dataPoints[0].dataIndex];
                             
-                            const innerHtml = `
-                                <div>${point.name}</div>
-                                <div>Ano: ${point.x}</div>
-                                <div>${yAxisLabel}: ${point.y.toLocaleString()}</div>
-                                ${point.image_url ? `<img src="${point.image_url}" alt="${point.name}">` : ''}
+                            let innerHtml = `
+                                <div class="tooltip-header">
+                                    <strong>${dataPoint.name || 'Unknown'}</strong>
+                                </div>
+                                <div class="tooltip-body">
                             `;
+                            
+                            if (dataPoint.image_url) {
+                                innerHtml += `<img src="${dataPoint.image_url}" alt="${dataPoint.name}" style="max-width: 150px; max-height: 100px;"><br>`;
+                            }
+                            
+                            innerHtml += `
+                                    <strong>Ano:</strong> ${dataPoint.x}<br>
+                                    <strong>${yAxisLabel}:</strong> ${dataPoint.y.toLocaleString()}<br>
+                                </div>
+                            `;
+                            
                             tooltipEl.innerHTML = innerHtml;
                         }
 
                         // Position tooltip
                         const position = context.chart.canvas.getBoundingClientRect();
-                        const bodyFont = context.chart.options.font;
-
-                        // Calculate tooltip dimensions
-                        tooltipEl.style.display = 'block';
+                        tooltipEl.style.opacity = 1;
                         tooltipEl.style.position = 'absolute';
-                        
-                        // Get tooltip dimensions
-                        const tooltipRect = tooltipEl.getBoundingClientRect();
-                        const tooltipWidth = tooltipRect.width;
-                        const tooltipHeight = tooltipRect.height;
-                        
-                        // Calculate initial position
-                        let left = position.left + window.pageXOffset + tooltipModel.caretX + 10;
-                        let top = position.top + window.pageYOffset + tooltipModel.caretY;
-                        
-                        // Check right edge
-                        if (left + tooltipWidth > window.innerWidth) {
-                            left = position.left + window.pageXOffset + tooltipModel.caretX - tooltipWidth - 10;
-                        }
-                        
-                        // Check bottom edge
-                        if (top + tooltipHeight > window.innerHeight + window.pageYOffset) {
-                            top = window.innerHeight + window.pageYOffset - tooltipHeight - 10;
-                        }
-                        
-                        // Check top edge
-                        if (top < window.pageYOffset) {
-                            top = window.pageYOffset + 10;
-                        }
-
-                        tooltipEl.style.left = left + 'px';
-                        tooltipEl.style.top = top + 'px';
+                        tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                        tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                        tooltipEl.style.pointerEvents = 'none';
                     }
                 },
                 legend: {
-                    position: 'right',
-                    labels: {
-                        padding: 20
-                    }
+                    position: 'right'
                 }
             },
             onClick: (e, elements) => {
@@ -336,8 +363,10 @@ function renderTimelineChart(data, param, colorGroup, logScale) {
     new Chart(canvas, config);
 }
 
-// Helper function to convert hex to rgba
+// Convert hex color to rgba
 function hexToRgba(hex, alpha = 1) {
+    if (!hex) return `rgba(100, 100, 100, ${alpha})`;
+    
     // Remove # if present
     hex = hex.replace('#', '');
     
@@ -346,7 +375,7 @@ function hexToRgba(hex, alpha = 1) {
     const g = parseInt(hex.substring(2, 4), 16);
     const b = parseInt(hex.substring(4, 6), 16);
     
-    // Return rgba string
+    // Return rgba
     return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 }
 

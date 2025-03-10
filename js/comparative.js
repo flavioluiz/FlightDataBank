@@ -1,6 +1,7 @@
 // Global variables
 let chartParameters = null;
 let aircraftData = [];
+let filteredData = [];
 let currentChart = null;
 
 // Initialize when DOM is loaded
@@ -108,6 +109,9 @@ function initializeControls() {
         }
     });
     
+    // Initialize filter controls
+    initializeFilterControls();
+    
     // Add reset zoom button
     const chartContainer = document.querySelector('.chart-container');
     if (chartContainer) {
@@ -121,6 +125,114 @@ function initializeControls() {
         resetZoomBtn.addEventListener('click', resetZoom);
         chartContainer.appendChild(resetZoomBtn);
     }
+}
+
+// Initialize filter controls
+function initializeFilterControls() {
+    console.log('Initializing filter controls...');
+    
+    // Get filter elements
+    const filters = {
+        categoryType: document.getElementById('category-type-filter'),
+        era: document.getElementById('era-filter'),
+        engineType: document.getElementById('engine-type-filter'),
+        size: document.getElementById('size-filter'),
+        search: document.getElementById('aircraft-search'),
+        clearFilters: document.getElementById('clear-filters')
+    };
+
+    // Populate select elements with classifications
+    populateSelectWithClassification(filters.categoryType, 'category_type');
+    populateSelectWithClassification(filters.era, 'era');
+    populateSelectWithClassification(filters.engineType, 'engine_type');
+    populateSelectWithClassification(filters.size, 'size');
+
+    // Add event listeners to filters
+    Object.entries(filters).forEach(([key, element]) => {
+        if (element && key !== 'clearFilters') {
+            if (key === 'search') {
+                element.addEventListener('input', applyFilters);
+            } else {
+                element.addEventListener('change', applyFilters);
+            }
+        }
+    });
+
+    // Add event listener for clear filters button
+    if (filters.clearFilters) {
+        filters.clearFilters.addEventListener('click', clearFilters);
+    }
+    
+    console.log('Filter controls initialized successfully');
+}
+
+// Clear all filters
+function clearFilters() {
+    console.log('Clearing all filters');
+    
+    // Reset filter selects
+    document.getElementById('category-type-filter').value = 'all';
+    document.getElementById('era-filter').value = 'all';
+    document.getElementById('engine-type-filter').value = 'all';
+    document.getElementById('size-filter').value = 'all';
+    
+    // Clear search input
+    document.getElementById('aircraft-search').value = '';
+    
+    // Reset filtered data
+    filteredData = [...aircraftData];
+    
+    // Update chart
+    updateScatterChart();
+}
+
+// Apply filters
+function applyFilters() {
+    const categoryType = document.getElementById('category-type-filter')?.value;
+    const era = document.getElementById('era-filter')?.value;
+    const engineType = document.getElementById('engine-type-filter')?.value;
+    const size = document.getElementById('size-filter')?.value;
+    const searchTerm = document.getElementById('aircraft-search')?.value.toLowerCase();
+    
+    console.log('Applying filters:', { categoryType, era, engineType, size, searchTerm });
+    
+    let filtered = [...aircraftData];
+    
+    // Apply category type filter
+    if (categoryType && categoryType !== 'all') {
+        filtered = filtered.filter(aircraft => aircraft.category_type === categoryType);
+    }
+    
+    // Apply era filter
+    if (era && era !== 'all') {
+        filtered = filtered.filter(aircraft => aircraft.era === era);
+    }
+    
+    // Apply engine type filter
+    if (engineType && engineType !== 'all') {
+        filtered = filtered.filter(aircraft => aircraft.engine_type === engineType);
+    }
+    
+    // Apply size filter
+    if (size && size !== 'all') {
+        filtered = filtered.filter(aircraft => aircraft.WTC === size);
+    }
+    
+    // Apply search filter
+    if (searchTerm) {
+        filtered = filtered.filter(aircraft => {
+            return (
+                (aircraft.name && aircraft.name.toLowerCase().includes(searchTerm)) ||
+                (aircraft.manufacturer && aircraft.manufacturer.toLowerCase().includes(searchTerm))
+            );
+        });
+    }
+    
+    // Update filtered data
+    filteredData = filtered;
+    
+    // Update chart
+    updateScatterChart();
 }
 
 // Reset zoom function
@@ -170,6 +282,9 @@ async function loadAircraftData() {
                 image_url: b.image_url
             }))
         ];
+        
+        // Initialize filtered data
+        filteredData = [...aircraftData];
 
         console.log('Total data points loaded:', aircraftData.length);
         
@@ -197,7 +312,7 @@ function updateScatterChart() {
     console.log('Updating scatter chart with parameters:', { xParam, yParam, colorGroup, xLogScale, yLogScale });
 
     // Filter and map data for chart
-    const data = aircraftData.filter(aircraft => {
+    const data = filteredData.filter(aircraft => {
         return aircraft[xParam] != null && aircraft[yParam] != null;
     }).map(aircraft => {
         // Get the category value

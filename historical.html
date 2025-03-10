@@ -75,8 +75,49 @@
             </div>
         </div>
         <div class="row">
-            <div class="col">
-                <canvas id="timeline-chart" style="width: 100%; height: 600px;"></canvas>
+            <div class="col-md-9">
+                <div class="chart-container" style="position: relative; height:70vh; width:100%">
+                    <canvas id="timeline-chart"></canvas>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <!-- Filters Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Filters</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="category-type-filter" class="form-label">Category Type</label>
+                            <select class="form-select filter-control" id="category-type-filter">
+                                <!-- Will be populated from classifications.json -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="era-filter" class="form-label">Era</label>
+                            <select class="form-select filter-control" id="era-filter">
+                                <!-- Will be populated from classifications.json -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="engine-type-filter" class="form-label">Engine Type</label>
+                            <select class="form-select filter-control" id="engine-type-filter">
+                                <!-- Will be populated from classifications.json -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="size-filter" class="form-label">Size (WTC)</label>
+                            <select class="form-select filter-control" id="size-filter">
+                                <!-- Will be populated from classifications.json -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="aircraft-search" class="form-label">Search</label>
+                            <input type="text" class="form-control filter-control" id="aircraft-search" placeholder="Search by name...">
+                        </div>
+                        <button class="btn btn-outline-secondary w-100" type="button" id="clear-filters">Clear Filters</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

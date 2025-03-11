@@ -78,6 +78,25 @@ function displayAircraftDetails(aircraft) {
 
     const detailsContainer = document.getElementById('aircraft-details');
     
+    // Prepare image attribution section
+    let attributionHtml = '';
+    if (aircraft.image_attribution) {
+        console.log('Image attribution found:', aircraft.image_attribution);
+        attributionHtml = `
+            <div class="image-attribution mt-2">
+                <small class="text-muted">
+                    <i class="fas fa-camera"></i> ${aircraft.image_attribution}
+                    <br>
+                    <a href="${aircraft.image_url}" target="_blank" class="text-muted">
+                        <i class="fas fa-external-link-alt"></i> View original image
+                    </a>
+                </small>
+            </div>
+        `;
+    } else {
+        console.log('No image attribution found for:', aircraft.name);
+    }
+    
     const html = `
         <div class="card">
             <div class="card-header bg-primary text-white">
@@ -134,7 +153,10 @@ function displayAircraftDetails(aircraft) {
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <img src="${aircraft.image_url}" class="img-fluid rounded" alt="${aircraft.name}">
+                        <div class="image-container">
+                            <img src="${aircraft.image_url}" class="img-fluid rounded" alt="${aircraft.name}">
+                            ${attributionHtml}
+                        </div>
                         ${aircraft.notes ? `<div class="mt-3"><h4>Notes</h4><p>${aircraft.notes}</p></div>` : ''}
                     </div>
                 </div>

@@ -57,6 +57,27 @@
         .social-share .fa-envelope {
             color: #D44638;
         }
+        
+        /* Image attribution styling */
+        .image-container {
+            position: relative;
+        }
+        .image-attribution {
+            padding: 8px;
+            background-color: rgba(248, 249, 250, 0.9);
+            border-radius: 0 0 5px 5px;
+            border-top: 1px solid #dee2e6;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+        .image-attribution a {
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .image-attribution a:hover {
+            color: #0d6efd !important;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +117,12 @@
     <div class="container mt-4">
         <div id="aircraft-details">
             <!-- Aircraft details will be loaded here -->
+        </div>
+        
+        <div class="mt-4">
+            <p class="text-muted small">
+                <i class="fas fa-info-circle"></i> Images are sourced from Wikimedia Commons and are displayed with proper attribution according to their respective licenses.
+            </p>
         </div>
         
         <div class="social-share">

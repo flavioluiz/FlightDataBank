@@ -1,8 +1,10 @@
 import json
 import math
 from pathlib import Path
-from typing import Dict, List, Union
 import os
+import subprocess
+import sys
+from typing import Dict, List, Union
 
 def compute_isa_density(altitude_m: float) -> float:
     """
@@ -278,7 +280,81 @@ def validate_aircraft(aircraft):
     
     return True
 
-def process_database(input_file: str, output_file: str, start_id: int = 1) -> int:
+def load_attribution_data(attribution_file):
+    """
+    Load attribution data from a JSON file.
+    
+    Parameters:
+    attribution_file (str): Path to the attribution JSON file
+    
+    Returns:
+    dict: Dictionary mapping item names to their attribution information
+    """
+    try:
+        if not os.path.exists(attribution_file):
+            print(f"Attribution file {attribution_file} not found.")
+            return {}
+        
+        with open(attribution_file, 'r') as f:
+            data = json.load(f)
+        
+        # Create a dictionary mapping item names to their attribution information
+        attribution_map = {}
+        if 'attributions' in data:
+            for item in data['attributions']:
+                if 'item_name' in item and 'formatted_attribution' in item:
+                    # Store the attribution information with the item name as the key
+                    attribution_map[item['item_name']] = item
+                    
+                    # For birds, also store without the "Bird - " prefix for flexibility
+                    if item['item_name'].startswith("Bird - "):
+                        bird_name = item['item_name'][7:]  # Remove "Bird - " prefix
+                        attribution_map[bird_name] = item
+        
+        return attribution_map
+    except Exception as e:
+        print(f"Error loading attribution data: {str(e)}")
+        return {}
+
+def run_wiki_image_scraper(input_file, output_dir="attribution_results"):
+    """
+    Run the wiki_image_scraper.py script to update image attribution information.
+    
+    Parameters:
+    input_file (str): Path to the input JSON file
+    output_dir (str): Directory to save the attribution results
+    
+    Returns:
+    bool: True if successful, False otherwise
+    """
+    try:
+        # Create output directory if it doesn't exist
+        os.makedirs(output_dir, exist_ok=True)
+        
+        # Construct the command
+        cmd = [
+            sys.executable,  # Use the current Python interpreter
+            "wiki_image_scraper.py",
+            "--file", input_file,
+            "--output", output_dir
+        ]
+        
+        # Run the command
+        print(f"Running: {' '.join(cmd)}")
+        result = subprocess.run(cmd, capture_output=True, text=True)
+        
+        if result.returncode == 0:
+            print("Successfully updated image attribution information.")
+            print(result.stdout)
+            return True
+        else:
+            print(f"Error running wiki_image_scraper.py: {result.stderr}")
+            return False
+    except Exception as e:
+        print(f"Error running wiki_image_scraper.py: {str(e)}")
+        return False
+
+def process_database(input_file: str, output_file: str, start_id: int = 1, attribution_file: str = None) -> int:
     """
     Process the aircraft database and save the results.
     Returns the next available ID after processing.
@@ -295,6 +371,12 @@ def process_database(input_file: str, output_file: str, start_id: int = 1) -> in
     data = load_json_data(input_file)
     current_id = start_id
     
+    # Load attribution data if available
+    attribution_map = {}
+    if attribution_file and os.path.exists(attribution_file):
+        attribution_map = load_attribution_data(attribution_file)
+        print(f"Loaded attribution data for {len(attribution_map)} items")
+    
     # Process each aircraft
     if 'aircraft' in data:
         processed_aircraft = []
@@ -304,6 +386,14 @@ def process_database(input_file: str, output_file: str, start_id: int = 1) -> in
             aircraft['id'] = current_id
             print(f"Processing aircraft {aircraft.get('name', 'Unknown')} with ID {current_id}")
             current_id += 1
+            
+            # Add attribution information if available
+            if aircraft.get('name') in attribution_map:
+                attribution = attribution_map[aircraft['name']]
+                aircraft['image_attribution'] = attribution.get('formatted_attribution')
+                aircraft['image_license'] = attribution.get('license')
+                aircraft['image_author'] = attribution.get('author')
+                print(f"  Added attribution information for {aircraft['name']}")
             
             # Rename fields with units
             aircraft = rename_fields_with_units(aircraft)
@@ -324,6 +414,14 @@ def process_database(input_file: str, output_file: str, start_id: int = 1) -> in
             bird['id'] = current_id
             print(f"Processing bird {bird.get('name', 'Unknown')} with ID {current_id}")
             current_id += 1
+            
+            # Add attribution information if available
+            if bird.get('name') in attribution_map:
+                attribution = attribution_map[bird['name']]
+                bird['image_attribution'] = attribution.get('formatted_attribution')
+                bird['image_license'] = attribution.get('license')
+                bird['image_author'] = attribution.get('author')
+                print(f"  Added attribution information for {bird['name']}")
             
             # Rename fields with units
             bird = rename_fields_with_units(bird)
@@ -347,6 +445,7 @@ def main():
     # Define input and output paths
     data_dir = Path('data')
     processed_dir = data_dir / 'processed'
+    attribution_dir = Path('attribution_results')
     
     # Create processed directory if it doesn't exist
     os.makedirs(processed_dir, exist_ok=True)
@@ -354,13 +453,34 @@ def main():
     print(f"Input directory: {data_dir}")
     print(f"Output directory: {processed_dir}")
     
+    # Ask if user wants to update image attribution information
+    update_attribution = input("Do you want to update image attribution information? (y/n): ").lower().strip() == 'y'
+    
+    if update_attribution:
+        print("\nUpdating image attribution information...")
+        # Create attribution directory if it doesn't exist
+        os.makedirs(attribution_dir, exist_ok=True)
+        
+        # Update aircraft attribution
+        aircraft_input = str(data_dir / 'aircraft.json')
+        run_wiki_image_scraper(aircraft_input, str(attribution_dir))
+        
+        # Update birds attribution
+        birds_input = str(data_dir / 'birds.json')
+        run_wiki_image_scraper(birds_input, str(attribution_dir))
+    
+    # Define attribution file paths
+    aircraft_attribution = str(attribution_dir / 'aircraft_attribution.json')
+    birds_attribution = str(attribution_dir / 'birds_attribution.json')
+    
     # Process aircraft data first, starting with ID 1
     aircraft_input = str(data_dir / 'aircraft.json')
     aircraft_output = str(processed_dir / 'aircraft_processed.json')
     next_id = process_database(
         aircraft_input,
         aircraft_output,
-        start_id=1
+        start_id=1,
+        attribution_file=aircraft_attribution if os.path.exists(aircraft_attribution) else None
     )
     
     # Process birds data, starting with ID after the last aircraft
@@ -369,7 +489,8 @@ def main():
     process_database(
         birds_input,
         birds_output,
-        start_id=next_id
+        start_id=next_id,
+        attribution_file=birds_attribution if os.path.exists(birds_attribution) else None
     )
     
     print("Data processing completed!")

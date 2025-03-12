@@ -173,7 +173,7 @@
       "landing_speed_ms": 23.61,
       "service_ceiling_m": 4100,
       "max_thrust_kN": 2.2,
-      "engine_type": "Pistão",
+      "engine_type": "Piston",
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg",
       "cruise_altitude_m": 3500,

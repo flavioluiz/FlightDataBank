@@ -46,7 +46,7 @@
       "wing_area_m2": 10.68,
       "wingspan_m": 5.49,
       "length_m": 6.07,
-      "height_m": 2.40,
+      "height_m": 2.4,
       "cruise_speed_ms": 25,
       "takeoff_speed_ms": null,
       "landing_speed_ms": null,
@@ -65,8 +65,8 @@
       "notes": "The Demoiselle, designed by Brazilian aviation pioneer Alberto Santos-Dumont, was one of the first ultralight aircraft in aviation history. The No. 20 model, first flown in 1907, featured a high-wing monoplane design with a wire-braced wing mounted above an open-framework fuselage made from bamboo. The pilot's seat was positioned below the wing and between the main wheels of the undercarriage. The aircraft was powered by a 35 hp Darracq engine, allowing it to reach a maximum speed of approximately 90 km/h. Its lightweight and relatively simple construction made it popular among early aviation enthusiasts. Santos-Dumont generously made the plans available for free, leading to the construction of around 50 units in various countries. The Demoiselle played a significant role in popularizing aviation in the early 20th century. Data source: https://en.wikipedia.org/wiki/Santos-Dumont_Demoiselle. Image source: https://upload.wikimedia.org/wikipedia/commons/3/3d/Santos-Dumont_Demoiselle.jpg."
     },
     {
-      "name": "Blériot XI",
-      "manufacturer": "Blériot Aéronautique",
+      "name": "Bl\u00e9riot XI",
+      "manufacturer": "Bl\u00e9riot A\u00e9ronautique",
       "model": "XI",
       "first_flight_year": 1909,
       "mtow_N": 3136,
@@ -91,7 +91,7 @@
       "range_km": null,
       "max_roc_ms": null,
       "category_type": "historica",
-      "notes": "The Blériot XI is a historic French aircraft designed by Louis Blériot and first flown in 1909. It gained fame for being the first airplane to cross the English Channel on July 25, 1909, piloted by Blériot himself. The aircraft features a monoplane design with a wooden framework and fabric covering. It was powered by a 25 hp Anzani 3-cylinder engine, allowing it to reach a maximum speed of approximately 75 km/h. The Blériot XI played a significant role in early aviation history and is considered one of the first successful monoplanes. Data source: https://pt.wikipedia.org/wiki/Bl%C3%A9riot_XI. Image source: https://upload.wikimedia.org/wikipedia/commons/0/03/Bleriot.jpg."
+      "notes": "The Bl\u00e9riot XI is a historic French aircraft designed by Louis Bl\u00e9riot and first flown in 1909. It gained fame for being the first airplane to cross the English Channel on July 25, 1909, piloted by Bl\u00e9riot himself. The aircraft features a monoplane design with a wooden framework and fabric covering. It was powered by a 25 hp Anzani 3-cylinder engine, allowing it to reach a maximum speed of approximately 75 km/h. The Bl\u00e9riot XI played a significant role in early aviation history and is considered one of the first successful monoplanes. Data source: https://pt.wikipedia.org/wiki/Bl%C3%A9riot_XI. Image source: https://upload.wikimedia.org/wikipedia/commons/0/03/Bleriot.jpg."
     },
     {
       "name": "Airbus A320neo",
@@ -110,7 +110,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/A320neo_LATAM_%2830934637733%29.jpg/640px-A320neo_LATAM_%2830934637733%29.jpg",
       "cruise_altitude_m": 11277,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 6300
     },
     {
       "name": "Embraer E190-E2",
@@ -129,7 +130,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/PR-ZEY_E190-E2_%28FAB-EGLF%29_%2828498436022%29.jpg/640px-PR-ZEY_E190-E2_%28FAB-EGLF%29_%2828498436022%29.jpg",
       "cruise_altitude_m": 12192,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 5300
     },
     {
       "name": "AEA June Bug",
@@ -177,7 +179,8 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/a/ae/Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg",
       "cruise_altitude_m": 3500,
-      "category_type": "geral"
+      "category_type": "geral",
+      "range_km": 1185
     },
     {
       "name": "Boeing 787-9",
@@ -196,7 +199,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/American_787-9_%2831715090444%29.jpg/1599px-American_787-9_%2831715090444%29.jpg?20170129195428",
       "cruise_altitude_m": 12801,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 14140
     },
     {
       "name": "Airbus A350-900",
@@ -215,7 +219,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/d/d6/Qatar_Airways_A350-941_%28A7-ALA%29_landing_at_Frankfurt_Airport.jpg",
       "cruise_altitude_m": 13106,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 15000
     },
     {
       "name": "Bombardier CRJ-900",
@@ -234,7 +239,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/USexCRJ-900.jpg/1600px-USexCRJ-900.jpg?20071111203358",
       "cruise_altitude_m": 11582,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 2876
     },
     {
       "name": "ATR 72-600",
@@ -253,7 +259,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/b/bc/ATR_ATR-72-600_%28ATR-72-212A%29%2C_Azul_-_Linhas_Aereas_Brasileiras_AN2298854.jpg?20130812204608",
       "cruise_altitude_m": 7620,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 1528
     },
     {
       "name": "Embraer Phenom 300",
@@ -272,7 +279,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Embraer_EMB-505_Phenom_300_Private%2C_LUX_Luxembourg_%28Findel%29%2C_Luxembourg_PP1337181623.jpg/640px-Embraer_EMB-505_Phenom_300_Private%2C_LUX_Luxembourg_%28Findel%29%2C_Luxembourg_PP1337181623.jpg",
       "cruise_altitude_m": 13716,
-      "category_type": "executiva"
+      "category_type": "executiva",
+      "range_km": 3650
     },
     {
       "name": "Airbus A380",
@@ -291,7 +299,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/0/09/A6-EDY_A380_Emirates_31_jan_2013_jfk_%288442269364%29_%28cropped%29.jpg",
       "cruise_altitude_m": 13100,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 15200
     },
     {
       "name": "Boeing 747-8",
@@ -310,7 +319,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/D-ABYT_at_FRA.jpg/640px-D-ABYT_at_FRA.jpg",
       "cruise_altitude_m": 13106,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 14320
     },
     {
       "name": "Cirrus SR22",
@@ -329,7 +339,8 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Cirrus_SR-22_G3_GTS_AN1594917.jpg/640px-Cirrus_SR-22_G3_GTS_AN1594917.jpg",
       "cruise_altitude_m": 5486,
-      "category_type": "geral"
+      "category_type": "geral",
+      "range_km": 1178
     },
     {
       "name": "Pilatus PC-12",
@@ -348,7 +359,8 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/PC-12.jpg/640px-PC-12.jpg",
       "cruise_altitude_m": 9144,
-      "category_type": "geral"
+      "category_type": "geral",
+      "range_km": 3340
     },
     {
       "name": "Beechcraft King Air 350",
@@ -367,7 +379,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/MAKS2015part4-43.jpg/640px-MAKS2015part4-43.jpg",
       "cruise_altitude_m": 10668,
-      "category_type": "geral"
+      "category_type": "geral",
+      "range_km": 3345
     },
     {
       "name": "Dassault Falcon 7X",
@@ -386,7 +399,8 @@
       "engine_count": 3,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Rossiya_Dassault_Falcon_7X.jpg/640px-Rossiya_Dassault_Falcon_7X.jpg",
       "cruise_altitude_m": 15544,
-      "category_type": "executiva"
+      "category_type": "executiva",
+      "range_km": 11019
     },
     {
       "name": "Gulfstream G650",
@@ -405,7 +419,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/G-ULFS_Gulfstream_G650_CVT_05-05-16_%2827046023031%29_%28cropped%29.jpg/640px-G-ULFS_Gulfstream_G650_CVT_05-05-16_%2827046023031%29_%28cropped%29.jpg",
       "cruise_altitude_m": 15544,
-      "category_type": "executiva"
+      "category_type": "executiva",
+      "range_km": 12964
     },
     {
       "name": "Wright Flyer",
@@ -424,7 +439,8 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/First_flight2.jpg/640px-First_flight2.jpg",
       "cruise_altitude_m": 30,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": null
     },
     {
       "name": "Santos-Dumont 14-bis",
@@ -443,7 +459,8 @@
       "engine_count": 1,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/14-bis_de_Alberto_Santos_Dumont.jpg/640px-14-bis_de_Alberto_Santos_Dumont.jpg",
       "cruise_altitude_m": 60,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": null
     },
     {
       "name": "Douglas DC-3",
@@ -462,7 +479,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Douglas_DC-3%2C_SE-CFP.jpg/640px-Douglas_DC-3%2C_SE-CFP.jpg",
       "cruise_altitude_m": 3000,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": 2400
     },
     {
       "name": "Boeing 707",
@@ -481,11 +499,12 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Boeing_707-321B_Pan_Am_Freer.jpg/640px-Boeing_707-321B_Pan_Am_Freer.jpg",
       "cruise_altitude_m": 11000,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": 10650
     },
     {
       "name": "Concorde",
-      "manufacturer": "Aérospatiale/BAC",
+      "manufacturer": "A\u00e9rospatiale/BAC",
       "model": "Concorde",
       "first_flight_year": 1969,
       "mtow_N": 1815536.7,
@@ -500,7 +519,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/eb/British_Airways_Concorde_G-BOAC_03.jpg",
       "cruise_altitude_m": 18290,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": 7223
     },
     {
       "name": "Airbus A320",
@@ -519,7 +539,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Jetstar_Airbus_A320_in_flight_%286768081241%29_crop.jpg/640px-Jetstar_Airbus_A320_in_flight_%286768081241%29_crop.jpg",
       "cruise_altitude_m": 11280,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 5700
     },
     {
       "name": "Boeing 747",
@@ -538,7 +559,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/B-747_Iberia.jpg/640px-B-747_Iberia.jpg",
       "cruise_altitude_m": 13100,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 13450
     },
     {
       "name": "Embraer E190",
@@ -579,7 +601,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/N975QS_2002_Cessna_750_C-N_750-0175_Citation_X_%287039507775%29.jpg/1599px-N975QS_2002_Cessna_750_C-N_750-0175_Citation_X_%287039507775%29.jpg?20180625221258",
       "cruise_altitude_m": 15545,
-      "category_type": "executiva"
+      "category_type": "executiva",
+      "range_km": 6408
     },
     {
       "name": "Boeing 757-200",
@@ -598,7 +621,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Icelandair.b757-200.tf-fiv.arp.jpg/1600px-Icelandair.b757-200.tf-fiv.arp.jpg?20071031103941",
       "cruise_altitude_m": 11890,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 7250
     },
     {
       "name": "Boeing 767-200",
@@ -617,7 +641,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/United_Airlines_Boeing_767-222%3B_N602UA%2C_May_1990_%285424568174%29.jpg/1600px-United_Airlines_Boeing_767-222%3B_N602UA%2C_May_1990_%285424568174%29.jpg?20130616090955",
       "cruise_altitude_m": 12500,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 7890
     },
     {
       "name": "Boeing 777-200",
@@ -636,7 +661,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Kenya_Airways_B777-2U8ER_%285Y-KYZ%29_taking_off_from_London_Heathrow_Airport.jpg/1599px-Kenya_Airways_B777-2U8ER_%285Y-KYZ%29_taking_off_from_London_Heathrow_Airport.jpg?20070815184523",
       "cruise_altitude_m": 13100,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 9700
     },
     {
       "name": "Airbus A300B4",
@@ -655,7 +681,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/9/9d/VARIG_Airbus_A300_Aragao.jpg",
       "cruise_altitude_m": 10670,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 7500
     },
     {
       "name": "Airbus A310-300",
@@ -674,7 +701,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/77/LV-AIV_Airbus_A310_Aerolineas_Argentinas_%287378993190%29.jpg?20140505010405",
       "cruise_altitude_m": 11890,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 8050
     },
     {
       "name": "Airbus A330-300",
@@ -693,7 +721,8 @@
       "engine_count": 2,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Aircanada.a330-300.c-ghkr.arp.jpg/1600px-Aircanada.a330-300.c-ghkr.arp.jpg?20070813143750",
       "cruise_altitude_m": 12500,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 11300
     },
     {
       "name": "Airbus A340-300",
@@ -712,7 +741,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/1/1e/Airbus_A340-311%2C_Lufthansa_AN1936774.jpg?20130624203121",
       "cruise_altitude_m": 12500,
-      "category_type": "comercial"
+      "category_type": "comercial",
+      "range_km": 13700
     },
     {
       "name": "Boeing 314 Clipper",
@@ -731,7 +761,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Boeing_314_Clipper-cropped.jpg/640px-Boeing_314_Clipper-cropped.jpg",
       "cruise_altitude_m": 3960,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": 5900
     },
     {
       "name": "Boeing 377 Stratocruiser",
@@ -750,7 +781,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/6/69/Pan_Am_Stratocruiser_San_Francisco.jpg",
       "cruise_altitude_m": 8245,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": 6760
     },
     {
       "name": "Boeing 307 Stratoliner",
@@ -769,7 +801,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/3/34/Boeing_307_Stratoliner%2C_Pan_Am_JP5629675.jpg?20131111003711",
       "cruise_altitude_m": 6100,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": null
     },
     {
       "name": "Lockheed Constellation",
@@ -788,7 +821,8 @@
       "engine_count": 4,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/C-69.jpg/1568px-C-69.jpg?20050719012059",
       "cruise_altitude_m": 7010,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": 8700
     },
     {
       "name": "Hawker Siddeley Trident",
@@ -807,7 +841,8 @@
       "engine_count": 3,
       "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/British_Airways_Trident3B_%287107744185%29.jpg/1600px-British_Airways_Trident3B_%287107744185%29.jpg?20201105150946",
       "cruise_altitude_m": 10670,
-      "category_type": "historica"
+      "category_type": "historica",
+      "range_km": null
     }
   ]
 }

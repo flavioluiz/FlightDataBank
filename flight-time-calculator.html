@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flight Time Calculator - FlightDataBank</title>
+    <meta name="description" content="Calculate flight time between two destinations with different aircraft and simulate wind conditions.">
+    <meta name="keywords" content="flight time calculator, aircraft speed, flight duration, travel time, headwind, tailwind">
+    <meta name="author" content="Flavio Ribeiro">
+    <meta property="og:title" content="Flight Time Calculator - FlightDataBank">
+    <meta property="og:description" content="Calculate flight time between two destinations with different aircraft and simulate wind conditions.">
+    <meta property="og:url" content="https://www.flightdatabank.com/flight-time-calculator.html">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <link rel="canonical" href="https://www.flightdatabank.com/flight-time-calculator.html">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <link href="styles.css" rel="stylesheet">
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .points-legend {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+        }
+        .results-table {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .wind-controls {
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .result-card {
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        .result-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .point-marker {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+        .point-a {
+            background-color: #4CAF50;
+        }
+        .point-b {
+            background-color: #F44336;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand text-white" href="index.html">
+                <i class="fas fa-plane"></i> FlightDataBank
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="aircraft-list.html">Aircraft List</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="aircraft-gallery.html">Aircraft Gallery</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="comparative.html">Comparative Charts</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="flight-diagrams.html">Flight Diagrams</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="historical.html">Historical Evolution</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="aircraft-range-map.html">Range Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active text-white" href="flight-time-calculator.html">Flight Time Calculator</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="about.html">About</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <h1 class="mb-4">Flight Time Calculator</h1>
+        <p class="lead">Calculate the flight time between any two points for different aircraft, with optional wind conditions.</p>
+        
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Interactive Map</h5>
+                    </div>
+                    <div class="card-body">
+                        <p><strong>Click twice on the map</strong> to select departure and destination points.</p>
+                        <div id="map"></div>
+                        <div class="d-flex justify-content-between mt-3">
+                            <div>
+                                <span class="point-marker point-a"></span> Departure
+                                <span class="point-marker point-b ms-3"></span> Destination
+                            </div>
+                            <button id="reset-points" class="btn btn-danger">Reset Points</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Fixed Route Summary Section -->
+                <div class="card mt-3">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Route Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="fixed-route-summary">
+                            <div class="route-info">
+                                <p id="instruction-text" class="mb-2"><i class="fas fa-info-circle me-2"></i>Select two points on the map to calculate the distance.</p>
+                                
+                                <div id="route-details" style="display: none;">
+                                    <div class="mb-2">
+                                        <strong>Departure:</strong> <span id="departure-info">-</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Destination:</strong> <span id="destination-info">-</span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Great Circle Distance:</strong> <span id="distance-info">-</span> km
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Safety Margin:</strong> <span id="safety-margin-info">-</span> km
+                                    </div>
+                                    <div class="mb-2">
+                                        <strong>Total Required Range:</strong> <span id="total-range-info">-</span> km
+                                    </div>
+                                    <div id="wind-info-container" class="mb-0 mt-2" style="display: none;">
+                                        <strong>Wind:</strong> <span id="wind-info">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <!-- City Search in Collapsible Panel -->
+                <div class="card mb-3">
+                    <div class="card-header bg-primary text-white" data-bs-toggle="collapse" href="#citySearchPanel" role="button" aria-expanded="false" aria-controls="citySearchPanel" style="cursor: pointer;">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">City Search (Optional)</h5>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="collapse" id="citySearchPanel">
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <label for="point-a" class="form-label">Departure Location</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="point-a" placeholder="Enter city name">
+                                    <button class="btn btn-outline-secondary" type="button" id="search-a">Search</button>
+                                </div>
+                                <div id="point-a-coords" class="form-text"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="point-b" class="form-label">Destination Location</label>
+                                <div class="input-group mb-3">
+                                    <input type="text" class="form-control" id="point-b" placeholder="Enter city name">
+                                    <button class="btn btn-outline-secondary" type="button" id="search-b">Search</button>
+                                </div>
+                                <div id="point-b-coords" class="form-text"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card mb-3">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Flight Parameters</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label for="safety-distance" class="form-label">Safety Distance (km)</label>
+                            <input type="number" class="form-control" id="safety-distance" value="100" min="0" max="1000">
+                            <div class="form-text">Additional distance added to ensure aircraft range safety.</div>
+                        </div>
+                        <div id="distance-info" style="display: none;"></div>
+                    </div>
+                </div>
+                
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Wind Conditions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-check form-switch mb-3">
+                            <input class="form-check-input" type="checkbox" id="enable-wind">
+                            <label class="form-check-label" for="enable-wind">Enable Wind Simulation</label>
+                        </div>
+                        <div class="wind-controls" id="wind-controls-container">
+                            <div class="mb-3">
+                                <label for="wind-speed" class="form-label">Wind Speed (km/h)</label>
+                                <input type="number" class="form-control" id="wind-speed" value="50" min="0" max="500">
+                            </div>
+                            <div class="mb-3">
+                                <label for="wind-type" class="form-label">Wind Type</label>
+                                <select class="form-select" id="wind-type">
+                                    <option value="tailwind">Tailwind (assisting)</option>
+                                    <option value="headwind">Headwind (opposing)</option>
+                                    <option value="crosswind">Crosswind (90° to flight path)</option>
+                                </select>
+                            </div>
+                            <div class="form-text">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Tailwind decreases flight time, headwind increases it, crosswind has minimal effect on time.
+                            </div>
+                        </div>
+                        <button id="calculate-btn" class="btn btn-primary w-100">Calculate Flight Times</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row" id="results-section" style="display: none;">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Results</h5>
+                        <div class="form-check form-switch mb-0">
+                            <input class="form-check-input" type="checkbox" id="show-all-aircraft">
+                            <label class="form-check-label text-white" for="show-all-aircraft">Show All Aircraft</label>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row" id="results-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Special Examples</h5>
+                    </div>
+                    <div class="card-body">
+                        <h6>Jet Stream Effects</h6>
+                        <p>The jet stream is a narrow band of strong wind in the upper levels of the atmosphere. Commercial aircraft flying eastbound across the Atlantic or Pacific can save significant time and fuel by utilizing these favorable winds.</p>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Trans-Atlantic Crossings</h6>
+                                        <p class="card-text">Flights from New York to London can be up to 1 hour shorter than the reverse route due to jet stream assistance.</p>
+                                        <button class="btn btn-sm btn-primary load-example" data-example="atlantic">Load Example</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Trans-Pacific Routes</h6>
+                                        <p class="card-text">The jet stream can cause significant differences in flight times between Tokyo and Los Angeles.</p>
+                                        <button class="btn btn-sm btn-primary load-example" data-example="pacific">Load Example</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title">Extreme Weather Events</h6>
+                                        <p class="card-text">During winter, strengthened jet streams can create over 100 km/h tailwinds or headwinds.</p>
+                                        <button class="btn btn-sm btn-primary load-example" data-example="extreme">Load Example</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">About This Tool</h5>
+                    </div>
+                    <div class="card-body">
+                        <p>This interactive tool allows you to calculate and compare flight times between any two points on the world map for different aircraft, with optional wind simulation.</p>
+                        <p><strong>How it works:</strong></p>
+                        <ol>
+                            <li>Select two points on the map by clicking, or enter city names in the input fields.</li>
+                            <li>The great circle distance between the points will be calculated.</li>
+                            <li>Only aircraft with enough range (including safety margin) will be shown in the results.</li>
+                            <li>Flight time is calculated by dividing the distance by the cruise speed of each aircraft.</li>
+                            <li>Optional wind effects can be applied to see how they affect flight time.</li>
+                        </ol>
+                        <p><strong>Note:</strong> The calculations provide approximate flight times and do not account for all real-world factors such as altitude changes, air traffic control, taxi time, and varying speeds during different flight phases.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5>FlightDataBank</h5>
+                    <p>A comprehensive database of aircraft specifications and performance data.</p>
+                </div>
+                <div class="col-md-3">
+                    <h5>Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="index.html" class="text-white">Home</a></li>
+                        <li><a href="about.html" class="text-white">About</a></li>
+                        <li><a href="privacy-policy.html" class="text-white">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5>Contact</h5>
+                    <p>For inquiries or feedback, please contact us.</p>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-12 text-center">
+                    <p class="mb-0">&copy; 2025 FlightDataBank. All rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="js/flight-time-calculator.js"></script>
+</body>
+</html> 

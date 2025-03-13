@@ -62,6 +62,30 @@ document.addEventListener('DOMContentLoaded', function() {
             calculateFlightTimes();
         });
         
+        // Set up aircraft filter controls
+        document.getElementById('aircraft-classification').addEventListener('change', updateAircraftFilters);
+        document.getElementById('aircraft-search').addEventListener('input', updateAircraftFilters);
+        document.getElementById('select-all-aircraft').addEventListener('click', selectAllAircraft);
+        document.getElementById('clear-all-aircraft').addEventListener('click', clearAllAircraft);
+        
+        // Set up collapse panels icon rotation
+        document.querySelectorAll('.card-header[data-bs-toggle="collapse"]').forEach(header => {
+            const icon = header.querySelector('i.fas');
+            const targetId = header.getAttribute('href');
+            const targetPanel = document.querySelector(targetId);
+            
+            // Add Bootstrap collapse event listeners
+            targetPanel.addEventListener('shown.bs.collapse', function() {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            });
+            
+            targetPanel.addEventListener('hidden.bs.collapse', function() {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            });
+        });
+        
         // Add event listeners for the example buttons
         document.querySelectorAll('.load-example').forEach(button => {
             button.addEventListener('click', function() {
@@ -225,6 +249,9 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('route-details').style.display = 'none';
         document.getElementById('wind-info-container').style.display = 'none';
         
+        // Clear aircraft filters
+        clearAircraftList();
+        
         // Hide results section
         document.getElementById('results-section').style.display = 'none';
     }
@@ -272,6 +299,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         console.log(`Converted speed for ${aircraftCopy.name}: ${aircraftCopy.cruise_speed_ms} m/s = ${aircraftCopy.cruise_speed_kmh} km/h`);
                     }
                     
+                    // Determine aircraft classification if not provided
+                    if (!aircraftCopy.classification) {
+                        aircraftCopy.classification = determineAircraftClassification(aircraftCopy);
+                    }
+                    
                     return aircraftCopy;
                 });
                 
@@ -304,6 +336,62 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
     
+    // Determine aircraft classification based on available data
+    function determineAircraftClassification(aircraft) {
+        const name = aircraft.name.toLowerCase();
+        const type = aircraft.type ? aircraft.type.toLowerCase() : '';
+        const cruiseSpeed = aircraft.cruise_speed_kmh || 0;
+        
+        // Check for military aircraft
+        if (name.includes('fighter') || name.includes('military') || 
+            type.includes('fighter') || type.includes('military') ||
+            name.includes('f-') || name.includes('su-') || name.includes('mig-')) {
+            return 'military';
+        }
+        
+        // Check for helicopters
+        if (name.includes('helicopter') || name.includes('chopper') || 
+            type.includes('helicopter') || type.includes('rotor') ||
+            cruiseSpeed < 300) {
+            return 'helicopter';
+        }
+        
+        // Check for business jets
+        if (name.includes('business') || name.includes('corporate') || 
+            name.includes('private') || name.includes('learjet') ||
+            name.includes('citation') || name.includes('gulfstream') ||
+            type.includes('business') || type.includes('corporate')) {
+            return 'business';
+        }
+        
+        // Check for turboprops
+        if (name.includes('turboprop') || name.includes('prop') || 
+            type.includes('turboprop') || type.includes('prop') ||
+            (cruiseSpeed >= 300 && cruiseSpeed < 500)) {
+            return 'turboprop';
+        }
+        
+        // Check for piston aircraft
+        if (name.includes('piston') || name.includes('cessna') || 
+            name.includes('piper') || name.includes('beechcraft') ||
+            type.includes('piston') || type.includes('general aviation') ||
+            cruiseSpeed < 400) {
+            return 'piston';
+        }
+        
+        // Default to airliner for commercial jets
+        if (cruiseSpeed >= 700 || 
+            name.includes('boeing') || name.includes('airbus') || 
+            name.includes('a3') || name.includes('a2') || 
+            name.includes('737') || name.includes('747') || 
+            name.includes('777') || name.includes('787')) {
+            return 'airliner';
+        }
+        
+        // If can't determine, default to airliner
+        return 'airliner';
+    }
+    
     // Format flight time from hours to hours:minutes
     function formatFlightTime(timeInHours) {
         const hours = Math.floor(timeInHours);
@@ -328,6 +416,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show all aircraft if checkbox is checked or only those with sufficient range
             return showAllAircraft || aircraft.range_km >= distanceKm;
         });
+        
+        // Apply aircraft selection filters
+        eligibleAircraft = applyAircraftFilters(eligibleAircraft);
+        
+        // Update the aircraft selection list
+        populateAircraftList(eligibleAircraft);
         
         // Get wind parameters
         const windEnabled = document.getElementById('enable-wind').checked;
@@ -587,6 +681,25 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('wind-speed').value = windSettings.speed;
         document.getElementById('wind-type').value = windSettings.type;
         
+        // Make sure wind panel is expanded when using an example with wind
+        if (windSettings.enabled) {
+            const windPanel = document.getElementById('windConditionsPanel');
+            const bootstrap = window.bootstrap || {};
+            
+            // Check if Bootstrap's Collapse is available
+            if (bootstrap.Collapse) {
+                const collapse = bootstrap.Collapse.getInstance(windPanel);
+                if (collapse) {
+                    collapse.show();
+                } else {
+                    new bootstrap.Collapse(windPanel, { show: true });
+                }
+            } else {
+                // Fallback if Bootstrap is not fully loaded
+                windPanel.classList.add('show');
+            }
+        }
+        
         // Update UI
         drawRouteLine();
         updateDistanceInfo();
@@ -616,5 +729,132 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             alertContainer.remove();
         }, 5000);
+    }
+    
+    // Populate the aircraft list for filtering
+    function populateAircraftList(aircraftList) {
+        const listContainer = document.getElementById('aircraft-list');
+        
+        // Clear previous content
+        while (listContainer.firstChild) {
+            listContainer.removeChild(listContainer.firstChild);
+        }
+        
+        if (aircraftList.length === 0) {
+            // Show placeholder if no aircraft
+            const placeholder = document.createElement('div');
+            placeholder.className = 'text-center text-muted py-4';
+            placeholder.innerHTML = `
+                <i class="fas fa-plane-slash fa-2x mb-2"></i>
+                <p>No matching aircraft found</p>
+            `;
+            listContainer.appendChild(placeholder);
+            return;
+        }
+        
+        // Create checkbox for each aircraft
+        aircraftList.forEach((aircraft, index) => {
+            const item = document.createElement('div');
+            item.className = 'form-check';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.className = 'form-check-input aircraft-checkbox';
+            checkbox.id = `aircraft-${index}`;
+            checkbox.value = aircraft.id || index;
+            checkbox.dataset.name = aircraft.name;
+            checkbox.checked = true; // Default to checked
+            checkbox.addEventListener('change', () => calculateFlightTimes());
+            
+            const label = document.createElement('label');
+            label.className = 'form-check-label';
+            label.htmlFor = `aircraft-${index}`;
+            label.textContent = aircraft.name;
+            
+            item.appendChild(checkbox);
+            item.appendChild(label);
+            listContainer.appendChild(item);
+        });
+    }
+    
+    // Clear the aircraft list
+    function clearAircraftList() {
+        const listContainer = document.getElementById('aircraft-list');
+        
+        // Clear the container and add placeholder
+        listContainer.innerHTML = `
+            <div class="text-center text-muted py-4">
+                <i class="fas fa-plane-slash fa-2x mb-2"></i>
+                <p>Aircraft will appear after selecting points on the map</p>
+            </div>
+        `;
+    }
+    
+    // Update aircraft filters based on classification and search
+    function updateAircraftFilters() {
+        // If no points selected yet, nothing to filter
+        if (!pointA || !pointB) return;
+        
+        // Get current filter values
+        const classification = document.getElementById('aircraft-classification').value;
+        const searchTerm = document.getElementById('aircraft-search').value.toLowerCase();
+        
+        // Get showAllAircraft setting for range filter
+        const showAllAircraft = document.getElementById('show-all-aircraft').checked;
+        const distanceKm = calculateDistance(pointA, pointB);
+        
+        // Apply filters
+        let filteredAircraft = allAircraft.filter(aircraft => {
+            // Filter by range if needed
+            if (!showAllAircraft && aircraft.range_km < distanceKm) {
+                return false;
+            }
+            
+            // Filter by classification if not set to "all"
+            if (classification !== 'all' && aircraft.classification !== classification) {
+                return false;
+            }
+            
+            // Filter by search term
+            if (searchTerm && !aircraft.name.toLowerCase().includes(searchTerm)) {
+                return false;
+            }
+            
+            return true;
+        });
+        
+        // Update the aircraft list
+        populateAircraftList(filteredAircraft);
+    }
+    
+    // Apply selected aircraft filters to the eligible aircraft list
+    function applyAircraftFilters(eligibleAircraft) {
+        // Get all checked aircraft
+        const checkedBoxes = document.querySelectorAll('.aircraft-checkbox:checked');
+        const selectedNames = Array.from(checkedBoxes).map(checkbox => checkbox.dataset.name);
+        
+        // If no checkboxes exist yet, return all eligible aircraft
+        if (document.querySelectorAll('.aircraft-checkbox').length === 0) {
+            return eligibleAircraft;
+        }
+        
+        // Filter to only show selected aircraft
+        return eligibleAircraft.filter(aircraft => selectedNames.includes(aircraft.name));
+    }
+    
+    // Select all aircraft in the filter list
+    function selectAllAircraft() {
+        document.querySelectorAll('.aircraft-checkbox').forEach(checkbox => {
+            checkbox.checked = true;
+        });
+        calculateFlightTimes();
+    }
+    
+    // Clear all aircraft in the filter list
+    function clearAllAircraft() {
+        document.querySelectorAll('.aircraft-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        calculateFlightTimes();
     }
 }); 

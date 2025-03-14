@@ -236,11 +236,20 @@ function openAircraftDetails(aircraft) {
     // Check if it's a bird
     const isBird = aircraft.category_type === 'ave';
     
+    // Convert MTOW from Newtons to kg (dividing by 9.81)
+    const mtowKg = aircraft.mtow_N ? (aircraft.mtow_N / 9.81).toFixed(2) : 'N/A';
+    
     // Create content
     modalContent.innerHTML = `
         <div class="row">
             <div class="col-md-6">
-                <img src="${aircraft.image_url}" alt="${aircraft.name}" class="img-fluid rounded">
+                <img src="${aircraft.image_url}" class="img-fluid rounded mb-3" alt="${aircraft.name}">
+                <p class="text-muted small">
+                    <strong>Image Attribution:</strong> ${aircraft.image_attribution || 'Not available'}
+                </p>
+                <p class="text-muted small">
+                    <strong>Image Source:</strong> <a href="${aircraft.image_url}" target="_blank">View original image</a>
+                </p>
             </div>
             <div class="col-md-6">
                 <h4>${aircraft.name} ${isBird ? '<i class="fas fa-feather-alt ms-1" title="Bird"></i>' : ''}</h4>
@@ -253,7 +262,7 @@ function openAircraftDetails(aircraft) {
                      <p><strong>Size (WTC):</strong> ${getLabelForValue('size', aircraft.WTC) || 'N/A'}</p>
                      <p><strong>First Flight:</strong> ${aircraft.first_flight_year || 'N/A'}</p>`
                 }
-                <p><strong>MTOW:</strong> ${aircraft.mtow_kg ? (aircraft.mtow_kg / 1000).toFixed(2) + ' tons' : 'N/A'}</p>
+                <p><strong>MTOW:</strong> ${mtowKg} kg</p>
                 <p><strong>Cruise Speed:</strong> ${aircraft.cruise_speed_ms ? (aircraft.cruise_speed_ms * 3.6).toFixed(0) + ' km/h' : 'N/A'}</p>
                 <p><strong>Wing Area:</strong> ${aircraft.wing_area_m2 ? aircraft.wing_area_m2.toFixed(1) + ' m²' : 'N/A'}</p>
                 ${isBird ? 

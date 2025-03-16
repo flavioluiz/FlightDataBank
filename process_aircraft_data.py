@@ -358,6 +358,29 @@ def run_wiki_image_scraper(input_file, output_dir="attribution_results"):
         print(f"Error running wiki_image_scraper.py: {str(e)}")
         return False
 
+def clean_wikimedia_url(url):
+    """Clean Wikimedia URL to get base filename."""
+    if not url:
+        return None
+        
+    # First remove any query parameters (after ?)
+    url = url.split('?')[0]
+    
+    # Get the filename
+    filename = url.split('/')[-1]
+    
+    # If it's a thumb URL, get the original filename
+    if '/thumb/' in url:
+        # Remove resolution prefix (e.g., '1599px-')
+        if 'px-' in filename:
+            filename = filename.split('px-')[-1]
+        # Remove the thumbnail resolution version completely
+        parts = url.split('/thumb/')
+        if len(parts) > 1:
+            filename = parts[1].split('/')[-2]
+    
+    return filename
+
 def process_database(input_file: str, output_file: str, start_id: int = 1, attribution_file: str = None, update_thumbnails: bool = False) -> int:
     """
     Process the aircraft database and save the results.
@@ -415,36 +438,36 @@ def process_database(input_file: str, output_file: str, start_id: int = 1, attri
             
             # Add thumbnail URL if requested and image_url exists
             if update_thumbnails and aircraft.get('image_url'):
-                # Get the description URL from wiki_image_scraper
-                image_url = aircraft['image_url']
-                file_name = image_url.split('/')[-1]
-                description_url = f"https://commons.wikimedia.org/wiki/File:{file_name}"
-                
-                print(f"  Getting thumbnail URL for {aircraft['name']}")
-                print(f"  Description URL: {description_url}")
-                
-                try:
-                    response = requests.get(description_url)
-                    if response.status_code == 200:
-                        soup = BeautifulSoup(response.text, 'html.parser')
-                        
-                        # Find the "Other resolutions" section
-                        resolution_text = soup.find(string=re.compile("Other resolutions:"))
-                        if resolution_text:
-                            # Find the first link after "Other resolutions:" text
-                            first_thumbnail = resolution_text.find_next('a', class_='mw-thumbnail-link')
-                            if first_thumbnail:
-                                thumbnail_url = first_thumbnail['href']
-                                aircraft['thumbnail_url'] = thumbnail_url
-                                print(f"    Found thumbnail: {thumbnail_url}")
+                # Clean up the image URL to get proper filename
+                filename = clean_wikimedia_url(aircraft['image_url'])
+                if filename:
+                    description_url = f"https://commons.wikimedia.org/wiki/File:{filename}"
+                    
+                    print(f"  Getting thumbnail URL for {aircraft['name']}")
+                    print(f"  Description URL: {description_url}")
+                    
+                    try:
+                        response = requests.get(description_url)
+                        if response.status_code == 200:
+                            soup = BeautifulSoup(response.text, 'html.parser')
+                            
+                            # Find the "Other resolutions" section
+                            resolution_text = soup.find(string=re.compile("Other resolutions:"))
+                            if resolution_text:
+                                # Find the first link after "Other resolutions:" text
+                                first_thumbnail = resolution_text.find_next('a', class_='mw-thumbnail-link')
+                                if first_thumbnail:
+                                    thumbnail_url = first_thumbnail['href']
+                                    aircraft['thumbnail_url'] = thumbnail_url
+                                    print(f"    Found thumbnail: {thumbnail_url}")
+                                else:
+                                    print(f"    No thumbnail link found")
                             else:
-                                print(f"    No thumbnail link found")
+                                print(f"    No 'Other resolutions' section found")
                         else:
-                            print(f"    No 'Other resolutions' section found")
-                    else:
-                        print(f"    Failed to get description page: {response.status_code}")
-                except Exception as e:
-                    print(f"    Error getting thumbnail: {str(e)}")
+                            print(f"    Failed to get description page: {response.status_code}")
+                    except Exception as e:
+                        print(f"    Error getting thumbnail: {str(e)}")
 
         # Update the data with processed aircraft
         data['aircraft'] = processed_aircraft
@@ -476,36 +499,36 @@ def process_database(input_file: str, output_file: str, start_id: int = 1, attri
             
             # Add thumbnail URL if requested and image_url exists
             if update_thumbnails and bird.get('image_url'):
-                # Get the description URL from wiki_image_scraper
-                image_url = bird['image_url']
-                file_name = image_url.split('/')[-1]
-                description_url = f"https://commons.wikimedia.org/wiki/File:{file_name}"
-                
-                print(f"  Getting thumbnail URL for {bird['name']}")
-                print(f"  Description URL: {description_url}")
-                
-                try:
-                    response = requests.get(description_url)
-                    if response.status_code == 200:
-                        soup = BeautifulSoup(response.text, 'html.parser')
-                        
-                        # Find the "Other resolutions" section
-                        resolution_text = soup.find(string=re.compile("Other resolutions:"))
-                        if resolution_text:
-                            # Find the first link after "Other resolutions:" text
-                            first_thumbnail = resolution_text.find_next('a', class_='mw-thumbnail-link')
-                            if first_thumbnail:
-                                thumbnail_url = first_thumbnail['href']
-                                bird['thumbnail_url'] = thumbnail_url
-                                print(f"    Found thumbnail: {thumbnail_url}")
+                # Clean up the image URL to get proper filename
+                filename = clean_wikimedia_url(bird['image_url'])
+                if filename:
+                    description_url = f"https://commons.wikimedia.org/wiki/File:{filename}"
+                    
+                    print(f"  Getting thumbnail URL for {bird['name']}")
+                    print(f"  Description URL: {description_url}")
+                    
+                    try:
+                        response = requests.get(description_url)
+                        if response.status_code == 200:
+                            soup = BeautifulSoup(response.text, 'html.parser')
+                            
+                            # Find the "Other resolutions" section
+                            resolution_text = soup.find(string=re.compile("Other resolutions:"))
+                            if resolution_text:
+                                # Find the first link after "Other resolutions:" text
+                                first_thumbnail = resolution_text.find_next('a', class_='mw-thumbnail-link')
+                                if first_thumbnail:
+                                    thumbnail_url = first_thumbnail['href']
+                                    bird['thumbnail_url'] = thumbnail_url
+                                    print(f"    Found thumbnail: {thumbnail_url}")
+                                else:
+                                    print(f"    No thumbnail link found")
                             else:
-                                print(f"    No thumbnail link found")
+                                print(f"    No 'Other resolutions' section found")
                         else:
-                            print(f"    No 'Other resolutions' section found")
-                    else:
-                        print(f"    Failed to get description page: {response.status_code}")
-                except Exception as e:
-                    print(f"    Error getting thumbnail: {str(e)}")
+                            print(f"    Failed to get description page: {response.status_code}")
+                    except Exception as e:
+                        print(f"    Error getting thumbnail: {str(e)}")
 
         # Update the data with processed birds
         data['birds'] = processed_birds

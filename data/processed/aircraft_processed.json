@@ -170,7 +170,8 @@
       "CL_cruise": 0.686039391734556,
       "CL_takeoff": 1.9787012069464158,
       "CL_landing": 2.321850627174213,
-      "thrust_to_weight_ratio": 0.15484070762203384
+      "thrust_to_weight_ratio": 0.15484070762203384,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/43/A320neo_LATAM_%2830934637733%29.jpg/320px-A320neo_LATAM_%2830934637733%29.jpg"
     },
     {
       "name": "Embraer E190-E2",
@@ -210,7 +211,8 @@
       "CL_cruise": 0.7480934280513709,
       "CL_takeoff": 2.1970251413867805,
       "CL_landing": 2.614998051235429,
-      "thrust_to_weight_ratio": 0.18073900564628653
+      "thrust_to_weight_ratio": 0.18073900564628653,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4d/PR-ZEY_E190-E2_%28FAB-EGLF%29_%2828498436022%29.jpg/320px-PR-ZEY_E190-E2_%28FAB-EGLF%29_%2828498436022%29.jpg"
     },
     {
       "name": "AEA June Bug",
@@ -331,7 +333,8 @@
       "CL_cruise": 0.8031744586638003,
       "CL_takeoff": 1.8679012123594387,
       "CL_landing": 2.343529135985624,
-      "thrust_to_weight_ratio": 0.12842431393323542
+      "thrust_to_weight_ratio": 0.12842431393323542,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e0/American_787-9_%2831715090444%29.jpg/320px-American_787-9_%2831715090444%29.jpg"
     },
     {
       "name": "Airbus A350-900",
@@ -412,7 +415,8 @@
       "CL_cruise": 0.6084781274944193,
       "CL_takeoff": 2.3417239916364827,
       "CL_landing": 2.832929708077159,
-      "thrust_to_weight_ratio": 0.17020493471975892
+      "thrust_to_weight_ratio": 0.17020493471975892,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/USexCRJ-900.jpg/320px-USexCRJ-900.jpg"
     },
     {
       "name": "ATR 72-600",
@@ -493,7 +497,8 @@
       "CL_cruise": 0.4408324815137604,
       "CL_takeoff": 1.6441163291380727,
       "CL_landing": 2.0540894357284394,
-      "thrust_to_weight_ratio": 0.19511829046359355
+      "thrust_to_weight_ratio": 0.19511829046359355,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Embraer_EMB-505_Phenom_300_Private%2C_LUX_Luxembourg_%28Findel%29%2C_Luxembourg_PP1337181623.jpg/320px-Embraer_EMB-505_Phenom_300_Private%2C_LUX_Luxembourg_%28Findel%29%2C_Luxembourg_PP1337181623.jpg"
     },
     {
       "name": "Airbus A380",
@@ -574,7 +579,8 @@
       "CL_cruise": 0.942131164772688,
       "CL_takeoff": 1.9943298074715918,
       "CL_landing": 2.684209883062871,
-      "thrust_to_weight_ratio": 0.22768996914117848
+      "thrust_to_weight_ratio": 0.22768996914117848,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/D-ABYT_at_FRA.jpg/320px-D-ABYT_at_FRA.jpg"
     },
     {
       "name": "Cirrus SR22",
@@ -614,7 +620,8 @@
       "CL_cruise": 0.36628731315374513,
       "CL_takeoff": 1.6467259044809206,
       "CL_landing": 2.3704317848485488,
-      "thrust_to_weight_ratio": 0.16527373958940714
+      "thrust_to_weight_ratio": 0.16527373958940714,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9f/Cirrus_SR-22_G3_GTS_AN1594917.jpg/320px-Cirrus_SR-22_G3_GTS_AN1594917.jpg"
     },
     {
       "name": "Pilatus PC-12",
@@ -654,7 +661,8 @@
       "CL_cruise": 0.40771377230573025,
       "CL_takeoff": 1.319669671719955,
       "CL_landing": 1.6946116999784204,
-      "thrust_to_weight_ratio": 0.3225848075459038
+      "thrust_to_weight_ratio": 0.3225848075459038,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/PC-12.jpg/320px-PC-12.jpg"
     },
     {
       "name": "Beechcraft King Air 350",
@@ -694,7 +702,8 @@
       "CL_cruise": 0.47339109523261796,
       "CL_takeoff": 1.600382333351777,
       "CL_landing": 1.914815305211233,
-      "thrust_to_weight_ratio": 0.4497211728728189
+      "thrust_to_weight_ratio": 0.4497211728728189,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/65/MAKS2015part4-43.jpg/320px-MAKS2015part4-43.jpg"
     },
     {
       "name": "Dassault Falcon 7X",
@@ -734,7 +743,8 @@
       "CL_cruise": 0.7861137247297002,
       "CL_takeoff": 2.1139705301495004,
       "CL_landing": 2.581927896024528,
-      "thrust_to_weight_ratio": 0.20226829444484576
+      "thrust_to_weight_ratio": 0.20226829444484576,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Rossiya_Dassault_Falcon_7X.jpg/320px-Rossiya_Dassault_Falcon_7X.jpg"
     },
     {
       "name": "Gulfstream G650",
@@ -774,7 +784,8 @@
       "CL_cruise": 0.6898688290941345,
       "CL_takeoff": 1.8903262344642437,
       "CL_landing": 2.2868456601621108,
-      "thrust_to_weight_ratio": 0.3294255044835714
+      "thrust_to_weight_ratio": 0.3294255044835714,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/G-ULFS_Gulfstream_G650_CVT_05-05-16_%2827046023031%29_%28cropped%29.jpg/320px-G-ULFS_Gulfstream_G650_CVT_05-05-16_%2827046023031%29_%28cropped%29.jpg"
     },
     {
       "name": "Wright Flyer",
@@ -814,7 +825,8 @@
       "CL_cruise": 0.6500823175732123,
       "CL_takeoff": 0.7371525667458683,
       "CL_landing": 0.9331453370236911,
-      "thrust_to_weight_ratio": 0.15079408163388403
+      "thrust_to_weight_ratio": 0.15079408163388403,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/First_flight2.jpg/320px-First_flight2.jpg"
     },
     {
       "name": "Santos-Dumont 14-bis",
@@ -854,7 +866,8 @@
       "CL_cruise": 0.7529249600303921,
       "CL_takeoff": 0.8743599317807741,
       "CL_landing": 0.9780114673269376,
-      "thrust_to_weight_ratio": 0.13591573224600748
+      "thrust_to_weight_ratio": 0.13591573224600748,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/14-bis_de_Alberto_Santos_Dumont.jpg/320px-14-bis_de_Alberto_Santos_Dumont.jpg"
     },
     {
       "name": "Douglas DC-3",
@@ -894,7 +907,8 @@
       "CL_cruise": 0.3143891779527963,
       "CL_takeoff": 1.7970693335917904,
       "CL_landing": 2.586848397982395,
-      "thrust_to_weight_ratio": 0.22295887835631148
+      "thrust_to_weight_ratio": 0.22295887835631148,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/df/Douglas_DC-3%2C_SE-CFP.jpg/320px-Douglas_DC-3%2C_SE-CFP.jpg"
     },
     {
       "name": "Boeing 707",
@@ -934,7 +948,8 @@
       "CL_cruise": 0.39138630447827233,
       "CL_takeoff": 1.3195167415014757,
       "CL_landing": 1.9266060049550646,
-      "thrust_to_weight_ratio": 0.05092969771641274
+      "thrust_to_weight_ratio": 0.05092969771641274,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/06/Boeing_707-321B_Pan_Am_Freer.jpg/330px-Boeing_707-321B_Pan_Am_Freer.jpg"
     },
     {
       "name": "Concorde",
@@ -1015,7 +1030,8 @@
       "CL_cruise": 0.6700246822282746,
       "CL_takeoff": 1.7264677220881026,
       "CL_landing": 2.266577498728212,
-      "thrust_to_weight_ratio": 0.1568258448992394
+      "thrust_to_weight_ratio": 0.1568258448992394,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/Jetstar_Airbus_A320_in_flight_%286768081241%29_crop.jpg/320px-Jetstar_Airbus_A320_in_flight_%286768081241%29_crop.jpg"
     },
     {
       "name": "Boeing 747",
@@ -1055,7 +1071,8 @@
       "CL_cruise": 0.8560391239822235,
       "CL_takeoff": 1.809804587411363,
       "CL_landing": 2.2519338631941412,
-      "thrust_to_weight_ratio": 0.07242863140784385
+      "thrust_to_weight_ratio": 0.07242863140784385,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b8/B-747_Iberia.jpg/320px-B-747_Iberia.jpg"
     },
     {
       "name": "Embraer E190",
@@ -1097,7 +1114,8 @@
       "CL_cruise": 0.5454014855284928,
       "CL_takeoff": 1.8732087068889995,
       "CL_landing": 2.2127880420613755,
-      "thrust_to_weight_ratio": 0.16023452080791808
+      "thrust_to_weight_ratio": 0.16023452080791808,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/28/Embraer_190_for_the_Brazilian_Government.jpg/320px-Embraer_190_for_the_Brazilian_Government.jpg"
     },
     {
       "name": "Cessna Citation X",
@@ -1137,7 +1155,8 @@
       "CL_cruise": 0.5064865377238734,
       "CL_takeoff": 1.4344052634573274,
       "CL_landing": 2.1426756241056006,
-      "thrust_to_weight_ratio": 0.19484804342683548
+      "thrust_to_weight_ratio": 0.19484804342683548,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/N975QS_2002_Cessna_750_C-N_750-0175_Citation_X_%287039507775%29.jpg/330px-N975QS_2002_Cessna_750_C-N_750-0175_Citation_X_%287039507775%29.jpg"
     },
     {
       "name": "Boeing 757-200",
@@ -1177,7 +1196,8 @@
       "CL_cruise": 0.6947090148696682,
       "CL_takeoff": 1.9170195184478627,
       "CL_landing": 2.677422665074789,
-      "thrust_to_weight_ratio": 0.3524784966087163
+      "thrust_to_weight_ratio": 0.3524784966087163,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a1/Icelandair.b757-200.tf-fiv.arp.jpg/320px-Icelandair.b757-200.tf-fiv.arp.jpg"
     },
     {
       "name": "Boeing 767-200",
@@ -1217,7 +1237,8 @@
       "CL_cruise": 0.6164398289345075,
       "CL_takeoff": 1.4360215852539333,
       "CL_landing": 1.978872068218228,
-      "thrust_to_weight_ratio": 0.34245280393934874
+      "thrust_to_weight_ratio": 0.34245280393934874,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/United_Airlines_Boeing_767-222%3B_N602UA%2C_May_1990_%285424568174%29.jpg/320px-United_Airlines_Boeing_767-222%3B_N602UA%2C_May_1990_%285424568174%29.jpg"
     },
     {
       "name": "Boeing 777-200",
@@ -1257,7 +1278,8 @@
       "CL_cruise": 0.7066258435542645,
       "CL_takeoff": 1.5297849157775838,
       "CL_landing": 2.0821180144392937,
-      "thrust_to_weight_ratio": 0.3175215832203451
+      "thrust_to_weight_ratio": 0.3175215832203451,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Kenya_Airways_B777-2U8ER_%285Y-KYZ%29_taking_off_from_London_Heathrow_Airport.jpg/320px-Kenya_Airways_B777-2U8ER_%285Y-KYZ%29_taking_off_from_London_Heathrow_Airport.jpg"
     },
     {
       "name": "Airbus A300B4",
@@ -1379,7 +1401,8 @@
       "CL_cruise": 0.7518584934739466,
       "CL_takeoff": 1.8346935669874163,
       "CL_landing": 2.3218018597279713,
-      "thrust_to_weight_ratio": 0.27999807501323426
+      "thrust_to_weight_ratio": 0.27999807501323426,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Aircanada.a330-300.c-ghkr.arp.jpg/320px-Aircanada.a330-300.c-ghkr.arp.jpg"
     },
     {
       "name": "Airbus A340-300",
@@ -1460,7 +1483,8 @@
       "CL_cruise": 0.5220991692615635,
       "CL_takeoff": 1.6096307770127323,
       "CL_landing": 1.867012290212043,
-      "thrust_to_weight_ratio": 0.08047642040882022
+      "thrust_to_weight_ratio": 0.08047642040882022,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Boeing_314_Clipper-cropped.jpg/320px-Boeing_314_Clipper-cropped.jpg"
     },
     {
       "name": "Boeing 377 Stratocruiser",
@@ -1581,7 +1605,8 @@
       "CL_cruise": 0.507750741773612,
       "CL_takeoff": 2.5269228365428895,
       "CL_landing": 3.2448673296910835,
-      "thrust_to_weight_ratio": 0.06607014761958696
+      "thrust_to_weight_ratio": 0.06607014761958696,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/C-69.jpg/314px-C-69.jpg"
     },
     {
       "name": "Hawker Siddeley Trident",
@@ -1621,7 +1646,8 @@
       "CL_cruise": 0.39024848380096105,
       "CL_takeoff": 1.3849725827766348,
       "CL_landing": 1.7696621737557674,
-      "thrust_to_weight_ratio": 0.286697247706422
+      "thrust_to_weight_ratio": 0.286697247706422,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6d/British_Airways_Trident3B_%287107744185%29.jpg/320px-British_Airways_Trident3B_%287107744185%29.jpg"
     }
   ]
 }

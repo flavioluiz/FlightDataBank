@@ -305,7 +305,8 @@
       "wing_loading_Nm2": 43.51851851851852,
       "aspect_ratio": 15.64814814814815,
       "VE_cruise_ms": 10.7,
-      "CL_cruise": 0.6205776142234607
+      "CL_cruise": 0.6205776142234607,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/17/Royal_Tern.jpg/320px-Royal_Tern.jpg"
     },
     {
       "name": "Bird - Fulmar",
@@ -390,7 +391,8 @@
       "wing_loading_Nm2": 51.93370165745857,
       "aspect_ratio": 12.430939226519337,
       "VE_cruise_ms": 11.7,
-      "CL_cruise": 0.6193941704747372
+      "CL_cruise": 0.6193941704747372,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Larus_argentatus%2C_Vaxholm%2C_Stockholm%2C_Sweden_%2814923468303%29.jpg/320px-Larus_argentatus%2C_Vaxholm%2C_Stockholm%2C_Sweden_%2814923468303%29.jpg"
     },
     {
       "name": "Bird - Great skua",
@@ -474,7 +476,8 @@
       "wing_loading_Nm2": 70.58823529411764,
       "aspect_ratio": 9.411764705882353,
       "VE_cruise_ms": 13.6,
-      "CL_cruise": 0.6230803659470493
+      "CL_cruise": 0.6230803659470493,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c6/Great_Black-backed_Gull_Larus_marinus.jpg/301px-Great_Black-backed_Gull_Larus_marinus.jpg"
     },
     {
       "name": "Bird - Sooty albatross",
@@ -516,7 +519,8 @@
       "wing_loading_Nm2": 82.35294117647058,
       "aspect_ratio": 11.76470588235294,
       "VE_cruise_ms": 14.7,
-      "CL_cruise": 0.6222057255456551
+      "CL_cruise": 0.6222057255456551,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fe/2021-10_Amsterdam_Island_-_Dark-mantled_sooty_albatross_27.jpg/320px-2021-10_Amsterdam_Island_-_Dark-mantled_sooty_albatross_27.jpg"
     },
     {
       "name": "Bird - Black-browed albatross",
@@ -558,7 +562,8 @@
       "wing_loading_Nm2": 105.55555555555556,
       "aspect_ratio": 13.444444444444446,
       "VE_cruise_ms": 16.7,
-      "CL_cruise": 0.6179277683627737
+      "CL_cruise": 0.6179277683627737,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/Thalassarche_melanophrys_-_SE_Tasmania.jpg/330px-Thalassarche_melanophrys_-_SE_Tasmania.jpg"
     },
     {
       "name": "Bird - Wandering albatross",
@@ -600,7 +605,8 @@
       "wing_loading_Nm2": 140.32258064516128,
       "aspect_ratio": 19.758064516129032,
       "VE_cruise_ms": 19.2,
-      "CL_cruise": 0.621462122669115
+      "CL_cruise": 0.621462122669115,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Diomedea_exulans_-_SE_Tasmania.jpg/320px-Diomedea_exulans_-_SE_Tasmania.jpg"
     }
   ]
 }

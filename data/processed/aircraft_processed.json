@@ -48,7 +48,8 @@
       "useful_load_N": 370000.0,
       "max_fuel_load_N": 220000.0,
       "max_fuel_weight_N": 204204.96000000002,
-      "thrust_to_weight_ratio": 0.15664516129032258
+      "thrust_to_weight_ratio": 0.15664516129032258,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/50/Ryanair_Boeing_737-800_EI-CSW.jpg/320px-Ryanair_Boeing_737-800_EI-CSW.jpg"
     },
     {
       "name": "Demoiselle",
@@ -128,7 +129,8 @@
       "aspect_ratio": 4.345714285714285,
       "VE_cruise_ms": 20.86991422429541,
       "CL_cruise": 0.8396460485282602,
-      "useful_load_N": 868.0
+      "useful_load_N": 868.0,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Bleriot.jpg/320px-Bleriot.jpg"
     },
     {
       "name": "Airbus A320neo",
@@ -288,7 +290,8 @@
       "CL_cruise": 0.4118569753169422,
       "CL_takeoff": 1.4822191752044025,
       "CL_landing": 2.0520358130251437,
-      "thrust_to_weight_ratio": 0.19382969594288016
+      "thrust_to_weight_ratio": 0.19382969594288016,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg/320px-Cessna_172S_Skyhawk_SP%2C_Private_JP6817606.jpg"
     },
     {
       "name": "Boeing 787-9",
@@ -368,7 +371,8 @@
       "CL_cruise": 0.690879614158118,
       "CL_takeoff": 1.7386866025901764,
       "CL_landing": 2.2826189452327275,
-      "thrust_to_weight_ratio": 0.13652249890782
+      "thrust_to_weight_ratio": 0.13652249890782,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Qatar_Airways_A350-941_%28A7-ALA%29_landing_at_Frankfurt_Airport.jpg/320px-Qatar_Airways_A350-941_%28A7-ALA%29_landing_at_Frankfurt_Airport.jpg"
     },
     {
       "name": "Bombardier CRJ-900",
@@ -448,7 +452,8 @@
       "CL_cruise": 0.6714470732803111,
       "CL_takeoff": 2.2866480825380915,
       "CL_landing": 2.7083488386201187,
-      "thrust_to_weight_ratio": 0.22160173735762087
+      "thrust_to_weight_ratio": 0.22160173735762087,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bc/ATR_ATR-72-600_%28ATR-72-212A%29%2C_Azul_-_Linhas_Aereas_Brasileiras_AN2298854.jpg/330px-ATR_ATR-72-600_%28ATR-72-212A%29%2C_Azul_-_Linhas_Aereas_Brasileiras_AN2298854.jpg"
     },
     {
       "name": "Embraer Phenom 300",
@@ -528,7 +533,8 @@
       "CL_cruise": 0.8120195912241608,
       "CL_takeoff": 1.8014981640889152,
       "CL_landing": 2.260217728877716,
-      "thrust_to_weight_ratio": 0.06630323981740018
+      "thrust_to_weight_ratio": 0.06630323981740018,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/A6-EDY_A380_Emirates_31_jan_2013_jfk_%288442269364%29_%28cropped%29.jpg/320px-A6-EDY_A380_Emirates_31_jan_2013_jfk_%288442269364%29_%28cropped%29.jpg"
     },
     {
       "name": "Boeing 747-8",
@@ -968,7 +974,8 @@
       "CL_cruise": 0.23998448086424146,
       "CL_takeoff": 0.6701964089356932,
       "CL_landing": 1.2748804945846168,
-      "thrust_to_weight_ratio": 0.09319558233110903
+      "thrust_to_weight_ratio": 0.09319558233110903,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/British_Airways_Concorde_G-BOAC_03.jpg/320px-British_Airways_Concorde_G-BOAC_03.jpg"
     },
     {
       "name": "Airbus A320",
@@ -1290,7 +1297,8 @@
       "CL_cruise": 0.561763228513414,
       "CL_takeoff": 1.806952079576382,
       "CL_landing": 2.4900231553624197,
-      "thrust_to_weight_ratio": 0.29654341580947086
+      "thrust_to_weight_ratio": 0.29654341580947086,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/VARIG_Airbus_A300_Aragao.jpg/320px-VARIG_Airbus_A300_Aragao.jpg"
     },
     {
       "name": "Airbus A310-300",
@@ -1330,7 +1338,8 @@
       "CL_cruise": 0.7621968359109744,
       "CL_takeoff": 2.103249245462377,
       "CL_landing": 2.6874471581329558,
-      "thrust_to_weight_ratio": 0.2854230377166157
+      "thrust_to_weight_ratio": 0.2854230377166157,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/7/77/LV-AIV_Airbus_A310_Aerolineas_Argentinas_%287378993190%29.jpg/320px-LV-AIV_Airbus_A310_Aerolineas_Argentinas_%287378993190%29.jpg"
     },
     {
       "name": "Airbus A330-300",
@@ -1410,7 +1419,8 @@
       "CL_cruise": 0.8920295631613201,
       "CL_takeoff": 2.0239199204124483,
       "CL_landing": 2.7546618368447695,
-      "thrust_to_weight_ratio": 0.2507499451484495
+      "thrust_to_weight_ratio": 0.2507499451484495,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Airbus_A340-311%2C_Lufthansa_AN1936774.jpg/320px-Airbus_A340-311%2C_Lufthansa_AN1936774.jpg"
     },
     {
       "name": "Boeing 314 Clipper",
@@ -1530,7 +1540,8 @@
       "CL_cruise": 0.4380717349439209,
       "CL_takeoff": 1.2699484121100435,
       "CL_landing": 1.4579988922216778,
-      "thrust_to_weight_ratio": 0.13412736734803368
+      "thrust_to_weight_ratio": 0.13412736734803368,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/34/Boeing_307_Stratoliner%2C_Pan_Am_JP5629675.jpg/320px-Boeing_307_Stratoliner%2C_Pan_Am_JP5629675.jpg"
     },
     {
       "name": "Lockheed Constellation",

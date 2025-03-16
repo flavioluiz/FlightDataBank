@@ -45,7 +45,8 @@
       "wing_loading_Nm2": 22.999999999999996,
       "aspect_ratio": 12.800000000000002,
       "VE_cruise_ms": 7.762606058678792,
-      "CL_cruise": 0.6231639200543482
+      "CL_cruise": 0.6231639200543482,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/2014-05-18_Sterna_hirundo%2C_Killingworth_Lake%2C_Northumberland_02.jpg/320px-2014-05-18_Sterna_hirundo%2C_Killingworth_Lake%2C_Northumberland_02.jpg"
     },
     {
       "id": 42,
@@ -87,7 +88,8 @@
       "wing_loading_Nm2": 36.95652173913044,
       "aspect_ratio": 10.652173913043477,
       "VE_cruise_ms": 9.828853021397046,
-      "CL_cruise": 0.6245611507355319
+      "CL_cruise": 0.6245611507355319,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0e/Antarctic_Prion_0A2A3422.jpg/320px-Antarctic_Prion_0A2A3422.jpg"
     },
     {
       "id": 43,
@@ -131,7 +133,8 @@
       "VE_cruise_ms": 9.0,
       "CL_cruise": 0.6181176034822552,
       "CL_takeoff": 1.390764607835074,
-      "CL_landing": 2.0027010352825068
+      "CL_landing": 2.0027010352825068,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Chroicocephalus_ridibundus_%28summer%29.jpg/320px-Chroicocephalus_ridibundus_%28summer%29.jpg"
     },
     {
       "id": 44,
@@ -173,7 +176,8 @@
       "wing_loading_Nm2": 33.70786516853933,
       "aspect_ratio": 16.179775280898877,
       "VE_cruise_ms": 9.287553961894535,
-      "CL_cruise": 0.6379962209674793
+      "CL_cruise": 0.6379962209674793,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/Black_Skimmer_JG.jpg/320px-Black_Skimmer_JG.jpg"
     },
     {
       "name": "Bird - Common gull",
@@ -215,7 +219,8 @@
       "wing_loading_Nm2": 31.913043478260867,
       "aspect_ratio": 14.695652173913045,
       "VE_cruise_ms": 9.2,
-      "CL_cruise": 0.6155766354393097
+      "CL_cruise": 0.6155766354393097,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e4/Common_gull_%28Larus_canus%29_adult_breeding_Oppdal.jpg/320px-Common_gull_%28Larus_canus%29_adult_breeding_Oppdal.jpg"
     },
     {
       "name": "Bird - Kittiwake",
@@ -257,7 +262,8 @@
       "wing_loading_Nm2": 38.61386138613861,
       "aspect_ratio": 11.980198019801982,
       "VE_cruise_ms": 10.1,
-      "CL_cruise": 0.6180022326317779
+      "CL_cruise": 0.6180022326317779,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/03/Rissa_tridactyla_%28Vard%C3%B8%2C_2012%29.jpg/320px-Rissa_tridactyla_%28Vard%C3%B8%2C_2012%29.jpg"
     },
     {
       "name": "Bird - Royal tern",
@@ -341,7 +347,8 @@
       "wing_loading_Nm2": 66.12903225806451,
       "aspect_ratio": 9.758064516129034,
       "VE_cruise_ms": 13.2,
-      "CL_cruise": 0.6196320356735091
+      "CL_cruise": 0.6196320356735091,
+      "thumbnail_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Fulmarus_glacialis_on_cliff.jpg/299px-Fulmarus_glacialis_on_cliff.jpg"
     },
     {
       "name": "Bird - Herring gull",

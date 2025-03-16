@@ -239,11 +239,11 @@ function openAircraftDetails(aircraft) {
     // Convert MTOW from Newtons to kg (dividing by 9.81)
     const mtowKg = aircraft.mtow_N ? (aircraft.mtow_N / 9.81).toFixed(2) : 'N/A';
     
-    // Create content
+    // Create content - use thumbnail_url with fallback to image_url
     modalContent.innerHTML = `
         <div class="row">
             <div class="col-md-6">
-                <img src="${aircraft.image_url}" class="img-fluid rounded mb-3" alt="${aircraft.name}">
+                <img src="${aircraft.thumbnail_url || aircraft.image_url}" class="img-fluid rounded mb-3" alt="${aircraft.name}">
                 <p class="text-muted small">
                     <strong>Image Attribution:</strong> ${aircraft.image_attribution || 'Not available'}
                 </p>

@@ -5,6 +5,10 @@ import os
 import subprocess
 import sys
 from typing import Dict, List, Union
+from add_thumbnail_urls import get_thumbnail_url
+import requests
+from bs4 import BeautifulSoup
+import re
 
 def compute_isa_density(altitude_m: float) -> float:
     """
@@ -354,10 +358,17 @@ def run_wiki_image_scraper(input_file, output_dir="attribution_results"):
         print(f"Error running wiki_image_scraper.py: {str(e)}")
         return False
 
-def process_database(input_file: str, output_file: str, start_id: int = 1, attribution_file: str = None) -> int:
+def process_database(input_file: str, output_file: str, start_id: int = 1, attribution_file: str = None, update_thumbnails: bool = False) -> int:
     """
     Process the aircraft database and save the results.
     Returns the next available ID after processing.
+    
+    Args:
+        input_file (str): Path to input JSON file
+        output_file (str): Path to output JSON file
+        start_id (int): Starting ID for items
+        attribution_file (str): Path to attribution JSON file
+        update_thumbnails (bool): Whether to update thumbnail URLs from Wikimedia
     """
     print(f"\nProcessing {input_file}")
     print(f"Starting with ID: {start_id}")
@@ -401,7 +412,40 @@ def process_database(input_file: str, output_file: str, start_id: int = 1, attri
             aircraft = compute_derived_values(aircraft)
             if aircraft:  # Only add if processing was successful
                 processed_aircraft.append(aircraft)
-        
+            
+            # Add thumbnail URL if requested and image_url exists
+            if update_thumbnails and aircraft.get('image_url'):
+                # Get the description URL from wiki_image_scraper
+                image_url = aircraft['image_url']
+                file_name = image_url.split('/')[-1]
+                description_url = f"https://commons.wikimedia.org/wiki/File:{file_name}"
+                
+                print(f"  Getting thumbnail URL for {aircraft['name']}")
+                print(f"  Description URL: {description_url}")
+                
+                try:
+                    response = requests.get(description_url)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        
+                        # Find the "Other resolutions" section
+                        resolution_text = soup.find(string=re.compile("Other resolutions:"))
+                        if resolution_text:
+                            # Find the first link after "Other resolutions:" text
+                            first_thumbnail = resolution_text.find_next('a', class_='mw-thumbnail-link')
+                            if first_thumbnail:
+                                thumbnail_url = first_thumbnail['href']
+                                aircraft['thumbnail_url'] = thumbnail_url
+                                print(f"    Found thumbnail: {thumbnail_url}")
+                            else:
+                                print(f"    No thumbnail link found")
+                        else:
+                            print(f"    No 'Other resolutions' section found")
+                    else:
+                        print(f"    Failed to get description page: {response.status_code}")
+                except Exception as e:
+                    print(f"    Error getting thumbnail: {str(e)}")
+
         # Update the data with processed aircraft
         data['aircraft'] = processed_aircraft
         print(f"Successfully processed {len(processed_aircraft)} aircraft")
@@ -429,7 +473,40 @@ def process_database(input_file: str, output_file: str, start_id: int = 1, attri
             bird = compute_derived_values(bird)
             if bird:  # Only add if processing was successful
                 processed_birds.append(bird)
-        
+            
+            # Add thumbnail URL if requested and image_url exists
+            if update_thumbnails and bird.get('image_url'):
+                # Get the description URL from wiki_image_scraper
+                image_url = bird['image_url']
+                file_name = image_url.split('/')[-1]
+                description_url = f"https://commons.wikimedia.org/wiki/File:{file_name}"
+                
+                print(f"  Getting thumbnail URL for {bird['name']}")
+                print(f"  Description URL: {description_url}")
+                
+                try:
+                    response = requests.get(description_url)
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        
+                        # Find the "Other resolutions" section
+                        resolution_text = soup.find(string=re.compile("Other resolutions:"))
+                        if resolution_text:
+                            # Find the first link after "Other resolutions:" text
+                            first_thumbnail = resolution_text.find_next('a', class_='mw-thumbnail-link')
+                            if first_thumbnail:
+                                thumbnail_url = first_thumbnail['href']
+                                bird['thumbnail_url'] = thumbnail_url
+                                print(f"    Found thumbnail: {thumbnail_url}")
+                            else:
+                                print(f"    No thumbnail link found")
+                        else:
+                            print(f"    No 'Other resolutions' section found")
+                    else:
+                        print(f"    Failed to get description page: {response.status_code}")
+                except Exception as e:
+                    print(f"    Error getting thumbnail: {str(e)}")
+
         # Update the data with processed birds
         data['birds'] = processed_birds
         print(f"Successfully processed {len(processed_birds)} birds")
@@ -456,6 +533,11 @@ def main():
     # Ask if user wants to update image attribution information
     update_attribution = input("Do you want to update image attribution information? (y/n): ").lower().strip() == 'y'
     
+    # Add new prompt for thumbnail URLs
+    update_thumbnails = False
+    if update_attribution:
+        update_thumbnails = input("Do you want to also fetch thumbnail URLs? (y/n): ").lower().strip() == 'y'
+    
     if update_attribution:
         print("\nUpdating image attribution information...")
         # Create attribution directory if it doesn't exist
@@ -480,7 +562,8 @@ def main():
         aircraft_input,
         aircraft_output,
         start_id=1,
-        attribution_file=aircraft_attribution if os.path.exists(aircraft_attribution) else None
+        attribution_file=aircraft_attribution if os.path.exists(aircraft_attribution) else None,
+        update_thumbnails=update_thumbnails
     )
     
     # Process birds data, starting with ID after the last aircraft
@@ -490,7 +573,8 @@ def main():
         birds_input,
         birds_output,
         start_id=next_id,
-        attribution_file=birds_attribution if os.path.exists(birds_attribution) else None
+        attribution_file=birds_attribution if os.path.exists(birds_attribution) else None,
+        update_thumbnails=update_thumbnails
     )
     
     print("Data processing completed!")

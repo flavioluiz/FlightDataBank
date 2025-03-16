@@ -201,7 +201,7 @@ function createGalleryItem(aircraft) {
     // Create image
     const img = document.createElement('img');
     img.className = 'gallery-img';
-    img.src = aircraft.image_url;
+    img.src = aircraft.thumbnail_url || aircraft.image_url;
     img.alt = aircraft.name;
     img.loading = 'lazy';
     

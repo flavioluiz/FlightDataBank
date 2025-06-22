@@ -1,0 +1,43 @@
+# Aircraft Range Data (km)
+# Format: Aircraft Name | Range (km)
+
+# Commercial Aircraft
+Boeing 737-800 | 5665
+Airbus A320neo | 6300
+Embraer E190-E2 | 5300
+Boeing 787-9 | 14140
+Airbus A350-900 | 15000
+Bombardier CRJ-900 | 2876
+ATR 72-600 | 1528
+Airbus A380 | 15200
+Boeing 747-8 | 14320
+Airbus A320 | 5700
+Boeing 747 | 13450
+Embraer E190 | 4537
+Boeing 757-200 | 7250
+Boeing 767-200 | 7890
+Boeing 777-200 | 9700
+Airbus A300B4 | 7500
+Airbus A310-300 | 8050
+Airbus A330-300 | 11300
+Airbus A340-300 | 13700
+
+# General Aviation
+Cessna 172 | 1185
+Cirrus SR22 | 1178
+Pilatus PC-12 | 3340
+Beechcraft King Air 350 | 3345
+
+# Executive Jets
+Embraer Phenom 300 | 3650
+Dassault Falcon 7X | 11019
+Gulfstream G650 | 12964
+Cessna Citation X | 6408
+
+# Historical Aircraft
+Concorde | 7223
+Douglas DC-3 | 2400
+Boeing 707 | 10650
+Boeing 314 Clipper | 5900
+Boeing 377 Stratocruiser | 6760
+Lockheed Constellation | 8700 

@@ -11,8 +11,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let selectedAircraft = []; // Track selected aircraft
     let clickCounter = 0;
     let classifications = []; // Store classifications data
-    const greenIcon = createCustomIcon('#4CAF50');
-    const redIcon = createCustomIcon('#F44336');
+    const greenIcon = createCustomIcon('#4CAF50', 'A', 'Departure');
+    const redIcon = createCustomIcon('#F44336', 'B', 'Destination');
     
     // Initialize the map and UI controls
     initMap();
@@ -50,14 +50,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Create custom icon for map markers
-    function createCustomIcon(color) {
-        return L.icon({
-            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-' + color.substring(1) + '.png',
-            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-            iconSize: [25, 41],
-            iconAnchor: [12, 41],
-            popupAnchor: [1, -34],
-            shadowSize: [41, 41]
+    function createCustomIcon(color, label, description) {
+        return L.divIcon({
+            className: 'map-point-icon',
+            html: `<span class="map-point-pin" style="--marker-color: ${color}" role="img" aria-label="${description}"><span class="map-point-pin-label">${label}</span></span>`,
+            iconSize: [32, 40],
+            iconAnchor: [16, 38],
+            popupAnchor: [0, -38]
         });
     }
     

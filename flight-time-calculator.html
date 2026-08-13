@@ -60,6 +60,28 @@
         .point-b {
             background-color: #F44336;
         }
+        .map-point-icon {
+            background: transparent;
+            border: 0;
+        }
+        .map-point-pin {
+            align-items: center;
+            background: var(--marker-color);
+            border: 3px solid #fff;
+            border-radius: 50% 50% 50% 0;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
+            box-sizing: border-box;
+            display: flex;
+            height: 32px;
+            justify-content: center;
+            transform: rotate(-45deg);
+            width: 32px;
+        }
+        .map-point-pin-label {
+            color: #fff;
+            font: 700 14px/1 Arial, sans-serif;
+            transform: rotate(45deg);
+        }
     </style>
 </head>
 <body>

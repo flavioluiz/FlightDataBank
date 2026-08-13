@@ -255,16 +255,16 @@ async function viewAircraftDetails(aircraftId) {
 // Function to check if an image exists and provide a fallback
 function getValidImageUrl(aircraft) {
     return new Promise((resolve) => {
-        const DEFAULT_FALLBACK_IMAGE = '/images/default.jpg';
+        const DEFAULT_FALLBACK_IMAGE = 'images/fallback/geral.jpg';
         const FALLBACK_IMAGES = {
-            'comercial': '/images/commercial.jpg',
-            'executiva': '/images/business.jpg',
-            'carga': '/images/cargo.jpg',
-            'militar': '/images/military.jpg',
-            'geral': '/images/general.jpg',
-            'historica': '/images/historical.jpg',
-            'experimental': '/images/experimental.jpg',
-            'ave': '/images/bird.jpg'
+            'comercial': 'images/fallback/comercial.jpg',
+            'executiva': 'images/fallback/executiva.jpg',
+            'carga': 'images/fallback/carga.jpg',
+            'militar': 'images/fallback/militar.jpg',
+            'geral': 'images/fallback/geral.jpg',
+            'historica': 'images/fallback/historica.jpg',
+            'experimental': 'images/fallback/experimental.jpg',
+            'ave': 'images/fallback/ave.jpg'
         };
 
         if (!aircraft || !aircraft.image_url) {
@@ -276,7 +276,7 @@ function getValidImageUrl(aircraft) {
         }
 
         // If the image URL is already a local path, use it directly
-        if (aircraft.image_url.startsWith('/images/')) {
+        if (/^(?:\.\/)?images\//.test(aircraft.image_url)) {
             resolve(aircraft.image_url);
             return;
         }
@@ -317,4 +317,4 @@ function getValidImageUrl(aircraft) {
 
         img.src = aircraft.image_url;
     });
-} 
+}

@@ -682,14 +682,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Helper function to get aircraft image URL based on category
     function getAircraftImageUrl(category) {
         const imageMap = {
-            'comercial': '/images/aircraft/commercial.jpg',
-            'executiva': '/images/aircraft/business.jpg',
-            'carga': '/images/aircraft/cargo.jpg',
-            'militar': '/images/aircraft/military.jpg',
-            'geral': '/images/aircraft/general.jpg',
-            'historica': '/images/aircraft/historical.jpg'
+            'comercial': 'images/fallback/comercial.jpg',
+            'executiva': 'images/fallback/executiva.jpg',
+            'carga': 'images/fallback/carga.jpg',
+            'militar': 'images/fallback/militar.jpg',
+            'geral': 'images/fallback/geral.jpg',
+            'historica': 'images/fallback/historica.jpg',
+            'experimental': 'images/fallback/experimental.jpg',
+            'ave': 'images/fallback/ave.jpg'
         };
-        return imageMap[category] || '/images/aircraft/default.jpg';
+        return imageMap[category] || 'images/fallback/geral.jpg';
     }
     
     // Helper function to capitalize first letter
@@ -1178,4 +1180,4 @@ document.addEventListener('DOMContentLoaded', function() {
         // Return false to indicate aircraft was already in the list
         return false;
     }
-}); 
+});

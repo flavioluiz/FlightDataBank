@@ -1202,7 +1202,7 @@ function getValidImageUrl(aircraft) {
         }
 
         // If the image URL is already a local path, use it directly
-        if (aircraft.image_url.startsWith('/images/')) {
+        if (/^(?:\.\/)?images\//.test(aircraft.image_url)) {
             resolve(aircraft.image_url);
         return;
     }

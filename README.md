@@ -25,6 +25,22 @@ pip install -r requirements.txt
 
 ## Usage
 
+### Audit and refresh Wikimedia images
+
+```bash
+# Read-only audit against the official Commons API
+python3 scripts/sync_wikimedia_images.py
+
+# Refresh attribution metadata and cache approved 960 px renditions locally
+python3 scripts/sync_wikimedia_images.py --write
+```
+
+The write command updates the raw and processed datasets together and stores
+the site-facing copies under `images/wikimedia/`. The original Commons page,
+author, and license remain recorded in each item. Serving local copies avoids
+broken hotlinks caused by renamed files, non-standard thumbnail sizes, or
+Wikimedia CDN rate limits.
+
 ### Process a JSON file
 
 ```bash
@@ -71,4 +87,4 @@ The output is a JSON file with the following structure:
 ## Notes
 
 - The script includes a 1-second delay between requests to avoid overloading the Wikimedia servers
-- Some images may not have complete attribution information available 
+- Some images may not have complete attribution information available

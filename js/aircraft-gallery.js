@@ -248,7 +248,7 @@ function openAircraftDetails(aircraft) {
                     <strong>Image Attribution:</strong> ${aircraft.image_attribution || 'Not available'}
                 </p>
                 <p class="text-muted small">
-                    <strong>Image Source:</strong> <a href="${aircraft.image_url}" target="_blank">View original image</a>
+                    <strong>Image Source:</strong> <a href="${aircraft.image_source_url || aircraft.image_original_url || aircraft.image_url}" target="_blank" rel="noopener noreferrer">View source on Wikimedia Commons</a>
                 </p>
             </div>
             <div class="col-md-6">
@@ -313,4 +313,4 @@ function showAlert(message, type = 'info') {
             }
         }, 150);
     }, 5000);
-} 
+}

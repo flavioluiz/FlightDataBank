@@ -20,14 +20,24 @@ def extract_image_urls(data, key_name="image_url"):
     # Handle aircraft.json structure
     if "aircraft" in data:
         for item in data["aircraft"]:
-            if key_name in item:
-                urls.append({"url": item[key_name], "name": item.get("name", "Unknown")})
+            image_url = (
+                item.get("image_source_url")
+                or item.get("image_original_url")
+                or item.get(key_name)
+            )
+            if image_url:
+                urls.append({"url": image_url, "name": item.get("name", "Unknown")})
     
     # Handle birds.json structure
     elif "birds" in data:
         for item in data["birds"]:
-            if key_name in item:
-                urls.append({"url": item[key_name], "name": item.get("name", "Unknown")})
+            image_url = (
+                item.get("image_source_url")
+                or item.get("image_original_url")
+                or item.get(key_name)
+            )
+            if image_url:
+                urls.append({"url": image_url, "name": item.get("name", "Unknown")})
     
     return urls
 
@@ -39,6 +49,10 @@ def convert_to_description_url(image_url):
     # Check if it's a Wikimedia URL
     if "wikimedia.org" not in parsed_url.netloc:
         return None
+
+    # The datasets may already contain the canonical Commons description page.
+    if parsed_url.netloc == "commons.wikimedia.org" and "/wiki/File:" in parsed_url.path:
+        return image_url.split('?', 1)[0]
     
     # Extract the filename from the path
     path_parts = parsed_url.path.split('/')
@@ -632,4 +646,4 @@ def main():
         parser.print_help()
 
 if __name__ == "__main__":
-    main() 
+    main()

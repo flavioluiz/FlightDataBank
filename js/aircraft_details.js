@@ -87,8 +87,8 @@ function displayAircraftDetails(aircraft) {
                 <small class="text-muted">
                     <i class="fas fa-camera"></i> ${aircraft.image_attribution}
                     <br>
-                    <a href="${aircraft.image_url}" target="_blank" class="text-muted">
-                        <i class="fas fa-external-link-alt"></i> View original image
+                    <a href="${aircraft.image_source_url || aircraft.image_original_url || aircraft.image_url}" target="_blank" rel="noopener noreferrer" class="text-muted">
+                        <i class="fas fa-external-link-alt"></i> View source on Wikimedia Commons
                     </a>
                 </small>
             </div>
@@ -209,4 +209,4 @@ async function handleHashChange() {
 
 // Event listeners
 window.addEventListener('hashchange', handleHashChange);
-window.addEventListener('DOMContentLoaded', handleHashChange); 
+window.addEventListener('DOMContentLoaded', handleHashChange);

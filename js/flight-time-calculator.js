@@ -202,7 +202,7 @@ document.addEventListener('DOMContentLoaded', function() {
         pointBMarker = L.marker(latlng, {icon: redIcon}).addTo(map);
     }
     
-    // Draw a line between points A and B
+    // Draw the shortest route between points A and B
     function drawRouteLine() {
         // Remove existing line if any
         if (routeLine) {
@@ -211,12 +211,18 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Draw new line if both points are set
         if (pointA && pointB) {
-            routeLine = L.polyline([pointA, pointB], {
+            const routeStyle = {
                 color: 'blue',
                 weight: 3,
                 opacity: 0.7,
                 dashArray: '10, 10'
-            }).addTo(map);
+            };
+            const routeSegments = GeodesicRoute.buildRouteSegments(pointA, pointB);
+            const polylines = routeSegments.map(segment => L.polyline(segment, routeStyle));
+
+            // A route that crosses the antimeridian is split at +180/-180 so
+            // Leaflet does not draw the longer line through the map's center.
+            routeLine = L.featureGroup(polylines).addTo(map);
             
             // Fit map bounds to show both points
             map.fitBounds(routeLine.getBounds(), {
